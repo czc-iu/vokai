@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-[calc(100vh-4rem)] py-8">
     <div class="container-zen">
-      <h1 class="text-2xl font-medium text-charcoal mb-8">费用账单</h1>
+      <h1 class="text-2xl font-medium text-charcoal mb-8">消费明细</h1>
 
       <!-- 余额概览 -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -159,11 +159,7 @@ watch(filterType, () => {
 })
 
 onMounted(async () => {
-  await auth.fetchUser()
-  if (!auth.state.value.user) {
-    router.push('/login')
-    return
-  }
+  // auth 中间件已经处理了认证，这里只需要加载数据
   await Promise.all([loadBalance(), loadTransactions()])
 })
 

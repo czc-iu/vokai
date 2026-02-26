@@ -7,6 +7,8 @@ import { getRAGContext } from '../../utils/rag'
 import { getUserRAGContext } from '../../utils/userRag'
 import { getUserMemories, formatMemoriesForPrompt, extractMemoriesFromConversation } from '../../utils/memory'
 import { throwBadRequest } from '../../utils/response'
+import { consumeTokens, recordDailyConsumption, getBalance } from '../../utils/billing'
+import { calculateMessageTokens } from '../../utils/tokenCalculator'
 
 interface DbConversation {
   id: number
@@ -40,6 +42,15 @@ export default defineEventHandler(async (event) => {
   const { message, conversationId } = validation.data as ChatInput
   const { enableSearch, enableThinking } = (body as ChatRequestBody) || {}
   const userId = auth.userId
+
+  // 检查用户余额
+  const balance = await getBalance(userId)
+  if (balance <= 0) {
+    throw createError({
+      statusCode: 402,
+      message: '当前tokens余额不足，请充值后继续使用'
+    })
+  }
 
   let conversation: DbConversation | null = null
 
@@ -164,17 +175,40 @@ export default defineEventHandler(async (event) => {
         }
 
         const responseContent = fullContent || '抱歉，我暂时无法回答这个问题。'
+        
+        const { inputTokens, outputTokens, totalTokens } = calculateMessageTokens(
+          message,
+          responseContent
+        )
+        
         await insert('messages', {
           conversation_id: conversation!.id,
           role: 'assistant',
-          content: responseContent
+          content: responseContent,
+          tokens: totalTokens
         })
+
+        await consumeTokens(
+          userId,
+          totalTokens,
+          `对话消耗 (输入: ${inputTokens}, 输出: ${outputTokens})`,
+          'conversation',
+          conversation!.id
+        )
+
+        await recordDailyConsumption(userId, totalTokens, 1)
 
         extractMemoriesFromConversation(userId, [
           ...aiMessages,
           { role: 'assistant', content: responseContent }
         ]).catch((err) => console.error('Memory extraction error:', err))
 
+        sendEvent({ 
+          type: 'tokens', 
+          inputTokens,
+          outputTokens,
+          totalTokens 
+        })
         sendEvent({ type: 'done' })
       } catch (error) {
         const errorMessage =

@@ -10,7 +10,7 @@
     "login": "登录",
     "register": "注册",
     "account": "账户设置",
-    "billing": "账单",
+    "billing": "消费",
     "orders": "订单",
     "embedSDK": "嵌入式SDK"
   },
@@ -642,6 +642,103 @@
           "title": "其他条款"
         }
       }
+    }
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "控制台",
+      "rag": "RAG文档",
+      "mcp": "MCP服务",
+      "skills": "技能管理",
+      "commands": "命令管理",
+      "backToSite": "返回网站",
+      "logout": "退出登录"
+    },
+    "dashboard": {
+      "title": "管理后台",
+      "totalDocuments": "文档总数",
+      "activeMCP": "活跃MCP服务",
+      "enabledSkills": "已启用技能",
+      "whitelistedCommands": "白名单命令",
+      "quickActions": "快捷操作",
+      "indexDocument": "索引文档",
+      "addMCP": "添加MCP服务",
+      "scanSkills": "扫描技能",
+      "manageCommands": "管理命令",
+      "systemStatus": "系统状态",
+      "ragIndex": "RAG索引",
+      "database": "数据库",
+      "connected": "已连接",
+      "aiService": "AI服务",
+      "operational": "运行中",
+      "indexed": "已索引",
+      "notIndexed": "未索引"
+    },
+    "rag": {
+      "title": "RAG文档管理",
+      "documentList": "文档列表",
+      "description": "管理和索引RAG知识库文档",
+      "indexNow": "立即索引",
+      "indexing": "索引中...",
+      "indexStatus": "索引状态",
+      "totalDocuments": "文档总数",
+      "totalVectors": "向量总数",
+      "indexed": "已索引",
+      "noDocuments": "暂无文档",
+      "indexSuccess": "索引完成",
+      "indexFailed": "索引失败",
+      "table": {
+        "id": "ID",
+        "filename": "文件名",
+        "size": "大小",
+        "status": "状态"
+      },
+      "info": {
+        "title": "提示",
+        "description": "将Markdown文档放入 docs/ 目录，点击索引按钮即可将其加入知识库"
+      }
+    },
+    "mcp": {
+      "title": "MCP服务管理",
+      "serviceList": "服务列表",
+      "description": "管理MCP (Model Context Protocol) 服务",
+      "addService": "添加服务",
+      "noServices": "暂无服务",
+      "form": {
+        "name": "服务名称",
+        "command": "命令",
+        "args": "参数 (JSON数组)"
+      }
+    },
+    "skills": {
+      "title": "技能管理",
+      "skillList": "技能列表",
+      "description": "管理和扫描AI技能",
+      "scanNow": "扫描技能",
+      "noSkills": "暂无技能",
+      "enabled": "已启用",
+      "disabled": "已禁用",
+      "scanSuccess": "扫描完成",
+      "scanFailed": "扫描失败"
+    },
+    "commands": {
+      "title": "命令管理",
+      "commandList": "命令列表",
+      "description": "管理命令白名单",
+      "addCommand": "添加命令",
+      "noCommands": "暂无命令",
+      "form": {
+        "command": "命令",
+        "description": "描述"
+      }
+    },
+    "common": {
+      "delete": "删除",
+      "cancel": "取消",
+      "save": "保存",
+      "confirmDelete": "确定要删除吗？",
+      "addFailed": "添加失败",
+      "deleteFailed": "删除失败"
     }
   }
 }

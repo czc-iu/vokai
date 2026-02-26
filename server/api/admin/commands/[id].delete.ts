@@ -1,7 +1,10 @@
+import { requireAdmin } from '../../../utils/adminAuth'
 import { deleteCommand } from '../../../utils/executor'
 import { successResponse, throwNotFound } from '../../../utils/response'
 
 export default defineEventHandler(async (event) => {
+  await requireAdmin(event)
+  
   const id = getRouterParam(event, 'id')
 
   if (!id) {

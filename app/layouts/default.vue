@@ -125,7 +125,7 @@
       <slot />
     </main>
 
-    <footer class="bg-ink text-sakura/70 py-12">
+    <footer v-if="!isChatPage" class="bg-ink text-sakura/70 py-12">
       <div class="container-zen">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div class="md:col-span-2">
@@ -189,10 +189,13 @@
 
 <script setup lang="ts">
 const { t } = useI18n()
+const route = useRoute()
 const mobileMenuOpen = ref(false)
 const userMenuOpen = ref(false)
 const userMenuRef = ref<HTMLElement | null>(null)
 const user = useUser()
+
+const isChatPage = computed(() => route.path === '/chat')
 
 const userInitial = computed(() => {
   if (!user.value) return '?'

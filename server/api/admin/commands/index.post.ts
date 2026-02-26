@@ -1,3 +1,4 @@
+import { requireAdmin } from '../../../utils/adminAuth'
 import { addCommand } from '../../../utils/executor'
 import { successResponse, throwBadRequest } from '../../../utils/response'
 import { z } from 'zod'
@@ -9,6 +10,8 @@ const commandSchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
+  await requireAdmin(event)
+  
   const body = await readBody(event)
 
   const result = commandSchema.safeParse(body)

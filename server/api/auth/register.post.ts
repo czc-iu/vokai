@@ -5,8 +5,6 @@ import { queryOne, insert } from '../../utils/db'
 import { successResponse, throwBadRequest, throwConflict } from '../../utils/response'
 import { ERROR_MESSAGES } from '../../utils/constants'
 
-const WELCOME_TOKENS = 10000
-
 interface DbUser {
   id: number
   email: string
@@ -41,18 +39,19 @@ export default defineEventHandler(async (event) => {
     password_hash: passwordHash,
     name: name || null,
     status: 'active',
-    email_verified: false,
-    token_balance: WELCOME_TOKENS
+    email_verified: false
   })
 
+  const userId = result.insertId
+  
   const token = generateToken({
-    userId: result.insertId,
+    userId,
     email
   })
 
   return successResponse({
     user: {
-      id: result.insertId,
+      id: userId,
       email,
       name: name || null
     },

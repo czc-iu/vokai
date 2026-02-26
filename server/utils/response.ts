@@ -62,6 +62,13 @@ export function throwConflict(message: string): never {
   })
 }
 
+export function throwForbidden(message: string = '禁止访问'): never {
+  throw createError({
+    statusCode: HTTP_STATUS.FORBIDDEN,
+    message
+  })
+}
+
 export function throwMethodNotAllowed(): never {
   throw createError({
     statusCode: HTTP_STATUS.METHOD_NOT_ALLOWED,

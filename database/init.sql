@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `phone_verified` BOOLEAN DEFAULT FALSE,
   `avatar` VARCHAR(500) DEFAULT NULL,
   `company` VARCHAR(100) DEFAULT NULL,
+  `role` ENUM('user', 'admin') DEFAULT 'user',
   `status` ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
   `email_verified` BOOLEAN DEFAULT FALSE,
   `email_verified_at` DATETIME DEFAULT NULL,
@@ -330,6 +331,20 @@ CREATE TABLE IF NOT EXISTS `token_daily_stats` (
   UNIQUE KEY `idx_token_daily_stats_user_date` (`user_id`, `date`),
   KEY `idx_token_daily_stats_date` (`date`),
   CONSTRAINT `fk_token_daily_stats_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 分享消息表
+CREATE TABLE IF NOT EXISTS `shared_messages` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `share_id` VARCHAR(20) NOT NULL COMMENT '分享ID',
+  `message_id` BIGINT UNSIGNED DEFAULT NULL COMMENT '关联消息ID',
+  `content` TEXT NOT NULL COMMENT '分享内容',
+  `view_count` INT DEFAULT 0 COMMENT '查看次数',
+  `expires_at` DATETIME DEFAULT NULL COMMENT '过期时间',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_shared_messages_share_id` (`share_id`),
+  KEY `idx_shared_messages_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;

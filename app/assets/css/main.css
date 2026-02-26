@@ -390,3 +390,161 @@ body {
 .gradient-bg-dark {
   background: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 50%, #A855F7 100%);
 }
+
+/* Modern chat enhancements */
+.chat-shadow {
+  box-shadow: 
+    0 1px 3px 0 rgba(0, 0, 0, 0.03),
+    0 1px 2px -1px rgba(0, 0, 0, 0.03),
+    0 20px 25px -5px rgba(139, 92, 246, 0.05),
+    0 8px 10px -6px rgba(139, 92, 246, 0.03);
+}
+
+.chat-shadow-lg {
+  box-shadow: 
+    0 10px 15px -3px rgba(139, 92, 246, 0.08),
+    0 4px 6px -4px rgba(139, 92, 246, 0.05),
+    0 0 0 1px rgba(139, 92, 246, 0.05);
+}
+
+/* Smooth animations */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(
+    to right,
+    rgba(139, 92, 246, 0) 0%,
+    rgba(139, 92, 246, 0.1) 50%,
+    rgba(139, 92, 246, 0) 100%
+  );
+  background-size: 1000px 100%;
+}
+
+/* Focus ring */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white;
+}
+
+/* Hover lift effect */
+.hover-lift {
+  @apply transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg;
+}
+
+/* Gradient border */
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #8B5CF6, #6366F1);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Modern button hover */
+.btn-modern {
+  @apply relative overflow-hidden transition-all duration-300;
+}
+
+.btn-modern::before {
+  content: '';
+  @apply absolute inset-0 bg-white opacity-0 transition-opacity duration-300;
+}
+
+.btn-modern:hover::before {
+  opacity: 0.1;
+}
+
+/* Glass morphism effect */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Subtle pulse animation */
+@keyframes subtle-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-subtle-pulse {
+  animation: subtle-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Text gradient animation */
+@keyframes text-gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-text-gradient {
+  background: linear-gradient(
+    90deg,
+    #8B5CF6,
+    #6366F1,
+    #8B5CF6
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-gradient 3s ease infinite;
+}
+
+/* Smooth scrollbar for chat */
+.chat-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.2);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.3);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(139, 92, 246, 0.2);
+  color: inherit;
+}
+
+::-moz-selection {
+  background-color: rgba(139, 92, 246, 0.2);
+  color: inherit;
+}

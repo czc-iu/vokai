@@ -1,3 +1,4 @@
+import { requireAdmin } from '../../../utils/adminAuth'
 import { createService } from '../../../utils/mcp'
 import { successResponse, throwBadRequest } from '../../../utils/response'
 import { z } from 'zod'
@@ -11,6 +12,8 @@ const createSchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
+  await requireAdmin(event)
+  
   const body = await readBody(event)
 
   const result = createSchema.safeParse(body)

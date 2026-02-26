@@ -115,8 +115,9 @@ export function useAuth() {
   }
 
   const getAuthHeaders = (): Record<string, string> => {
-    if (!state.token) return {}
-    return { Authorization: `Bearer ${state.token}` }
+    const token = state.token || getToken()
+    if (!token) return {}
+    return { Authorization: `Bearer ${token}` }
   }
 
   return {

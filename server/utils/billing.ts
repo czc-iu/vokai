@@ -128,6 +128,18 @@ export async function getOrCreateBalance(userId: number): Promise<TokenBalance> 
   if (!balance) {
     await createInitialBalance(userId)
     balance = await fetchBalanceByUserId(userId)
+    
+    if (balance && isEligibleForWelcomeBonus(balance)) {
+      await addTokens(
+        userId,
+        10000,
+        'gift',
+        '新用户注册赠送',
+        'welcome_bonus',
+        userId
+      )
+      balance = await fetchBalanceByUserId(userId)
+    }
   }
 
   return balance!
@@ -313,7 +325,7 @@ export async function giveWelcomeBonus(userId: number): Promise<void> {
   if (isEligibleForWelcomeBonus(balance)) {
     await addTokens(
       userId,
-      1000,
+      10000,
       'gift',
       '新用户注册赠送',
       'welcome_bonus',
