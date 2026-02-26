@@ -22,7 +22,7 @@ export const contactSchema = z.object({
 
 export const chatSchema = z.object({
   message: z.string().min(1, '请输入消息').max(4000),
-  conversationId: z.number().optional(),
+  conversationId: z.number().nullable().optional(),
 })
 
 export type RegisterInput = z.infer<typeof registerSchema>

@@ -24,7 +24,9 @@
     "apiDocs": "APIドキュメント",
     "copyright": "2026 SAYCO Information Technology. All rights reserved.",
     "privacy": "プライバシーポリシー",
-    "terms": "利用規約"
+    "terms": "利用規約",
+    "icp": "ICP許可番号 000000000",
+    "police": "公安届出番号 000000000"
   },
   "common": {
     "edit": "編集",
@@ -46,11 +48,22 @@
       "contact": "お問い合わせ"
     },
     "stats": {
+      "tag": "統計データ",
+      "title": "信頼できるAIサービス",
+      "subtitle": "数千社に安定したAIサービスを提供",
       "hours": "24時間対応",
       "response": "即時応答",
-      "security": "安全・信頼性"
+      "security": "安全・信頼性",
+      "companies": "企業顧客",
+      "daily": "日次対話数",
+      "satisfaction": "満足度",
+      "support": "24時間サポート",
+      "conversations": "累計対話",
+      "availability": "可用性",
+      "responseTime": "平均応答"
     },
     "features": {
+      "tag": "主な機能",
       "title": "主な機能",
       "subtitle": "包括的なAIサービスをご提供します",
       "items": {
@@ -125,6 +138,62 @@
       "subtitle": "お気軽にお問い合わせください",
       "description": "ご質問やパートナーシップのご相談はお気軽に",
       "onlineMessage": "オンラインメッセージ"
+    },
+    "advantages": {
+      "tag": "選ばれる理由",
+      "title": "選ばれる理由",
+      "description": "専門的なAIカスタマーサービスソリューションで、デジタル変革を支援します",
+      "demo": {
+        "title": "スマートカスタマーサービスデモ",
+        "item1": "ユーザーの意図を自動識別し、正確に回答",
+        "item2": "マルチターン会話と正確なコンテキスト理解をサポート",
+        "item3": "24時間365日中断のないサービスと迅速な応答",
+        "item4": "ビジネスシステムへのシームレスな統合"
+      },
+      "items": {
+        "fast": {
+          "title": "超高速応答",
+          "description": "ミリ秒単位の応答速度でユーザー体験を向上"
+        },
+        "secure": {
+          "title": "安全・信頼性",
+          "description": "エンタープライズグレードのデータ暗号化で情報セキュリティを保護"
+        },
+        "smart": {
+          "title": "スマートラーニング",
+          "description": "継続的な学習と最適化で、使うほど賢く"
+        }
+      }
+    },
+    "scenarios": {
+      "tag": "活用シーン",
+      "title": "様々なシーンに対応",
+      "subtitle": "Eコマース、企業、教育機関のいずれであっても、専門的なソリューションを提供します",
+      "items": {
+        "ecommerce": {
+          "title": "Eコマースサポート",
+          "description": "注文照会、物流追跡、返品・交換を自動処理し、顧客満足度を向上"
+        },
+        "enterprise": {
+          "title": "企業サービス",
+          "description": "社内ナレッジベースQ&A、ITサポート、人事相談で業務効率を向上"
+        },
+        "education": {
+          "title": "教育・トレーニング",
+          "description": "インテリジェントQ&A、コース相談、学習支援でスマート教育プラットフォームを構築"
+        }
+      }
+    },
+    "cta": {
+      "title": "AIカスタマーサービスの旅を始めましょう",
+      "subtitle": "今すぐ登録して、スマートカスタマーサービスの強力な機能を無料で体験",
+      "button": "無料で始める",
+      "contact": "営業に連絡"
+    },
+    "demo": {
+      "user": "こんにちは、製品の機能について知りたいです",
+      "ai": "こんにちは！TomyBotの主な機能をご紹介します...",
+      "online": "オンラインサービス"
     }
   },
   "services": {
@@ -134,6 +203,9 @@
     "popular": "人気",
     "tokens": "トークン",
     "permanent": "永久有効",
+    "validity": "{days}日間有効",
+    "validityMonths": "{months}ヶ月間有効",
+    "priceUnit": "/月",
     "buyNow": "今すぐ購入",
     "addToCart": "カートに追加",
     "info": {
@@ -336,7 +408,8 @@
     },
     "errors": {
       "noAnswer": "申し訳ございません、現在この質問にお答えできません",
-      "serviceUnavailable": "サービスは一時的にご利用いただけません。後でもう一度お試しください"
+      "serviceUnavailable": "サービスは一時的にご利用いただけません。後でもう一度お試しください",
+      "loginRequired": "メッセージを送信するにはログインしてください"
     }
   },
   "knowledgeBase": {

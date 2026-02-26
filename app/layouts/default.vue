@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen bg-cream flex flex-col">
-    <header class="fixed top-0 left-0 right-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-sakura">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
       <nav class="container-zen h-16 flex items-center justify-between">
         <NuxtLink to="/" class="flex items-center gap-3 group">
-          <span class="text-xl font-bold tracking-wide text-charcoal group-hover:text-indigo transition-colors duration-300">TOMYBOT</span>
+          <span class="text-xl font-brand tracking-wider text-charcoal group-hover:text-indigo transition-colors duration-300">TOMYBOT</span>
         </NuxtLink>
         
         <div class="hidden md:flex items-center gap-8">
@@ -88,7 +88,7 @@
 
       <div 
         v-if="mobileMenuOpen" 
-        class="md:hidden border-t border-sakura bg-cream px-6 py-4"
+        class="md:hidden border-t border-gray-100 bg-white px-6 py-4"
       >
         <div class="flex flex-col gap-4">
           <NuxtLink to="/" class="py-2 text-charcoal" @click="mobileMenuOpen = false">{{ t('nav.home') }}</NuxtLink>
@@ -159,13 +159,27 @@
           </div>
         </div>
         
-        <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p class="text-xs text-sakura/50">
-            {{ t('footer.copyright') }}
-          </p>
-          <div class="flex gap-4">
-            <NuxtLink to="/privacy" class="text-xs hover:text-white transition-colors">{{ t('footer.privacy') }}</NuxtLink>
-            <NuxtLink to="/terms" class="text-xs hover:text-white transition-colors">{{ t('footer.terms') }}</NuxtLink>
+        <div class="border-t border-white/10 pt-8">
+          <div class="flex flex-col md:flex-row justify-between items-start gap-6">
+            <div class="flex flex-col gap-3">
+              <p class="text-xs text-sakura/50">
+                {{ t('footer.copyright') }}
+              </p>
+              <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 text-xs text-sakura/40">
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">
+                  {{ t('footer.icp') }}
+                </a>
+                <span class="hidden sm:inline">|</span>
+                <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1 hover:text-white transition-colors">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAABcElEQVQ4y6WUzUrDQBSFv0mbtP5QRBQXLgQXIoIbwYUP4MIHMK58BFdu3PgIPoYbN4JP4EJwIYIIIogLQRQRxFqN/dNMZtxM0qQmVvDCYYY7c+6Zey8DUBsJCqmNBC0NQAcQA6IJ/5jdCv1hQMwTfgcI/Qk08kfvVugPIlYCkv4hqY0Eq5+AS6B7k/p7wA5Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQekPkA5B6Q+QDkHpD5AOQeSP4C/RdnkNgN/AMfAAAAAElFTkSuQmCC" alt="公安备案" class="w-4 h-4" />
+                  {{ t('footer.police') }}
+                </a>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <NuxtLink to="/privacy" class="text-xs hover:text-white transition-colors">{{ t('footer.privacy') }}</NuxtLink>
+              <NuxtLink to="/terms" class="text-xs hover:text-white transition-colors">{{ t('footer.terms') }}</NuxtLink>
+            </div>
           </div>
         </div>
       </div>

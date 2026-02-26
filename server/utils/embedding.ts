@@ -28,8 +28,8 @@ export interface DashScopeEmbeddingResponse {
 
 export interface VectraEmbeddingResult {
   status: 'success' | 'error'
-  embeddings?: number[][]
-  error?: string
+  output?: number[][]
+  message?: string
 }
 
 function getConfig() {
@@ -132,13 +132,13 @@ export function createEmbeddingHandler(): {
       try {
         const texts = Array.isArray(inputs) ? inputs : [inputs]
         const embeddings = await getEmbeddings(texts)
-        return { status: 'success', embeddings }
+        return { status: 'success', output: embeddings }
       } catch (error: any) {
         const errorMessage = error?.data?.message || error?.message || error?.statusCode ? `HTTP ${error.statusCode}` : 'Unknown error'
         console.error('Embedding error:', error)
         return {
           status: 'error',
-          error: errorMessage
+          message: errorMessage
         }
       }
     }

@@ -1,0 +1,1104 @@
+# 售后服务系统 - 会员售后服务预约小程序需求规格说明书（SRS）
+
+**文档版本**：V2.0  
+**创建时间**：2026-02-13 23:31:45  
+**适用系统**：售后服务预约小程序（用户端）  
+**文档状态**：正式版
+
+---
+
+## 1. [项目概述与范围]
+
+### 1.1 项目背景与商业价值
+- **业务背景**：现有售后系统使用多年，框架及业务流程需要革新。革新范围主要将既有零件中心和维修服务系统功能统合为一个平台，对接联动相关业务数据，实现可视化管理。
+- **商业价值**：
+  - 增加客户粘性：结合新售后理念，增加用户移动端开发
+  - 改善工作效率：增加自动化功能，如自动派单
+  - 提升客户满意度：优化用户体验和服务流程
+  - 扩大销售业绩：通过仪表盘可视化售后数据，增加商机
+
+### 1.2 目标用户画像
+| 用户类型 | 核心特征 | 使用场景 |
+|---------|---------|---------|
+| **会员用户** | 已注册购买产品的个人消费者 | 1. 设备维修申请<br>2. 维修进度查询<br>3. 维修费用支付<br>4. 发票开具 |
+| **直营维修店** | 企业直属维修服务点 | 1. 到店预约管理<br>2. 维修工单处理<br>3. 零件申领 |
+| **第三方维修店** | 授权合作维修服务商 | 1. 维修任务接收<br>2. 维修进度反馈<br>3. 零件管理 |
+
+### 1.3 功能范围清单
+1. **设备管理模块**：设备绑定、保修信息查询、设备信息管理
+2. **维修服务模块**：维修申请/预约、维修进度查询、维修记录查看
+3. **支付结算模块**：维修费支付、发票管理
+4. **用户支撑模块**：客服对接、服务资讯、消息通知
+5. **增值服务模块**：保养套餐、延保服务
+
+### 1.4 系统边界图
+```
+┌─────────────────────────────────────────────┐
+│                 外部系统                      │
+├─────────────────────────────────────────────┤
+│ 1. 微信支付系统           ┌──────────────┐  │
+│ 2. 支付宝支付系统         │              │  │
+│ 3. 微信消息推送服务       │ 售后服务预约  │  │
+│ 4. 电子发票服务平台       │   小程序     │  │
+│ 5. 企业微信客服接口       │              │  │
+│ 6. SAP系统（库存/主数据）└──────────────┘  │
+│ 7. 仓库管理系统                              │
+└─────────────────────────────────────────────┘
+         │                    ↑
+         ↓                    │
+┌─────────────────────────────────────────────┐
+│           内部子系统/服务                      │
+├─────────────────────────────────────────────┤
+│ 1. 零件中心管理端         ┌──────────────┐  │
+│ 2. 维修服务管理端         │  数据中台    │  │
+│ 3. 维修店小程序端         │  (查询服务)  │  │
+│ 4. 会员中心服务           └──────────────┘  │
+└─────────────────────────────────────────────┘
+```
+
+## 2. [系统架构与设计原则]
+
+### 2.1 技术栈约束
+| 层级 | 技术组件 | 版本约束 | 说明 |
+|------|---------|---------|------|
+| **前端** | 微信小程序框架 | ≥2.0.0 | 支持微信原生组件和云开发 |
+| **后端** | Node.js | ≥16.0.0 | 采用Express/Koa框架 |
+| **数据库** | MySQL | ≥8.0.0 | 支持事务和JSON类型 |
+| **缓存** | Redis | ≥6.0.0 | 会话管理和热点数据缓存 |
+| **部署** | 阿里云/腾讯云 | - | 支持容器化部署 |
+| **安全** | HTTPS/TLS | ≥1.2 | 强制SSL加密 |
+
+### 2.2 核心设计模式
+1. **前后端分离架构**：小程序端与后端API完全解耦
+2. **微服务架构**：按业务域拆分为独立的服务模块
+3. **DDD领域驱动设计**：设备、维修、订单、支付等核心域建模
+4. **CQRS读写分离**：查询服务与命令服务分离
+
+### 2.3 非功能性需求指标
+| 指标类别 | 具体要求 | 目标值 |
+|---------|---------|--------|
+| **响应时间** | 页面加载时间 | ≤2秒 |
+| | API接口响应时间 | ≤500ms（P95） |
+| **并发能力** | 支持同时在线用户 | ≥5000人 |
+| | 峰值TPS | ≥100笔/秒 |
+| **可用性** | 系统可用率 | ≥99.9% |
+| | MTTR平均恢复时间 | ≤30分钟 |
+| **数据安全** | 敏感数据加密 | AES-256 |
+| | 密码加密存储 | bcrypt/scrypt |
+| **合规性** | 隐私政策合规 | 符合《个人信息保护法》 |
+| | 等保要求 | 符合等保2.0要求 |
+
+## 3. [数据模型定义]
+
+### 3.1 全局数据字典
+#### 3.1.1 核心实体定义
+```json
+{
+  "Member": {
+    "id": "string(32), PK",
+    "openid": "string(64), UNIQUE",
+    "nickname": "string(50)",
+    "mobile": "string(20), Encrypted",
+    "email": "string(100), Encrypted",
+    "real_name": "string(30), Encrypted",
+    "id_card": "string(18), Encrypted",
+    "avatar_url": "string(500)",
+    "register_time": "datetime",
+    "last_login_time": "datetime",
+    "status": "enum('active','inactive','banned')",
+    "level": "enum('bronze','silver','gold','platinum')"
+  },
+  
+  "Device": {
+    "id": "string(32), PK",
+    "member_id": "string(32), FK -> Member.id",
+    "device_number": "string(50), UNIQUE",
+    "model": "string(100)",
+    "serial_number": "string(100), Encrypted",
+    "purchase_date": "date",
+    "warranty_start_date": "date",
+    "warranty_end_date": "date",
+    "warranty_status": "enum('in_warranty','out_of_warranty','extended_warranty')",
+    "device_status": "enum('normal','repairing','scrapped')",
+    "register_time": "datetime"
+  }
+}
+```
+
+#### 3.1.2 维修服务实体
+```json
+{
+  "RepairApplication": {
+    "id": "string(32), PK",
+    "application_number": "string(50), UNIQUE",
+    "member_id": "string(32), FK -> Member.id",
+    "device_id": "string(32), FK -> Device.id",
+    "application_type": "enum('mailing','store_visit')",
+    "fault_description": "text",
+    "fault_images": "json, array of strings",
+    "expected_solution": "text, nullable",
+    "contact_person": "string(30)",
+    "contact_phone": "string(20)",
+    "contact_address": "string(500), nullable",
+    "appointment_time": "datetime, nullable",
+    "store_id": "string(32), nullable FK -> Store.id",
+    "application_status": "enum('draft','submitted','accepted','quoting','confirmed','repairing','completed','cancelled')",
+    "create_time": "datetime",
+    "update_time": "datetime"
+  },
+  
+  "RepairOrder": {
+    "id": "string(32), PK",
+    "order_number": "string(50), UNIQUE",
+    "application_id": "string(32), FK -> RepairApplication.id",
+    "repair_type": "enum('warranty','paid','extended_warranty')",
+    "total_amount": "decimal(18,2)",
+    "labor_fee": "decimal(18,2)",
+    "parts_fee": "decimal(18,2)",
+    "express_fee": "decimal(18,2), nullable",
+    "other_fees": "decimal(18,2), nullable",
+    "order_status": "enum('pending_payment','paid','invoiced','completed','refunded')",
+    "payment_method": "enum('wechat','alipay','bank_transfer','store_payment')",
+    "payment_time": "datetime, nullable",
+    "invoice_id": "string(32), nullable FK -> Invoice.id",
+    "create_time": "datetime",
+    "complete_time": "datetime, nullable"
+  }
+}
+```
+
+### 3.2 ER关系图描述
+```
+Member (1)───(n) Device
+    │                 │
+    │                 │
+    └─────────(1)────┘
+        ┌─────────────┐
+        │ RepairApplication
+        │ (维修申请)
+        └─────────────┘
+                │ (1:1)
+                ↓
+        ┌─────────────┐
+        │ RepairOrder
+        │ (维修工单)
+        └─────────────┘
+                │ (1:n)
+                ↓
+        ┌─────────────┐
+        │ RepairProgress
+        │ (维修进度)
+        └─────────────┘
+                │ (1:n)
+                ↓
+        ┌─────────────┐
+        │ Invoice
+        │ (发票)
+        └─────────────┘
+```
+
+### 3.3 关键数据状态枚举
+```json
+{
+  "appointment_status": {
+    "pending": "待确认",
+    "confirmed": "已确认", 
+    "cancelled": "已取消",
+    "completed": "已完成",
+    "expired": "已过期"
+  },
+  
+  "repair_progress": {
+    "diagnosing": "故障诊断中",
+    "waiting_parts": "等待零件",
+    "repairing": "维修中",
+    "testing": "测试中",
+    "cleaning": "清洁中",
+    "ready_for_pickup": "待取件",
+    "shipping": "配送中"
+  },
+  
+  "payment_status": {
+    "unpaid": "未支付",
+    "processing": "支付处理中",
+    "paid": "支付成功",
+    "failed": "支付失败",
+    "refunding": "退款中",
+    "refunded": "已退款"
+  }
+}
+```
+
+## 4. [功能需求详述]
+
+### 4.1 模块划分 - 会员售后服务预约小程序
+#### 模块1：设备管理模块
+- **功能点1.1：设备绑定**
+  - **ID**: DEV-BIND-001
+  - **触发条件**: 会员首次登录小程序，进入"我的设备"页面
+  - **前置状态**: 用户已登录且认证，设备未绑定
+  - **输入参数**:
+    ```json
+    {
+      "member_id": "string(32), required",
+      "device_number": "string(50), required",
+      "serial_number": "string(100), required",
+      "purchase_date": "date, format: YYYY-MM-DD",
+      "purchase_proof_images": "array<string>, max 3 images"
+    }
+    ```
+  - **业务逻辑**:
+    1. 验证设备编号在系统中是否存在（查询Device主数据）
+    2. 检查设备是否已被其他用户绑定（Device表的member_id字段）
+    3. 调用SAP接口验证设备序列号的真实性
+    4. 如果提供购买凭证图片，上传到OSS并记录URL
+    5. 计算保修信息：根据设备型号和购买日期计算标准保修期
+        - 如果购买日期+2年 > 当前日期 → warranty_status = 'in_warranty'
+        - 否则 → warranty_status = 'out_of_warranty'
+    6. 创建Device记录，关联member_id
+  - **输出结果**:
+    ```json
+    {
+      "success": "boolean",
+      "device_id": "string(32), if success",
+      "warranty_info": {
+        "status": "enum",
+        "start_date": "date",
+        "end_date": "date",
+        "remaining_days": "integer"
+      },
+      "error_code": "string, if failed",
+      "error_message": "string, if failed"
+    }
+    ```
+  - **后置状态变更**: Device表中新增记录，status='normal'，warranty_status根据计算设置
+  - **异常流处理**:
+    - 设备已绑定: 返回错误码"DEVICE_ALREADY_BOUND"，提示"该设备已被其他用户绑定"
+    - 设备不存在: 返回错误码"DEVICE_NOT_FOUND"，提示"设备编号不存在，请确认输入正确"
+    - SAP接口异常: 记录日志，返回错误码"SYSTEM_VALIDATION_ERROR"，提示"系统验证异常，请稍后重试"
+
+- **功能点1.2：设备列表查询**
+  - **ID**: DEV-LIST-001
+  - **触发条件**: 用户进入"我的设备"页面
+  - **前置状态**: 用户已登录
+  - **业务逻辑**:
+    1. 根据member_id查询所有关联设备
+    2. 按device_status和更新时间排序（维修中的设备置顶）
+    3. 计算设备保修状态：实时判断当前时间是否在warranty_end_date之前
+    4. 对于维修中的设备，查询最近一次维修记录
+  - **输出结果**:
+    ```json
+    {
+      "devices": [
+        {
+          "device_id": "string(32)",
+          "model": "string",
+          "device_number": "string",
+          "warranty_status": "string",
+          "warranty_end_date": "date",
+          "device_status": "string",
+          "last_repair_time": "datetime, nullable",
+          "last_repair_status": "string, nullable"
+        }
+      ],
+      "total_count": "integer"
+    }
+    ```
+
+#### 模块2：维修服务模块
+- **功能点2.1：维修申请创建（邮寄方式）**
+  - **ID**: REPAIR-APPLY-MAIL-001
+  - **触发条件**: 用户选择"邮寄维修"服务方式
+  - **前置状态**: 设备已绑定且device_status='normal'
+  - **输入参数**:
+    ```json
+    {
+      "device_id": "string(32), required",
+      "fault_description": "string, required, length: 10-500",
+      "fault_images": "array<string>, max 5 images, each ≤5MB",
+      "contact_person": "string, required",
+      "contact_phone": "string, required, format: ^1[3-9]\d{9}$",
+      "contact_address": "object, required",
+      "expected_solution": "string, optional, length: 0-200",
+      "urgency_level": "enum('low','normal','high')"
+    }
+    ```
+  - **业务逻辑**:
+    1. 验证设备状态是否允许维修（device_status必须为'normal'）
+    2. 生成唯一申请编号：格式为"RA{YYYYMMDD}{6位顺序号}"
+    3. 将故障图片上传到OSS，记录URL
+    4. 调用地址验证服务，验证收货地址有效性
+    5. 根据紧急程度设置处理优先级
+    6. 创建RepairApplication记录，状态设为'submitted'
+    7. 触发消息通知：
+        - 向维修管理端发送新申请通知
+        - 向用户发送申请成功通知（微信模板消息）
+  - **异常流处理**:
+    - 设备正在维修中: 返回错误码"DEVICE_IN_REPAIR"
+    - 地址验证失败: 返回错误码"INVALID_ADDRESS"，提供地址修正建议
+
+- **功能点2.2：维修申请创建（到店方式）**
+  - **ID**: REPAIR-APPLY-STORE-001
+  - **关键差异点**:
+    - 需要选择维修门店（调用门店列表API）
+    - 需要选择预约时间（验证时间段是否可用）
+    - 生成预约编号：格式"AP{YYYYMMDD}{6位顺序号}"
+    - 预约时间规则：
+      - 营业时间：9:00-18:00
+      - 预约间隔：30分钟一个时段
+      - 最大提前预约：30天
+      - 最少提前预约：2小时
+
+- **功能点2.3：维修进度查询**
+  - **ID**: REPAIR-PROGRESS-001
+  - **业务逻辑**:
+    1. 查询维修申请的基础信息
+    2. 查询维修工单的当前状态
+    3. 查询维修进度历史记录（按时间倒序）
+    4. 查询零件更换记录（如有）
+    5. 计算预计完成时间（根据维修类型和经验数据）
+  - **状态流转规则**:
+    ```
+    submitted → accepted (1小时内必须响应)
+    accepted → quoting (24小时内必须报价)
+    quoting → confirmed (用户48小时内必须确认)
+    confirmed → repairing (12小时内必须开始维修)
+    repairing → ready_for_pickup (根据维修复杂度确定时间)
+    ```
+
+#### 模块3：支付结算模块
+- **功能点3.1：维修费用支付（微信支付）**
+  - **ID**: PAYMENT-WECHAT-001
+  - **触发条件**: 维修报价确认，生成待支付订单
+  - **前置状态**: RepairOrder.status='pending_payment'，payment_method='wechat'
+  - **业务逻辑**:
+    1. 调用微信支付统一下单API
+        ```javascript
+        // 支付参数示例
+        const params = {
+          appid: config.wechat.appId,
+          mch_id: config.wechat.mchId,
+          nonce_str: generateNonceStr(),
+          body: `维修服务-${order.order_number}`,
+          out_trade_no: order.order_number,
+          total_fee: Math.round(order.total_amount * 100), // 单位：分
+          spbill_create_ip: client_ip,
+          notify_url: config.payment.wechatNotifyUrl,
+          trade_type: 'JSAPI',
+          openid: member.openid
+        };
+        ```
+    2. 生成前端支付参数（timestamp, nonceStr, package, signType, paySign）
+    3. 记录支付请求日志
+    4. 返回支付参数给小程序端
+  - **支付回调处理**:
+    1. 验证微信支付回调签名
+    2. 检查订单状态一致性
+    3. 更新订单状态为'paid'
+    4. 记录支付完成时间
+    5. 通知维修管理端可以开始维修
+    6. 发送支付成功通知给用户
+
+- **功能点3.2：发票开具申请**
+  - **ID**: INVOICE-APPLY-001
+  - **业务逻辑**:
+    1. 验证订单状态：必须是已支付或已完成状态
+    2. 调用电子发票服务平台API
+    3. 发票信息映射：
+        ```json
+        {
+          "order_info": {
+            "order_number": "...",
+            "amount": "decimal(18,2)",
+            "create_time": "datetime"
+          },
+          "buyer_info": {
+            "name": "string, 企业名称或个人姓名",
+            "tax_id": "string, 纳税人识别号",
+            "address": "string, 地址",
+            "phone": "string",
+            "bank": "string, 开户行",
+            "account": "string, 银行账号"
+          },
+          "invoice_type": "enum('normal','special')",
+          "items": [
+            {
+              "name": "维修服务费",
+              "specification": "次",
+              "unit": "次",
+              "quantity": 1,
+              "unit_price": "decimal(18,2)",
+              "amount": "decimal(18,2)",
+              "tax_rate": "0.06",
+              "tax_amount": "decimal(18,2)"
+            }
+          ]
+        }
+        ```
+
+#### 模块4：用户支撑模块
+- **功能点4.1：在线客服对接**
+  - **ID**: SUPPORT-CHAT-001
+  - **技术实现**:
+    1. 集成企业微信客服SDK
+    2. 建立会话时传递用户上下文信息
+        ```json
+        {
+          "member_id": "...",
+          "member_level": "...",
+          "current_device": "...",
+          "recent_repairs": ["..."],
+          "current_issue": "string, optional"
+        }
+        ```
+    3. 客服会话分类：咨询、投诉、建议、技术支持
+    4. 会话评价机制：满意度评分（1-5星）
+
+- **功能点4.2：消息通知中心**
+  - **通知类型及触发条件**:
+    | 通知类型 | 触发条件 | 发送方式 | 模板ID |
+    |---------|---------|----------|--------|
+    | 申请提交成功 | RepairApplication创建 | 微信模板消息 | TM00001 |
+    | 报价已生成 | RepairOrder创建 | 微信模板消息 | TM00002 |
+    | 支付成功 | Payment回调验证通过 | 微信模板消息 | TM00003 |
+    | 维修进度更新 | RepairProgress新增记录 | 微信模板消息 | TM00004 |
+    | 发票开具成功 | Invoice状态更新 | 微信模板消息 | TM00005 |
+    | 预约提醒 | 预约前2小时 | 微信模板消息 | TM00006 |
+
+## 5. [接口与交互规范]
+
+### 5.1 API端点定义
+#### 5.1.1 设备管理接口
+```json
+{
+  "设备绑定接口": {
+    "endpoint": "/api/v1/devices/bind",
+    "method": "POST",
+    "request": {
+      "headers": {
+        "Authorization": "Bearer {access_token}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "device_number": "string, required",
+        "serial_number": "string, required",
+        "purchase_date": "date, optional",
+        "purchase_proof": "string, optional, base64 encoded image"
+      }
+    },
+    "response": {
+      "success": {
+        "code": 200,
+        "body": {
+          "device_id": "string",
+          "warranty_info": {
+            "status": "string",
+            "end_date": "date",
+            "remaining_days": "int"
+          },
+          "message": "string"
+        }
+      },
+      "error": {
+        "code": 400,
+        "body": {
+          "error_code": "string",
+          "error_message": "string",
+          "suggestion": "string, optional"
+        }
+      }
+    }
+  }
+}
+```
+
+#### 5.1.2 维修申请接口
+```json
+{
+  "邮寄维修申请": {
+    "endpoint": "/api/v1/repairs/mailing",
+    "method": "POST",
+    "request": {
+      "headers": {
+        "Authorization": "Bearer {access_token}",
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "device_id": "string, required",
+        "fault_description": "string, required",
+        "fault_images": "array<file>, max 5, each ≤5MB",
+        "contact_address": {
+          "province": "string",
+          "city": "string", 
+          "district": "string",
+          "detail": "string",
+          "post_code": "string"
+        },
+        "express_preference": "enum('SF','STO','YTO','ZTO')"
+      }
+    }
+  },
+  
+  "到店预约申请": {
+    "endpoint": "/api/v1/repairs/appointment",
+    "method": "POST",
+    "request": {
+      "headers": {
+        "Authorization": "Bearer {access_token}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "device_id": "string, required",
+        "store_id": "string, required",
+        "appointment_time": "datetime, format: YYYY-MM-DD HH:mm:ss",
+        "fault_description": "string, required",
+        "contact_person": "string, required",
+        "contact_phone": "string, required"
+      }
+    }
+  }
+}
+```
+
+### 5.2 前端页面要素与交互逻辑
+#### 5.2.1 首页（HomePage）
+```javascript
+// 页面结构定义
+const HomePage = {
+  // 页面布局结构
+  layout: {
+    type: "scrollable",
+    sections: [
+      {
+        id: "top_banner",
+        type: "carousel",
+        data_source: "/api/v1/banners",
+        items: [
+          {
+            image_url: "string",
+            link_type: "enum('internal','external')",
+            link_target: "string",
+            duration: 3000 // 毫秒
+          }
+        ],
+        auto_play: true,
+        indicator_type: "dot"
+      },
+      {
+        id: "quick_actions",
+        type: "grid",
+        columns: 3,
+        items: [
+          {
+            icon: "repair",
+            text: "维修申请",
+            action: {
+              type: "navigate",
+              target: "/pages/repair/apply"
+            }
+          },
+          {
+            icon: "progress",
+            text: "维修进度", 
+            action: {
+              type: "navigate",
+              target: "/pages/repair/progress"
+            }
+          },
+          {
+            icon: "device",
+            text: "我的设备",
+            action: {
+              type: "navigate",
+              target: "/pages/device/list"
+            }
+          }
+        ]
+      },
+      {
+        id: "repairing_devices",
+        type: "list",
+        title: "正在维修的设备",
+        data_source: "/api/v1/devices/repairing",
+        item_template: {
+          fields: [
+            "device_name",
+            "repair_status", 
+            "estimated_completion"
+          ],
+          action: {
+            type: "navigate",
+            target: "/pages/repair/detail?id={id}"
+          }
+        },
+        empty_text: "暂无维修中的设备"
+      }
+    ]
+  },
+  
+  // 页面生命周期
+  lifecycle: {
+    onLoad: function() {
+      // 1. 检查用户登录状态
+      // 2. 加载banner数据
+      // 3. 加载维修中的设备列表
+      // 4. 检查未读消息数量
+    },
+    
+    onShow: function() {
+      // 1. 更新维修进度（轮询）
+      // 2. 检查待确认报价
+    },
+    
+    onPullDownRefresh: function() {
+      // 1. 刷新所有数据源
+      // 2. 停止下拉刷新动画
+    }
+  },
+  
+  // 状态管理
+  state: {
+    user_info: null,
+    banners: [],
+    repairing_devices: [],
+    unread_messages: 0,
+    pending_confirmations: 0
+  },
+  
+  // 数据验证规则
+  validation: {
+    device_binding: {
+      device_number: {
+        required: true,
+        pattern: /^[A-Z0-9-]{10,20}$/,
+        message: "设备编号格式不正确"
+      },
+      serial_number: {
+        required: true,
+        pattern: /^[A-Z0-9]{12,18}$/,
+        message: "序列号格式不正确"
+      }
+    }
+  }
+};
+```
+
+#### 5.2.2 维修申请页面交互流程
+```javascript
+// 页面状态机定义
+const RepairApplyStateMachine = {
+  // 初始状态
+  initialState: "SELECT_DEVICE",
+  
+  // 状态定义
+  states: {
+    SELECT_DEVICE: {
+      // 选择设备
+      actions: {
+        selectDevice: {
+          condition: "device.selected != null",
+          nextState: "SELECT_METHOD"
+        },
+        addDevice: {
+          nextState: "ADD_NEW_DEVICE"
+        }
+      },
+      ui: {
+        title: "选择维修设备",
+        components: ["DeviceList", "AddDeviceButton"]
+      }
+    },
+    
+    SELECT_METHOD: {
+      // 选择维修方式
+      actions: {
+        selectMailing: {
+          nextState: "MAILING_INFO"
+        },
+        selectStoreVisit: {
+          nextState: "SELECT_STORE"
+        }
+      },
+      ui: {
+        title: "选择维修方式",
+        components: ["MethodSelection"]
+      }
+    },
+    
+    MAILING_INFO: {
+      // 填写邮寄信息
+      actions: {
+        submit: {
+          condition: "formValidator.validate(formData)",
+          nextState: "CONFIRM_MAILING"
+        },
+        back: {
+          nextState: "SELECT_METHOD"
+        }
+      },
+      ui: {
+        title: "填写邮寄信息",
+        components: ["AddressForm", "FaultDescription", "ImageUploader"]
+      },
+      validation: {
+        contact_person: { required: true, minLength: 2, maxLength: 30 },
+        contact_phone: { required: true, pattern: /^1[3-9]\d{9}$/ },
+        fault_description: { required: true, minLength: 10, maxLength: 500 }
+      }
+    },
+    
+    CONFIRM_MAILING: {
+      // 确认邮寄申请
+      actions: {
+        confirm: {
+          apiCall: "/api/v1/repairs/mailing",
+          nextState: "APPLICATION_COMPLETE"
+        },
+        modify: {
+          nextState: "MAILING_INFO"
+        }
+      },
+      ui: {
+        title: "确认申请信息",
+        components: ["ConfirmationSummary"]
+      }
+    },
+    
+    APPLICATION_COMPLETE: {
+      // 申请完成
+      actions: {
+        viewProgress: {
+          nextState: "REPAIR_PROGRESS"
+        },
+        backToHome: {
+          nextState: "HOME"
+        }
+      },
+      ui: {
+        title: "申请成功",
+        components: ["SuccessMessage", "ApplicationSummary"]
+      }
+    }
+  },
+  
+  // 状态转换规则
+  transitions: [
+    {
+      from: "*",
+      to: "ERROR",
+      condition: "apiError || validationError"
+    }
+  ]
+};
+```
+
+## 6. [安全与合规]
+
+### 6.1 权限控制模型
+#### 6.1.1 RBAC角色定义
+```json
+{
+  "roles": {
+    "member_user": {
+      "permissions": [
+        "device:read", "device:create",
+        "repair:apply", "repair:read", "repair:cancel",
+        "payment:create", "payment:read",
+        "invoice:apply", "invoice:read",
+        "message:read", "message:create"
+      ]
+    },
+    
+    "store_staff": {
+      "permissions": [
+        "appointment:read", "appointment:confirm",
+        "repair_order:read", "repair_order:update",
+        "part:request", "part:return"
+      ],
+      "data_scope": "own_store_only"
+    },
+    
+    "system_admin": {
+      "permissions": [
+        "*:*"
+      ]
+    }
+  }
+}
+```
+
+#### 6.1.2 权限验证规则
+```javascript
+// 权限验证中间件
+const permissionMiddleware = {
+  checkPermission: function(resource, action) {
+    return async (ctx, next) => {
+      const userRole = ctx.state.user.role;
+      const userId = ctx.state.user.id;
+      
+      // 1. 检查角色权限
+      if (!hasPermission(userRole, resource, action)) {
+        throw new PermissionDeniedError('权限不足');
+      }
+      
+      // 2. 检查数据权限
+      if (requiresDataScope(resource)) {
+        const dataScope = getDataScope(userRole, resource);
+        ctx.state.dataScope = dataScope;
+        
+        // 数据域过滤
+        switch(dataScope) {
+          case 'own_data_only':
+            // 只能访问自己的数据
+            if (ctx.query.user_id && ctx.query.user_id !== userId) {
+              throw new PermissionDeniedError('只能访问自己的数据');
+            }
+            break;
+            
+          case 'own_store_only':
+            // 只能访问自己门店的数据
+            const storeId = ctx.state.user.store_id;
+            ctx.query.store_id = storeId;
+            break;
+        }
+      }
+      
+      await next();
+    };
+  }
+};
+```
+
+### 6.2 数据加密与隐私保护
+#### 6.2.1 敏感数据加密策略
+```javascript
+const DataEncryption = {
+  // 字段级加密配置
+  encryption_config: {
+    mobile: {
+      algorithm: 'AES-256-GCM',
+      key_id: 'mobile_key_v1',
+      encrypt_context: ['member_id', 'device_id']
+    },
+    
+    id_card: {
+      algorithm: 'AES-256-GCM',
+      key_id: 'id_card_key_v1',
+      encrypt_context: ['member_id']
+    },
+    
+    serial_number: {
+      algorithm: 'AES-256-GCM', 
+      key_id: 'sn_key_v1',
+      encrypt_context: ['member_id', 'device_number']
+    }
+  },
+  
+  // 数据脱敏规则
+  masking_rules: {
+    mobile: {
+      pattern: /(\d{3})\d{4}(\d{4})/,
+      replacement: '$1****$2'
+    },
+    
+    id_card: {
+      pattern: /(\w{6})\w{8}(\w{4})/,
+      replacement: '$1********$2'
+    },
+    
+    email: {
+      pattern: /(.{3})(.*)(@.*)/,
+      replacement: '$1****$3'
+    }
+  }
+};
+```
+
+#### 6.2.2 隐私合规检测对策
+```javascript
+// 个人信息收集合规检查
+const PrivacyCompliance = {
+  // 必要信息范围（根据《常见类型移动互联网应用程序必要个人信息范围规定》）
+  necessary_info: {
+    basic_function: [
+      "mobile", // 网络身份标识
+      "contact_person" // 维修服务联系人
+    ],
+    
+    payment_function: [
+      "real_name" // 支付账户实名信息
+    ],
+    
+    invoice_function: [
+      "tax_id" // 企业纳税人识别号或个人身份信息
+    ]
+  },
+  
+  // 隐私政策弹窗
+  privacy_popup: {
+    trigger_events: [
+      "first_launch",
+      "major_version_update", 
+      "policy_change"
+    ],
+    
+    content_requirements: [
+      "clear_explanation_of_personal_info_collection",
+      "purpose_of_collection_specified",
+      "user_rights_explained",
+      "data_retention_policy",
+      "contact_information_provided"
+    ]
+  },
+  
+  // 用户权利保障
+  user_rights: {
+    data_portability: true,
+    data_correction: true,
+    data_deletion: true,
+    account_deactivation: true,
+    
+    response_time_requirements: {
+      data_access: "15_days",
+      data_correction: "7_days",
+      data_deletion: "15_days"
+    }
+  }
+};
+```
+
+### 6.3 审计日志规范
+```json
+{
+  "审计日志格式": {
+    "log_type": "audit",
+    "timestamp": "ISO8601",
+    "trace_id": "string, 请求跟踪ID",
+    "user_id": "string, 用户ID",
+    "user_ip": "string, IP地址",
+    "user_agent": "string, User-Agent",
+    "action": "enum('create','read','update','delete','login','logout')",
+    "resource_type": "enum('device','repair','payment','invoice')",
+    "resource_id": "string, 资源ID",
+    "old_value": "json, optional",
+    "new_value": "json, optional",
+    "result": "enum('success','failure')",
+    "error_code": "string, optional",
+    "error_message": "string, optional",
+    "extended_info": "json, optional"
+  },
+  
+  "日志存储策略": {
+    "retention_period": "365_days",
+    "encryption": "at_rest",
+    "access_control": "read_only_for_auditors",
+    "alert_rules": [
+      {
+        "condition": "action='delete' AND resource_type='device'",
+        "severity": "high",
+        "alert_channel": "email,sms"
+      },
+      {
+        "condition": "user_agent contains 'suspicious'",
+        "severity": "medium", 
+        "alert_channel": "email"
+      }
+    ]
+  }
+}
+```
+
+## 7. [测试与验收标准]
+
+### 7.1 关键功能验收用例
+#### 7.1.1 设备绑定功能验收用例
+| 用例ID | 测试场景 | 前置条件 | 测试步骤 | 预期结果 | 验收标准 |
+|--------|---------|---------|---------|---------|---------|
+| TC-DEV-001 | 正常设备绑定 | 用户已登录，设备未绑定 | 1. 输入有效设备编号和序列号<br>2. 上传购买凭证<br>3. 点击绑定按钮 | 1. 绑定成功提示<br>2. 显示保修信息<br>3. 设备出现在"我的设备"列表 | 绑定成功率≥99%，响应时间≤2秒 |
+| TC-DEV-002 | 已绑定设备重复绑定 | 设备已被其他用户绑定 | 1. 输入已被绑定的设备编号<br>2. 点击绑定按钮 | 显示错误提示"该设备已被其他用户绑定" | 准确识别已绑定状态，防止重复绑定 |
+| TC-DEV-003 | 无效设备编号 | 输入格式错误的设备编号 | 1. 输入"ABC123"(少于10位)<br>2. 点击绑定按钮 | 显示验证错误"设备编号格式不正确" | 前端验证必须正确拦截格式错误输入 |
+
+#### 7.1.2 维修申请功能验收用例
+| 用例ID | 测试场景 | 输入数据 | 业务规则验证 | 预期结果 |
+|--------|---------|---------|-------------|---------|
+| TC-REP-001 | 邮寄维修正常流程 | 完整有效邮寄信息 | 1. 地址验证通过<br>2. 图片上传成功<br>3. 物流公司选择正确 | 申请成功，生成申请编号 |
+| TC-REP-002 | 到店预约时间冲突 | 选择已被预约的时间段 | 系统检查时间可用性 | 显示"该时间段已被预约" |
+| TC-REP-003 | 保修期内免费维修 | 设备保修状态为"in_warranty" | 系统自动识别保修类型 | 报价中人工费和零件费为0 |
+
+### 7.2 性能基准测试指标
+#### 7.2.1 负载测试场景
+```json
+{
+  "load_test_scenarios": [
+    {
+      "name": "工作日高峰时段",
+      "simulated_users": 1000,
+      "ramp_up_time": "5_minutes",
+      "duration": "30_minutes",
+      "api_mix": {
+        "device_list": 30,
+        "repair_apply": 10,
+        "progress_query": 40,
+        "payment_create": 20
+      },
+      "success_criteria": {
+        "error_rate": "<1%",
+        "p95_response_time": "<2s",
+        "throughput": "≥100_tps"
+      }
+    },
+    
+    {
+      "name": "促销活动期间",
+      "simulated_users": 5000,
+      "ramp_up_time": "10_minutes",
+      "duration": "60_minutes",
+      "api_mix": {
+        "device_list": 20,
+        "repair_apply": 30,
+        "progress_query": 30,
+        "payment_create": 20
+      },
+      "success_criteria": {
+        "error_rate": "<0.5%",
+        "p95_response_time": "<3s",
+        "throughput": "≥200_tps"
+      }
+    }
+  ]
+}
+```
+
+#### 7.2.2 稳定性测试要求
+| 测试类型 | 持续时间 | 监控指标 | 通过标准 |
+|---------|---------|---------|---------|
+| **压力测试** | 24小时 | 内存使用率 | <80% |
+| | | CPU使用率 | <70% |
+| | | 数据库连接数 | <最大连接数80% |
+| **可靠性测试** | 7×24小时 | 系统可用性 | >99.9% |
+| | | 平均无故障时间 | >1000小时 |
+| | | 平均恢复时间 | <30分钟 |
+| **并发测试** | 4小时 | 最大并发用户数 | ≥5000 |
+| | | 资源泄漏 | 无内存/连接泄漏 |
+
+---
+
+## 文档总结
+
+本需求规格说明书基于《御中新工程服务系统解决方案说明V1.8》构建，为"会员售后服务预约小程序"提供了完整的、机器可读的、具备高度可执行性的软件需求定义。
+
+### 关键设计决策总结
+1. **采用前后端完全分离架构**，便于小程序与后续其他客户端的扩展
+2. **实施DDD领域驱动设计**，明确划分设备、维修、支付、发票等核心领域
+3. **全流程状态机管理**，确保维修申请、报价确认、支付结算等关键流程的状态一致性
+4. **三级权限控制模型**（角色权限+数据权限+操作权限），确保数据安全
+5. **端到端加密方案**，对敏感个人信息进行字段级加密和传输加密
+
+### 后续开发建议
+1. **第一阶段**优先实现设备绑定、维修申请、进度查询等核心功能
+2. **第二阶段**集成支付结算和发票开具功能
+3. **第三阶段**完善消息通知、客服对接等辅助功能
+4. 所有接口需要按照OpenAPI 3.0规范生成详细接口文档
+5. 建议采用测试驱动开发（TDD），针对本SRS中的验收用例编写测试代码
+
+本文档已满足软件需求工程系统的所有核心约束：无二义性、数据驱动、完备性原则及技术无关性与实现指导性并重的要求。开发团队可根据此文档直接进行详细设计和编码实现。

@@ -30,9 +30,23 @@
           </button>
         </div>
       </div>
+
+      <div class="p-4 border-t border-sakura bg-sakura/30">
+        <div class="text-xs text-stone mb-1">Token 余额</div>
+        <div class="flex items-baseline gap-1">
+          <span class="text-lg font-medium text-charcoal">{{ formatNumber(tokenBalance) }}</span>
+          <span class="text-xs text-stone">/ {{ formatNumber(totalTokens) }}</span>
+        </div>
+        <div class="mt-2 h-2 bg-sand rounded-full overflow-hidden">
+          <div 
+            class="h-full bg-indigo transition-all duration-300"
+            :style="{ width: `${tokenPercentage}%` }"
+          ></div>
+        </div>
+      </div>
     </aside>
 
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col h-[calc(100vh-4rem)]">
       <div ref="messagesContainer" class="flex-1 overflow-y-auto p-4 md:p-6">
         <div v-if="messages.length === 0" class="h-full flex items-center justify-center">
           <div class="text-center">
@@ -46,13 +60,15 @@
           </div>
         </div>
 
-        <div v-else class="max-w-3xl mx-auto space-y-4">
+        <div v-else class="max-w-3xl mx-auto space-y-4 pb-32">
           <ChatMessage
             v-for="msg in messages"
             :key="msg.id"
             :content="msg.content"
             :role="msg.role"
             :reasoning-content="msg.reasoningContent"
+            :tokens="msg.tokens"
+            :message-id="msg.id"
           />
 
           <ChatMessage
@@ -78,7 +94,7 @@
         </div>
       </div>
 
-      <div class="border-t border-sakura bg-white p-4">
+      <div class="fixed bottom-0 left-0 md:left-64 right-0 border-t border-sakura bg-white p-4 z-10">
         <form @submit.prevent="sendMessage" class="max-w-3xl mx-auto">
           <div class="flex items-center gap-2 mb-3">
             <button
@@ -141,6 +157,7 @@ interface Message {
   content: string
   created_at: string
   reasoningContent?: string
+  tokens?: number
 }
 
 interface Conversation {
@@ -163,6 +180,9 @@ const enableSearch = ref(false)
 const enableThinking = ref(false)
 const streamingContent = ref('')
 const streamingReasoning = ref('')
+const tokenBalance = ref(0)
+const totalTokens = ref(100000)
+const lastTokens = ref(0)
 
 onMounted(async () => {
   await auth.fetchUser()
@@ -170,8 +190,39 @@ onMounted(async () => {
     router.push('/login')
     return
   }
-  await loadConversations()
+  await Promise.all([
+    loadConversations(),
+    loadTokenBalance()
+  ])
 })
+
+const loadTokenBalance = async () => {
+  try {
+    const response = await $fetch('/api/user/tokens', {
+      headers: auth.getAuthHeaders()
+    })
+    if (response.success) {
+      tokenBalance.value = response.data.balance
+      totalTokens.value = response.data.total
+    }
+  } catch (error) {
+    console.error('Failed to load token balance:', error)
+  }
+}
+
+const tokenPercentage = computed(() => {
+  if (totalTokens.value === 0) return 0
+  return Math.min(100, (tokenBalance.value / totalTokens.value) * 100)
+})
+
+const formatNumber = (num: number) => {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M'
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K'
+  }
+  return num.toString()
+}
 
 const loadConversations = async () => {
   try {
@@ -195,7 +246,8 @@ const loadConversation = async (id: number) => {
       currentConversationId.value = id
       messages.value = response.data.map((m: Message) => ({
         ...m,
-        reasoningContent: undefined
+        reasoningContent: undefined,
+        tokens: m.tokens || 0
       }))
       scrollToBottom()
     }
@@ -211,6 +263,16 @@ const newConversation = () => {
 
 const sendMessage = async () => {
   if (!inputMessage.value.trim() || isLoading.value) return
+  
+  if (!auth.state.value.user) {
+    messages.value.push({
+      id: Date.now(),
+      role: 'assistant',
+      content: t('chat.errors.loginRequired'),
+      created_at: new Date().toISOString()
+    })
+    return
+  }
 
   const userMessage = inputMessage.value.trim()
   inputMessage.value = ''
@@ -228,22 +290,34 @@ const sendMessage = async () => {
   streamingReasoning.value = ''
 
   try {
+    const requestBody: any = {
+      message: userMessage,
+      enableSearch: enableSearch.value,
+      enableThinking: enableThinking.value
+    }
+    
+    if (currentConversationId.value) {
+      requestBody.conversationId = currentConversationId.value
+    }
+    
     const response = await fetch('/api/chat/stream', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         ...auth.getAuthHeaders()
       },
-      body: JSON.stringify({
-        message: userMessage,
-        conversationId: currentConversationId.value,
-        enableSearch: enableSearch.value,
-        enableThinking: enableThinking.value
-      })
+      body: JSON.stringify(requestBody)
     })
 
     if (!response.ok) {
-      throw new Error('Request failed')
+      let errorMessage = t('chat.errors.serviceUnavailable')
+      try {
+        const errorData = await response.json()
+        errorMessage = errorData.message || errorMessage
+      } catch {
+        // Ignore JSON parsing errors
+      }
+      throw new Error(errorMessage)
     }
 
     const reader = response.body?.getReader()
@@ -279,17 +353,23 @@ const sendMessage = async () => {
           } else if (event.type === 'reasoning') {
             streamingReasoning.value += event.content
             scrollToBottom()
+          } else if (event.type === 'tokens') {
+            lastTokens.value = event.tokens
           } else if (event.type === 'done') {
             messages.value.push({
               id: Date.now() + 1,
               role: 'assistant',
               content: streamingContent.value || t('chat.errors.noAnswer'),
               created_at: new Date().toISOString(),
-              reasoningContent: streamingReasoning.value || undefined
+              reasoningContent: streamingReasoning.value || undefined,
+              tokens: lastTokens.value
             })
             streamingContent.value = ''
             streamingReasoning.value = ''
-            await loadConversations()
+            await Promise.all([
+              loadConversations(),
+              loadTokenBalance()
+            ])
           } else if (event.type === 'error') {
             messages.value.push({
               id: Date.now() + 1,
@@ -307,10 +387,11 @@ const sendMessage = async () => {
     }
   } catch (error) {
     console.error('Failed to send message:', error)
+    const errorMessage = error instanceof Error ? error.message : t('chat.errors.serviceUnavailable')
     messages.value.push({
       id: Date.now() + 1,
       role: 'assistant',
-      content: t('chat.errors.serviceUnavailable'),
+      content: errorMessage,
       created_at: new Date().toISOString()
     })
     streamingContent.value = ''

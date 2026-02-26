@@ -24,7 +24,9 @@
     "apiDocs": "API Docs",
     "copyright": "2026 SAYCO Information Technology. All rights reserved.",
     "privacy": "Privacy Policy",
-    "terms": "Terms of Service"
+    "terms": "Terms of Service",
+    "icp": "ICP License No. 000000000",
+    "police": "Public Security Record No. 000000000"
   },
   "common": {
     "edit": "Edit",
@@ -46,11 +48,22 @@
       "contact": "Contact Us"
     },
     "stats": {
+      "tag": "Statistics",
+      "title": "Trusted AI Service",
+      "subtitle": "Providing reliable AI services to thousands of companies",
       "hours": "24/7",
       "response": "Instant Response",
-      "security": "Secure & Reliable"
+      "security": "Secure & Reliable",
+      "companies": "Companies",
+      "daily": "Daily Chats",
+      "satisfaction": "Satisfaction",
+      "support": "24/7 Support",
+      "conversations": "Conversations",
+      "availability": "Availability",
+      "responseTime": "Response Time"
     },
     "features": {
+      "tag": "Core Features",
       "title": "Core Features",
       "subtitle": "Comprehensive AI services for you",
       "items": {
@@ -125,6 +138,62 @@
       "subtitle": "Feel free to contact us anytime",
       "description": "Questions or partnership? Contact us anytime",
       "onlineMessage": "Online Message"
+    },
+    "advantages": {
+      "tag": "Why Choose Us",
+      "title": "Why Choose Us",
+      "description": "Professional AI customer service solutions to empower your digital transformation",
+      "demo": {
+        "title": "Smart Customer Service Demo",
+        "item1": "Automatically identify user intent and answer questions accurately",
+        "item2": "Support multi-turn conversations with accurate context understanding",
+        "item3": "24/7 uninterrupted service with fast response",
+        "item4": "Seamlessly integrate into your business systems"
+      },
+      "items": {
+        "fast": {
+          "title": "Lightning Fast",
+          "description": "Millisecond response speed to enhance user experience"
+        },
+        "secure": {
+          "title": "Secure & Reliable",
+          "description": "Enterprise-grade data encryption to protect information security"
+        },
+        "smart": {
+          "title": "Smart Learning",
+          "description": "Continuous learning and optimization, getting smarter with use"
+        }
+      }
+    },
+    "scenarios": {
+      "tag": "Use Cases",
+      "title": "Suitable for Various Scenarios",
+      "subtitle": "Whether you are e-commerce, enterprise or education, we provide professional solutions",
+      "items": {
+        "ecommerce": {
+          "title": "E-commerce Support",
+          "description": "Automatically handle order inquiries, logistics tracking, returns and exchanges to improve customer satisfaction"
+        },
+        "enterprise": {
+          "title": "Enterprise Services",
+          "description": "Internal knowledge base Q&A, IT support, HR consulting to improve operational efficiency"
+        },
+        "education": {
+          "title": "Education & Training",
+          "description": "Intelligent Q&A, course consultation, learning assistance to build smart education platforms"
+        }
+      }
+    },
+    "cta": {
+      "title": "Start Your AI Customer Service Journey",
+      "subtitle": "Register now to experience the powerful features of smart customer service for free",
+      "button": "Get Started Free",
+      "contact": "Contact Sales"
+    },
+    "demo": {
+      "user": "Hi, I'd like to learn about product features",
+      "ai": "Hello! I'm happy to introduce TomyBot's core features...",
+      "online": "Online Service"
     }
   },
   "services": {
@@ -134,6 +203,9 @@
     "popular": "Popular",
     "tokens": "tokens",
     "permanent": "Permanent",
+    "validity": "Valid for {days} days",
+    "validityMonths": "Valid for {months} months",
+    "priceUnit": "/month",
     "buyNow": "Buy Now",
     "addToCart": "Add to Cart",
     "info": {
@@ -336,7 +408,8 @@
     },
     "errors": {
       "noAnswer": "Sorry, I cannot answer this question at the moment",
-      "serviceUnavailable": "Service temporarily unavailable, please try again later"
+      "serviceUnavailable": "Service temporarily unavailable, please try again later",
+      "loginRequired": "Please login first to send messages"
     }
   },
   "knowledgeBase": {

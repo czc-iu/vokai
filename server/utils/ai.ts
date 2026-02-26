@@ -102,16 +102,6 @@ function getApiConfig(): ApiConfig {
   }
 }
 
-function requireApiKey(apiKey: string | undefined): string {
-  if (!apiKey) {
-    throw createError({
-      statusCode: 500,
-      message: ERROR_MESSAGES.AI_NOT_CONFIGURED
-    })
-  }
-  return apiKey
-}
-
 function buildRequestBody(
   messages: QwenMessage[],
   options: ChatOptions,
@@ -143,16 +133,6 @@ function buildHeaders(apiKey: string): Record<string, string> {
 
 function throwApiError(statusCode: number, message: string): never {
   throw createError({ statusCode, message })
-}
-
-function handleApiError(error: unknown): never {
-  console.error('Qwen API Error:', error)
-
-  if (error && typeof error === 'object' && 'statusCode' in error) {
-    throw error
-  }
-
-  throwApiError(500, ERROR_MESSAGES.AI_UNAVAILABLE)
 }
 
 function parseResponseUsage(data: QwenResponse): ChatResult['usage'] {
@@ -212,11 +192,18 @@ export async function chatWithQwen(
   options: ChatOptions = {}
 ): Promise<ChatResult> {
   const { apiKey, apiUrl, model, systemPrompt } = getApiConfig()
-  const validKey = requireApiKey(apiKey)
+  
+  if (!apiKey) {
+    console.error('AI API Error: API key not configured')
+    throw createError({
+      statusCode: 500,
+      message: ERROR_MESSAGES.AI_NOT_CONFIGURED
+    })
+  }
 
   try {
     const body = buildRequestBody(messages, options, systemPrompt, model)
-    const response = await makeApiRequest(apiUrl, validKey, body)
+    const response = await makeApiRequest(apiUrl, apiKey, body)
     const data = (await response.json()) as QwenResponse
     const message = data.choices[0]?.message
 
@@ -226,8 +213,18 @@ export async function chatWithQwen(
       toolCalls: message?.tool_calls,
       usage: parseResponseUsage(data)
     }
-  } catch (error) {
-    return handleApiError(error)
+  } catch (error: unknown) {
+    console.error('AI API Error:', error)
+    
+    if (error && typeof error === 'object' && 'statusCode' in error) {
+      throw error
+    }
+    
+    const errorMessage = error instanceof Error ? error.message : ERROR_MESSAGES.AI_UNAVAILABLE
+    throw createError({
+      statusCode: 500,
+      message: errorMessage
+    })
   }
 }
 
@@ -263,20 +260,40 @@ export async function* streamChatWithQwen(
   options: ChatOptions = {}
 ): AsyncGenerator<StreamChunk, void, unknown> {
   const { apiKey, apiUrl, model, systemPrompt } = getApiConfig()
-  const validKey = requireApiKey(apiKey)
+  
+  if (!apiKey) {
+    console.error('AI API Error: API key not configured')
+    throw createError({
+      statusCode: 500,
+      message: ERROR_MESSAGES.AI_NOT_CONFIGURED
+    })
+  }
 
   try {
     const body = buildRequestBody(messages, options, systemPrompt, model, true)
-    const response = await makeApiRequest(apiUrl, validKey, body)
+    const response = await makeApiRequest(apiUrl, apiKey, body)
 
     const reader = response.body?.getReader()
     if (!reader) {
-      throwApiError(500, ERROR_MESSAGES.AI_STREAM_UNAVAILABLE)
+      throw createError({
+        statusCode: 500,
+        message: ERROR_MESSAGES.AI_STREAM_UNAVAILABLE
+      })
     }
 
     yield* processStreamChunks(reader)
-  } catch (error) {
-    handleApiError(error)
+  } catch (error: unknown) {
+    console.error('AI API Error:', error)
+    
+    if (error && typeof error === 'object' && 'statusCode' in error) {
+      throw error
+    }
+    
+    const errorMessage = error instanceof Error ? error.message : ERROR_MESSAGES.AI_UNAVAILABLE
+    throw createError({
+      statusCode: 500,
+      message: errorMessage
+    })
   }
 }
 

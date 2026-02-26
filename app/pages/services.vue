@@ -9,7 +9,7 @@
         <div
           v-for="service in services"
           :key="service.id"
-          class="bg-white rounded-sm border relative overflow-hidden"
+          class="bg-white rounded-sm border relative overflow-hidden flex flex-col"
           :class="service.is_popular ? 'border-indigo ring-2 ring-indigo/20' : 'border-sakura'"
         >
           <div
@@ -18,11 +18,12 @@
           >
             {{ $t('services.popular') }}
           </div>
-          <div class="p-6">
+          <div class="p-6 flex flex-col flex-1">
             <h3 class="text-lg font-medium text-charcoal mb-2">{{ service.name }}</h3>
             <p class="text-stone text-sm mb-4">{{ service.description }}</p>
             <div class="mb-4">
               <span class="text-3xl font-medium text-charcoal">¥{{ service.price }}</span>
+              <span class="text-xs text-stone ml-1">{{ $t('services.priceUnit') }}</span>
               <span v-if="service.original_price" class="text-stone line-through text-sm ml-2">
                 ¥{{ service.original_price }}
               </span>
@@ -32,24 +33,26 @@
               <span class="text-sm font-normal text-stone">{{ $t('services.tokens') }}</span>
             </div>
             <div v-if="service.validity_days" class="text-sm text-stone mb-4">
-              {{ $t('services.validity', { days: service.validity_days }) }}
+              {{ getValidityText(service.validity_days) }}
             </div>
             <div v-else class="text-sm text-matcha mb-4">
               {{ $t('services.permanent') }}
             </div>
 
-            <ul v-if="service.features" class="space-y-2 mb-6">
+            <ul class="space-y-2 mb-6 flex-1">
               <li
-                v-for="(feature, idx) in service.features"
+                v-for="(feature, idx) in getDisplayFeatures(service.features)"
                 :key="idx"
-                class="flex items-center gap-2 text-sm text-charcoal"
+                class="flex items-center gap-2 text-sm"
+                :class="feature ? 'text-charcoal' : 'text-transparent'"
               >
-                <Icon name="heroicons:check" class="w-4 h-4 text-matcha" />
-                {{ feature }}
+                <Icon v-if="feature" name="heroicons:check" class="w-4 h-4 text-matcha" />
+                <span v-else class="w-4 h-4"></span>
+                {{ feature || '占位' }}
               </li>
             </ul>
 
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2 mt-auto">
               <button
                 @click="buyNow(service)"
                 class="w-full btn-primary text-sm py-2.5"
@@ -216,6 +219,25 @@ const buyNow = async (service: Service) => {
 
 const formatNumber = (num: number) => {
   return num.toLocaleString()
+}
+
+const getDisplayFeatures = (features: string[] | null): (string | null)[] => {
+  const MIN_FEATURES = 6
+  const featureList = features || []
+  const result: (string | null)[] = [...featureList]
+  while (result.length < MIN_FEATURES) {
+    result.push(null)
+  }
+  return result
+}
+
+const getValidityText = (days: number): string => {
+  const { t } = useI18n()
+  if (days >= 30 && days % 30 === 0) {
+    const months = days / 30
+    return t('services.validityMonths', { months })
+  }
+  return t('services.validity', { days })
 }
 
 watch(() => auth.state.value.user, async (user) => {

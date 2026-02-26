@@ -15,7 +15,7 @@
     "embedSDK": "嵌入式SDK"
   },
   "footer": {
-    "description": "TomyBot AI智能助手，让客服更智能，让服务更高效",
+    "description": "专业的AI智能对话助手，为企业提供7×24小时智能客服解决方案",
     "product": "产品",
     "features": "功能介绍",
     "cases": "行业案例",
@@ -24,7 +24,9 @@
     "apiDocs": "API文档",
     "copyright": "2026 赛熠可信息技术（上海）有限公司 版权所有",
     "privacy": "隐私政策",
-    "terms": "服务条款"
+    "terms": "服务条款",
+    "icp": "沪ICP备000000000号",
+    "police": "沪公网安备000000000XXXXXX号"
   },
   "common": {
     "edit": "编辑",
@@ -46,13 +48,24 @@
       "contact": "联系我们"
     },
     "stats": {
+      "tag": "数据统计",
+      "title": "值得信赖的AI服务",
+      "subtitle": "已为数千家企业提供稳定可靠的智能服务",
       "hours": "7×24小时",
       "response": "秒级响应",
-      "security": "安全可靠"
+      "security": "安全可靠",
+      "companies": "企业客户",
+      "daily": "日对话量",
+      "satisfaction": "满意度",
+      "support": "全天支持",
+      "conversations": "累计对话",
+      "availability": "可用性",
+      "responseTime": "平均响应"
     },
     "features": {
-      "title": "核心功能",
-      "subtitle": "为您提供全方位的AI服务",
+      "tag": "核心功能",
+      "title": "强大功能，满足多样需求",
+      "subtitle": "从售前咨询到售后支持，全方位智能服务覆盖",
       "items": {
         "chat": {
           "title": "智能对话",
@@ -123,17 +136,74 @@
     "contact": {
       "title": "联系我们",
       "subtitle": "如有任何问题或合作意向，欢迎随时联系",
-      "description": "如有任何问题或合作意向，欢迎随时联系",
       "onlineMessage": "在线留言"
+    },
+    "advantages": {
+      "tag": "产品优势",
+      "title": "为什么选择TomyBot",
+      "demo": {
+        "title": "智能客服演示",
+        "item1": "自动识别用户意图，精准回答问题",
+        "item2": "支持多轮对话，上下文理解准确",
+        "item3": "7×24小时不间断服务，响应迅速",
+        "item4": "无缝集成到您的业务系统"
+      },
+      "items": {
+        "fast": {
+          "title": "极速响应",
+          "description": "毫秒级响应速度，提升用户体验"
+        },
+        "secure": {
+          "title": "安全可靠",
+          "description": "企业级数据加密，保障信息安全"
+        },
+        "smart": {
+          "title": "智能学习",
+          "description": "持续学习优化，越用越聪明"
+        }
+      }
+    },
+    "scenarios": {
+      "tag": "应用场景",
+      "title": "丰富的应用场景",
+      "subtitle": "覆盖电商、企业、教育等多个行业，满足不同业务需求",
+      "items": {
+        "ecommerce": {
+          "title": "电商客服",
+          "description": "自动处理订单咨询、物流查询、退换货等问题，提升客户满意度"
+        },
+        "enterprise": {
+          "title": "企业服务",
+          "description": "内部知识库问答、IT支持、HR咨询，提高企业运营效率"
+        },
+        "education": {
+          "title": "教育培训",
+          "description": "智能答疑、课程咨询、学习辅导，打造智慧教育平台"
+        }
+      }
+    },
+    "cta": {
+      "title": "立即开始，体验智能客服",
+      "subtitle": "注册即可免费试用14天，无需信用卡，随时取消。让AI助手为您的客户服务带来革命性改变。",
+      "button": "免费试用",
+      "contact": "联系销售"
+    },
+    "demo": {
+      "user": "您好，我想了解一下产品功能",
+      "ai": "您好！很高兴为您介绍TomyBot的核心功能...",
+      "online": "在线服务"
     }
   },
   "services": {
     "title": "购买服务 - TomyBot",
     "heading": "购买服务",
-    "description": "选择适合您的套餐",
+    "description": "选择适合您的套餐，开启AI智能服务之旅",
     "popular": "热门推荐",
     "tokens": "tokens",
     "permanent": "永久有效",
+    "validity": "有效期{days}天",
+    "validityMonths": "有效期{months}个月",
+    "priceUnit": "/月",
     "buyNow": "立即购买",
     "addToCart": "加入购物车",
     "info": {
@@ -167,7 +237,6 @@
   "contact": {
     "title": "联系我们 - TomyBot",
     "heading": "联系我们",
-    "description": "如有任何问题或合作意向，欢迎随时联系",
     "info": {
       "company": "公司名称",
       "companyName": "赛熠可信息技术（上海）有限公司",
@@ -177,7 +246,6 @@
   "contactPage": {
     "title": "联系我们 - TomyBot",
     "heading": "联系我们",
-    "description": "如有任何问题或合作意向，欢迎随时联系",
     "form": {
       "name": "姓名",
       "namePlaceholder": "请输入您的姓名",
@@ -336,7 +404,8 @@
     },
     "errors": {
       "noAnswer": "抱歉，我暂时无法回答这个问题",
-      "serviceUnavailable": "服务暂时不可用，请稍后重试"
+      "serviceUnavailable": "服务暂时不可用，请稍后重试",
+      "loginRequired": "请先登录后再发送消息"
     }
   },
   "knowledgeBase": {
