@@ -210,12 +210,12 @@ const handleLogout = async () => {
 
 <style scoped>
 .nav-link {
-  @apply text-stone hover:text-charcoal transition-colors duration-200 text-sm tracking-wide relative;
+  @apply text-charcoal/80 hover:text-charcoal transition-colors duration-200 text-sm tracking-wide relative font-medium;
 }
 
 .nav-link::after {
   content: '';
-  @apply absolute -bottom-1 left-0 w-0 h-px bg-charcoal transition-all duration-200;
+  @apply absolute -bottom-1 left-0 w-0 h-px bg-indigo transition-all duration-200;
 }
 
 .nav-link:hover::after {
