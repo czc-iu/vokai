@@ -182,8 +182,11 @@ describe('Embedding Utils', () => {
 
     it('should send correct request body for multiple texts', async () => {
       const mockResponse = {
-        output: { embeddings: [] },
-        usage: { total_tokens: 0 }
+        output: { embeddings: [
+          { text_index: 0, embedding: [0.1, 0.2] },
+          { text_index: 1, embedding: [0.3, 0.4] }
+        ]},
+        usage: { total_tokens: 10 }
       }
 
       mockFetch.mockResolvedValueOnce({
@@ -240,19 +243,11 @@ describe('Embedding Utils', () => {
     })
 
     it('should handle empty array', async () => {
-      const mockResponse = {
-        output: { embeddings: [] },
-        usage: { total_tokens: 0 }
-      }
-
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(mockResponse)
-      })
-
       const { getEmbeddings } = await import('../utils/embedding')
+      
+      // Empty array should return empty embeddings without calling API
       const result = await getEmbeddings([])
-
+      
       expect(result).toEqual([])
     })
 

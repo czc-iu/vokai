@@ -63,24 +63,16 @@ export async function indexUserDocument(
   const index = await getUserIndex(userId)
   await ensureIndexCreated(index)
 
-  try {
-    await index.upsertDocument(filename, content, 'markdown', {
-      source: filename,
-      userId,
-      indexedAt: new Date().toISOString()
-    })
+  await index.upsertDocument(filename, content, 'markdown', {
+    source: filename,
+    userId,
+    indexedAt: new Date().toISOString()
+  })
 
-    await query(
-      'UPDATE user_documents SET is_indexed = TRUE WHERE user_id = ? AND filename = ?',
-      [userId, filename]
-    )
-  } catch (error: any) {
-    console.error('Failed to index document:', error)
-    throw createError({
-      statusCode: 500,
-      message: error?.message || '文档索引失败'
-    })
-  }
+  await query(
+    'UPDATE user_documents SET is_indexed = TRUE WHERE user_id = ? AND filename = ?',
+    [userId, filename]
+  )
 }
 
 export async function deleteUserDocument(userId: number, filename: string): Promise<void> {

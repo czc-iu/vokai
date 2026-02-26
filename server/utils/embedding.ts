@@ -46,6 +46,10 @@ function isOpenAIFormat(url: string): boolean {
 }
 
 async function fetchEmbeddings(texts: string[]): Promise<number[][]> {
+  if (texts.length === 0) {
+    return []
+  }
+
   const { apiKey, apiUrl, model } = getConfig()
 
   if (!apiKey) {
@@ -86,7 +90,7 @@ async function fetchEmbeddings(texts: string[]): Promise<number[][]> {
   
   if (isOpenAI) {
     const openaiData = data as OpenAIEmbeddingResponse
-    if (!openaiData.data || openaiData.data.length === 0) {
+    if (!openaiData.data || !Array.isArray(openaiData.data) || openaiData.data.length === 0) {
       console.error('Embedding API: No embeddings in response', JSON.stringify(data))
       throw createError({
         statusCode: 500,
@@ -97,7 +101,7 @@ async function fetchEmbeddings(texts: string[]): Promise<number[][]> {
     return openaiData.data.sort((a, b) => a.index - b.index).map((e) => e.embedding)
   } else {
     const dashscopeData = data as DashScopeEmbeddingResponse
-    if (!dashscopeData.output?.embeddings || dashscopeData.output.embeddings.length === 0) {
+    if (!dashscopeData.output || !Array.isArray(dashscopeData.output.embeddings) || dashscopeData.output.embeddings.length === 0) {
       console.error('Embedding API: No embeddings in response', JSON.stringify(data))
       throw createError({
         statusCode: 500,
