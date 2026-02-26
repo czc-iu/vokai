@@ -1,0 +1,578 @@
+{
+  "nav": {
+    "home": "首页",
+    "services": "购买服务",
+    "contact": "联系我们",
+    "cart": "购物车",
+    "knowledgeBase": "知识库",
+    "chat": "开始对话",
+    "logout": "退出登录",
+    "login": "登录",
+    "register": "注册",
+    "account": "账户设置",
+    "billing": "账单",
+    "orders": "订单",
+    "embedSDK": "嵌入式SDK"
+  },
+  "footer": {
+    "description": "TomyBot AI智能助手，让客服更智能，让服务更高效",
+    "product": "产品",
+    "features": "功能介绍",
+    "cases": "行业案例",
+    "support": "支持",
+    "helpCenter": "帮助中心",
+    "apiDocs": "API文档",
+    "copyright": "2026 赛熠可信息技术（上海）有限公司 版权所有",
+    "privacy": "隐私政策",
+    "terms": "服务条款"
+  },
+  "common": {
+    "edit": "编辑",
+    "loading": "加载中...",
+    "view": "查看"
+  },
+  "close": "关闭",
+  "saved": "已保存",
+  "uploaded": "已上传",
+  "home": {
+    "title": "TomyBot - AI 智能助手",
+    "description": "TomyBot AI智能助手 - 让客服更智能，让服务更高效",
+    "banner": "官方网站正在建设中，敬请期待",
+    "hero": {
+      "title": "TomyBot",
+      "subtitle": "AI 智能助手",
+      "description": "让客服更智能，让服务更高效",
+      "cta": "立即体验",
+      "contact": "联系我们"
+    },
+    "stats": {
+      "hours": "7×24小时",
+      "response": "秒级响应",
+      "security": "安全可靠"
+    },
+    "features": {
+      "title": "核心功能",
+      "subtitle": "为您提供全方位的AI服务",
+      "items": {
+        "chat": {
+          "title": "智能对话",
+          "description": "基于先进AI模型，提供自然流畅的对话体验"
+        },
+        "knowledge": {
+          "title": "知识库",
+          "description": "上传文档构建专属知识库，让AI更懂您的业务"
+        },
+        "memory": {
+          "title": "智能记忆",
+          "description": "记住用户偏好和历史对话，提供个性化服务"
+        },
+        "search": {
+          "title": "联网搜索",
+          "description": "实时获取互联网信息，回答更准确更全面"
+        },
+        "embed": {
+          "title": "嵌入集成",
+          "description": "轻松嵌入到您的网站，快速部署智能客服"
+        },
+        "analytics": {
+          "title": "数据分析",
+          "description": "完整的对话数据分析，助力业务决策"
+        }
+      }
+    },
+    "highlights": {
+      "title": "功能亮点",
+      "subtitle": "强大的AI能力，为您赋能",
+      "webSearch": {
+        "title": "联网搜索",
+        "description": "实时联网获取最新信息",
+        "features": {
+          "0": "实时信息获取",
+          "1": "多源数据整合",
+          "2": "智能信息筛选"
+        }
+      },
+      "knowledge": {
+        "title": "知识库管理",
+        "description": "构建您的专属知识库",
+        "features": {
+          "0": "多格式文档支持",
+          "1": "智能语义检索",
+          "2": "自动更新同步"
+        }
+      },
+      "memory": {
+        "title": "智能记忆",
+        "description": "个性化用户体验",
+        "features": {
+          "0": "用户偏好记忆",
+          "1": "上下文理解",
+          "2": "智能推荐"
+        }
+      },
+      "embed": {
+        "title": "嵌入集成",
+        "description": "一键嵌入您的网站",
+        "features": {
+          "0": "简单代码嵌入",
+          "1": "自定义样式",
+          "2": "跨平台支持"
+        }
+      }
+    },
+    "contact": {
+      "title": "联系我们",
+      "subtitle": "如有任何问题或合作意向，欢迎随时联系",
+      "description": "如有任何问题或合作意向，欢迎随时联系",
+      "onlineMessage": "在线留言"
+    }
+  },
+  "services": {
+    "title": "购买服务 - TomyBot",
+    "heading": "购买服务",
+    "description": "选择适合您的套餐",
+    "popular": "热门推荐",
+    "tokens": "tokens",
+    "permanent": "永久有效",
+    "buyNow": "立即购买",
+    "addToCart": "加入购物车",
+    "info": {
+      "title": "购买说明",
+      "whatIsToken": {
+        "title": "什么是Token",
+        "description": "Token是AI服务的计费单位，每次对话会消耗一定数量的Token。Token数量决定了您可以使用AI服务的次数和时长。"
+      },
+      "howToCalculate": {
+        "title": "如何计算消耗",
+        "description": "Token消耗与对话长度相关，一般而言，1000个中文字约等于1500个Token。系统会实时显示您的Token余额和消耗情况。"
+      },
+      "validityRules": {
+        "title": "有效期规则",
+        "description": "购买的Token在有效期内可随时使用，过期后未使用的Token将自动清零。永久有效的套餐无时间限制。"
+      },
+      "refundPolicy": {
+        "title": "退款政策",
+        "description": "已购买的Token套餐支持7天内无理由退款（未使用情况下）。如有问题请联系客服。"
+      }
+    },
+    "alerts": {
+      "addedToCart": "已加入购物车",
+      "addFailed": "添加失败",
+      "loginRequired": "请先登录",
+      "purchaseSuccess": "购买成功",
+      "purchaseFailed": "购买失败",
+      "pendingItemsAdded": "已将之前选中的商品添加到购物车"
+    }
+  },
+  "contact": {
+    "title": "联系我们 - TomyBot",
+    "heading": "联系我们",
+    "description": "如有任何问题或合作意向，欢迎随时联系",
+    "info": {
+      "company": "公司名称",
+      "companyName": "赛熠可信息技术（上海）有限公司",
+      "email": "邮箱地址"
+    }
+  },
+  "contactPage": {
+    "title": "联系我们 - TomyBot",
+    "heading": "联系我们",
+    "description": "如有任何问题或合作意向，欢迎随时联系",
+    "form": {
+      "name": "姓名",
+      "namePlaceholder": "请输入您的姓名",
+      "email": "邮箱",
+      "emailPlaceholder": "请输入您的邮箱",
+      "phone": "电话",
+      "phonePlaceholder": "请输入您的电话",
+      "company": "公司",
+      "companyPlaceholder": "请输入您的公司名称",
+      "subject": "主题",
+      "subjectPlaceholder": "请输入咨询主题",
+      "message": "留言内容",
+      "messagePlaceholder": "请输入您的留言内容",
+      "submit": "提交",
+      "submitting": "提交中...",
+      "error": {
+        "incomplete": "请填写所有必填项",
+        "failed": "提交失败，请稍后重试"
+      }
+    },
+    "info": {
+      "company": "公司名称",
+      "companyName": "赛熠可信息技术（上海）有限公司",
+      "email": "邮箱地址",
+      "workingHours": "工作时间",
+      "workingHoursValue": "周一至周五 9:00-18:00"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "登录 - TomyBot",
+      "heading": "登录",
+      "description": "欢迎回来",
+      "email": "邮箱",
+      "emailPlaceholder": "请输入邮箱",
+      "password": "密码",
+      "passwordPlaceholder": "请输入密码",
+      "submit": "登录",
+      "submitting": "登录中...",
+      "noAccount": "还没有账号？",
+      "registerLink": "立即注册",
+      "error": {
+        "incomplete": "请填写邮箱和密码",
+        "failed": "登录失败，请检查邮箱和密码",
+        "retry": "登录失败，请重试"
+      }
+    },
+    "register": {
+      "title": "注册 - TomyBot",
+      "heading": "注册",
+      "description": "创建您的账号",
+      "name": "姓名",
+      "namePlaceholder": "请输入您的姓名",
+      "email": "邮箱",
+      "emailPlaceholder": "请输入邮箱",
+      "password": "密码",
+      "passwordPlaceholder": "请输入密码（至少6位）",
+      "confirmPassword": "确认密码",
+      "confirmPasswordPlaceholder": "请再次输入密码",
+      "submit": "注册",
+      "submitting": "注册中...",
+      "hasAccount": "已有账号？",
+      "loginLink": "立即登录",
+      "error": {
+        "incomplete": "请填写所有必填项",
+        "passwordLength": "密码长度至少6位",
+        "passwordMismatch": "两次输入的密码不一致",
+        "failed": "注册失败，该邮箱可能已被注册",
+        "retry": "注册失败，请重试"
+      }
+    }
+  },
+  "account": {
+    "title": "账户中心 - TomyBot",
+    "heading": "账户中心",
+    "tokenBalance": "Token余额",
+    "recharge": "充值",
+    "basicInfo": {
+      "title": "基本信息",
+      "name": "姓名",
+      "namePlaceholder": "请输入姓名",
+      "email": "邮箱",
+      "company": "公司",
+      "companyPlaceholder": "请输入公司名称",
+      "save": "保存",
+      "saving": "保存中..."
+    },
+    "overview": {
+      "title": "账户概览",
+      "status": "账户状态",
+      "statusNormal": "正常",
+      "registeredAt": "注册时间",
+      "emailVerified": "邮箱验证",
+      "verified": "已验证",
+      "notVerified": "未验证"
+    },
+    "password": {
+      "title": "修改密码",
+      "current": "当前密码",
+      "currentPlaceholder": "请输入当前密码",
+      "new": "新密码",
+      "newPlaceholder": "请输入新密码（至少6位）",
+      "confirm": "确认新密码",
+      "confirmPlaceholder": "请再次输入新密码",
+      "submit": "修改密码",
+      "submitting": "修改中..."
+    },
+    "phone": {
+      "title": "手机绑定",
+      "placeholder": "请输入手机号",
+      "bind": "绑定",
+      "change": "更换",
+      "verified": "已验证"
+    },
+    "embed": {
+      "title": "嵌入代码",
+      "description": "将以下代码复制到您的网站中，即可嵌入TomyBot对话窗口",
+      "copyCode": "复制代码",
+      "copied": "已复制",
+      "copyFailed": "复制失败"
+    },
+    "shortcuts": {
+      "title": "快捷入口",
+      "billing": "账单明细",
+      "orders": "订单记录"
+    },
+    "alerts": {
+      "saveSuccess": "保存成功",
+      "saveFailed": "保存失败",
+      "passwordChangeSuccess": "密码修改成功",
+      "passwordChangeFailed": "密码修改失败",
+      "passwordMismatch": "两次输入的密码不一致",
+      "passwordTooShort": "密码长度至少6位",
+      "phoneBindSuccess": "手机绑定成功",
+      "phoneBindFailed": "手机绑定失败",
+      "phoneInvalid": "请输入正确的手机号"
+    }
+  },
+  "chat": {
+    "welcome": {
+      "title": "欢迎使用 TomyBot",
+      "description": "我是您的AI助手，有什么可以帮助您的吗？"
+    },
+    "input": {
+      "placeholder": "输入您的问题..."
+    },
+    "newConversation": "新对话",
+    "noConversations": "暂无对话记录",
+    "options": {
+      "deepThinking": "深度思考",
+      "webSearch": "联网搜索"
+    },
+    "date": {
+      "today": "今天",
+      "yesterday": "昨天"
+    },
+    "errors": {
+      "noAnswer": "抱歉，我暂时无法回答这个问题",
+      "serviceUnavailable": "服务暂时不可用，请稍后重试"
+    }
+  },
+  "knowledgeBase": {
+    "heading": "知识库",
+    "description": "管理您的知识库文档",
+    "newDocument": "新建文档",
+    "uploadFile": "上传文件",
+    "noDescription": "暂无描述",
+    "empty": {
+      "title": "知识库为空",
+      "description": "上传文档开始构建您的知识库",
+      "uploadFirst": "上传第一个文档"
+    },
+    "upload": {
+      "title": "上传文档",
+      "selectFile": "选择文件",
+      "dragOrClick": "拖拽文件到此处，或点击选择",
+      "supportedFormats": "支持的格式：PDF、Word、TXT、Markdown"
+    },
+    "alerts": {
+      "deleteFailed": "删除失败"
+    }
+  },
+  "embed": {
+    "title": "TomyBot 智能助手",
+    "status": {
+      "online": "在线"
+    },
+    "input": {
+      "placeholder": "输入您的问题..."
+    },
+    "welcome": {
+      "greeting": "您好！",
+      "help": "我是TomyBot智能助手，有什么可以帮助您的吗？"
+    },
+    "error": "服务暂时不可用，请稍后重试"
+  },
+  "privacy": {
+    "title": "隐私政策 - TomyBot",
+    "heading": "隐私政策",
+    "lastUpdated": "最后更新日期：2026年1月1日",
+    "content": {
+      "company": "赛熠可信息技术（上海）有限公司",
+      "intro": "我们重视您的隐私保护。本隐私政策说明我们如何收集、使用、存储和保护您的个人信息。",
+      "sections": {
+        "collection": {
+          "title": "信息收集",
+          "account": {
+            "title": "账户信息",
+            "description": "注册时收集的信息",
+            "items": {
+              "name": "姓名",
+              "email": "邮箱地址",
+              "password": "密码（加密存储）",
+              "phone": "手机号码（可选）"
+            }
+          },
+          "chat": {
+            "title": "对话信息",
+            "description": "使用服务时收集的信息",
+            "items": {
+              "conversations": "对话记录",
+              "memory": "用户记忆设置",
+              "knowledge": "知识库文档"
+            }
+          },
+          "transaction": {
+            "title": "交易信息",
+            "description": "购买服务时收集的信息",
+            "items": {
+              "orders": "订单记录",
+              "payment": "支付信息"
+            }
+          }
+        },
+        "usage": {
+          "title": "信息使用"
+        },
+        "sharing": {
+          "title": "信息共享",
+          "share": {
+            "title": "共享情况",
+            "description": "我们不会向第三方出售您的个人信息，仅在以下情况下共享：",
+            "items": {
+              "0": "获得您的明确同意",
+              "1": "法律法规要求",
+              "2": "保护我们的合法权益"
+            }
+          },
+          "disclosure": {
+            "title": "信息披露",
+            "description": "我们不会公开披露您的个人信息，除非获得您的明确同意或法律法规要求。"
+          },
+          "transfer": {
+            "title": "信息转移",
+            "description": "如发生合并、收购或资产出售，我们会通知您并继续保护您的隐私。"
+          }
+        },
+        "security": {
+          "title": "信息安全",
+          "description": "我们采用行业标准的安全措施保护您的信息，包括数据加密、访问控制等。"
+        },
+        "rights": {
+          "title": "您的权利",
+          "items": {
+            "access": "访问您的个人信息",
+            "correct": "更正不准确的信息",
+            "delete": "删除您的个人信息",
+            "export": "导出您的数据",
+            "withdraw": "撤回同意"
+          }
+        },
+        "cookie": {
+          "title": "Cookie政策",
+          "description": "我们使用Cookie来改善您的使用体验，您可以在浏览器设置中管理Cookie。"
+        },
+        "minors": {
+          "title": "未成年人保护",
+          "description": "我们的服务不面向13岁以下的儿童。如发现误收集儿童信息，我们将及时删除。"
+        },
+        "updates": {
+          "title": "政策更新",
+          "description": "我们可能会不时更新本隐私政策，重大变更会通过邮件或网站通知您。"
+        },
+        "contact": {
+          "title": "联系我们",
+          "description": "如有隐私相关问题，请通过联系我们页面与我们联系。"
+        }
+      }
+    }
+  },
+  "terms": {
+    "title": "服务条款 - TomyBot",
+    "heading": "服务条款",
+    "lastUpdated": "最后更新日期：2026年1月1日",
+    "content": {
+      "company": "赛熠可信息技术（上海）有限公司",
+      "intro": "欢迎使用TomyBot服务。使用本服务即表示您同意以下条款。",
+      "acceptance": "使用本服务即表示您同意接受本服务条款的约束。如您不同意本条款，请勿使用本服务。",
+      "sections": {
+        "service": {
+          "title": "服务说明",
+          "description": {
+            "title": "服务内容",
+            "intro": "TomyBot提供AI对话、知识库管理、智能客服等服务。"
+          },
+          "changes": {
+            "title": "服务变更",
+            "description": "我们保留随时修改、暂停或终止部分或全部服务的权利，恕不另行通知。"
+          }
+        },
+        "account": {
+          "title": "账户管理",
+          "registration": {
+            "title": "账户注册"
+          },
+          "security": {
+            "title": "账户安全"
+          }
+        },
+        "billing": {
+          "title": "付费服务",
+          "method": {
+            "title": "支付方式"
+          },
+          "validity": {
+            "title": "服务有效期"
+          },
+          "description": {
+            "title": "计费说明",
+            "intro": "服务采用Token计费方式，具体价格以购买页面显示为准。"
+          }
+        },
+        "conduct": {
+          "title": "使用规范",
+          "prohibited": {
+            "title": "禁止行为",
+            "description": "禁止利用本服务从事违法活动、侵害他人权益、传播有害信息等行为。"
+          },
+          "responsibility": {
+            "title": "用户责任",
+            "description": "您对使用本服务时的行为负责，应遵守相关法律法规。"
+          }
+        },
+        "intellectualProperty": {
+          "title": "知识产权",
+          "ours": {
+            "title": "我们的权利",
+            "description": "本服务的所有内容、技术、商标等知识产权归我们所有。"
+          },
+          "yours": {
+            "title": "您的权利",
+            "description": "您上传的内容仍归您所有，但授予我们使用、存储、处理的许可。"
+          }
+        },
+        "disclaimer": {
+          "title": "免责声明",
+          "aiOutput": {
+            "title": "AI输出免责",
+            "description": "AI生成的内容仅供参考，不构成专业建议，我们对其准确性不作保证。"
+          },
+          "interruption": {
+            "title": "服务中断",
+            "description": "因不可抗力、系统维护等原因导致的服务中断，我们不承担责任。"
+          }
+        },
+        "termination": {
+          "title": "服务终止",
+          "user": {
+            "title": "用户终止",
+            "description": "您可以随时注销账户终止使用服务。"
+          },
+          "us": {
+            "title": "我们终止",
+            "description": "如您违反本条款，我们有权暂停或终止您的账户。"
+          }
+        },
+        "refund": {
+          "title": "退款政策"
+        },
+        "modifications": {
+          "title": "条款修改",
+          "description": "我们保留随时修改本条款的权利，重大变更会提前通知。"
+        },
+        "disputes": {
+          "title": "争议解决",
+          "description": "因本条款引起的争议，双方应友好协商解决，协商不成的可通过法律途径解决。"
+        },
+        "contact": {
+          "title": "联系我们",
+          "description": "如有疑问，请通过联系我们页面与我们联系。"
+        },
+        "other": {
+          "title": "其他条款"
+        }
+      }
+    }
+  }
+}

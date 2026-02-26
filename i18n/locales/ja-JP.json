@@ -1,0 +1,578 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "services": "サービス購入",
+    "contact": "お問い合わせ",
+    "cart": "カート",
+    "knowledgeBase": "ナレッジベース",
+    "chat": "チャット開始",
+    "logout": "ログアウト",
+    "login": "ログイン",
+    "register": "新規登録",
+    "account": "アカウント設定",
+    "billing": "請求",
+    "orders": "注文",
+    "embedSDK": "埋め込みSDK"
+  },
+  "footer": {
+    "description": "TomyBot AIアシスタント - よりスマートなカスタマーサービス、より効率的なサービスを",
+    "product": "製品",
+    "features": "機能紹介",
+    "cases": "導入事例",
+    "support": "サポート",
+    "helpCenter": "ヘルプセンター",
+    "apiDocs": "APIドキュメント",
+    "copyright": "2026 SAYCO Information Technology. All rights reserved.",
+    "privacy": "プライバシーポリシー",
+    "terms": "利用規約"
+  },
+  "common": {
+    "edit": "編集",
+    "loading": "読み込み中...",
+    "view": "表示"
+  },
+  "close": "閉じる",
+  "saved": "保存しました",
+  "uploaded": "アップロードしました",
+  "home": {
+    "title": "TomyBot - AIアシスタント",
+    "description": "TomyBot AIアシスタント - よりスマートなカスタマーサービス、より効率的なサービスを",
+    "banner": "公式サイト準備中",
+    "hero": {
+      "title": "TomyBot",
+      "subtitle": "AIアシスタント",
+      "description": "よりスマートなカスタマーサービス、より効率的なサービスを",
+      "cta": "今すぐ試す",
+      "contact": "お問い合わせ"
+    },
+    "stats": {
+      "hours": "24時間対応",
+      "response": "即時応答",
+      "security": "安全・信頼性"
+    },
+    "features": {
+      "title": "主な機能",
+      "subtitle": "包括的なAIサービスをご提供します",
+      "items": {
+        "chat": {
+          "title": "スマートチャット",
+          "description": "先進的なAIモデルによる自然でスムーズな会話体験"
+        },
+        "knowledge": {
+          "title": "ナレッジベース",
+          "description": "ドキュメントをアップロードして専用のナレッジベースを構築"
+        },
+        "memory": {
+          "title": "スマートメモリー",
+          "description": "ユーザーの設定と会話履歴を記憶し、パーソナライズされたサービスを提供"
+        },
+        "search": {
+          "title": "ウェブ検索",
+          "description": "リアルタイムのインターネット情報で正確かつ包括的な回答を提供"
+        },
+        "embed": {
+          "title": "埋め込み統合",
+          "description": "ウェブサイトに簡単に埋め込み、スマートカスタマーサービスを迅速に導入"
+        },
+        "analytics": {
+          "title": "データ分析",
+          "description": "完全な会話データ分析でビジネス意思決定を支援"
+        }
+      }
+    },
+    "highlights": {
+      "title": "機能のハイライト",
+      "subtitle": "強力なAI機能でビジネスを支援",
+      "webSearch": {
+        "title": "ウェブ検索",
+        "description": "リアルタイムのインターネット情報取得",
+        "features": {
+          "0": "リアルタイム情報アクセス",
+          "1": "複数ソースのデータ統合",
+          "2": "インテリジェントな情報フィルタリング"
+        }
+      },
+      "knowledge": {
+        "title": "ナレッジベース管理",
+        "description": "専用のナレッジベースを構築",
+        "features": {
+          "0": "マルチフォーマット対応",
+          "1": "インテリジェントなセマンティック検索",
+          "2": "自動更新同期"
+        }
+      },
+      "memory": {
+        "title": "スマートメモリー",
+        "description": "パーソナライズされたユーザー体験",
+        "features": {
+          "0": "ユーザー設定の記憶",
+          "1": "コンテキスト理解",
+          "2": "スマートレコメンデーション"
+        }
+      },
+      "embed": {
+        "title": "埋め込み統合",
+        "description": "ワンクリックでウェブサイトに埋め込み",
+        "features": {
+          "0": "シンプルなコード埋め込み",
+          "1": "カスタムスタイリング",
+          "2": "クロスプラットフォーム対応"
+        }
+      }
+    },
+    "contact": {
+      "title": "お問い合わせ",
+      "subtitle": "お気軽にお問い合わせください",
+      "description": "ご質問やパートナーシップのご相談はお気軽に",
+      "onlineMessage": "オンラインメッセージ"
+    }
+  },
+  "services": {
+    "title": "サービス購入 - TomyBot",
+    "heading": "サービス購入",
+    "description": "お客様に合ったプランをお選びください",
+    "popular": "人気",
+    "tokens": "トークン",
+    "permanent": "永久有効",
+    "buyNow": "今すぐ購入",
+    "addToCart": "カートに追加",
+    "info": {
+      "title": "購入案内",
+      "whatIsToken": {
+        "title": "トークンとは",
+        "description": "トークンはAIサービスの課金単位です。各会話は一定数のトークンを消費します。トークン数により、AIサービスをご利用いただける回数と時間が決まります。"
+      },
+      "howToCalculate": {
+        "title": "消費の計算方法",
+        "description": "トークン消費は会話の長さに関連します。一般的に、日本語1000文字は約1500トークンに相当します。システムはトークン残高と消費状況をリアルタイムで表示します。"
+      },
+      "validityRules": {
+        "title": "有効期限ルール",
+        "description": "購入したトークンは有効期限内であればいつでもご利用いただけます。有効期限後、未使用のトークンは自動的に失効します。永久パッケージには期限がありません。"
+      },
+      "refundPolicy": {
+        "title": "返金ポリシー",
+        "description": "購入したトークンパッケージは7日間の返金保証があります（未使用の場合）。ご不明な点はカスタマーサービスまでお問い合わせください。"
+      }
+    },
+    "alerts": {
+      "addedToCart": "カートに追加しました",
+      "addFailed": "追加に失敗しました",
+      "loginRequired": "ログインが必要です",
+      "purchaseSuccess": "購入が完了しました",
+      "purchaseFailed": "購入に失敗しました",
+      "pendingItemsAdded": "以前選択した商品をカートに追加しました"
+    }
+  },
+  "contact": {
+    "title": "お問い合わせ - TomyBot",
+    "heading": "お問い合わせ",
+    "description": "お気軽にお問い合わせください",
+    "info": {
+      "company": "会社名",
+      "companyName": "SAYCO Information Technology (Shanghai) Co., Ltd.",
+      "email": "メールアドレス"
+    }
+  },
+  "contactPage": {
+    "title": "お問い合わせ - TomyBot",
+    "heading": "お問い合わせ",
+    "description": "お気軽にお問い合わせください",
+    "form": {
+      "name": "お名前",
+      "namePlaceholder": "お名前を入力してください",
+      "email": "メールアドレス",
+      "emailPlaceholder": "メールアドレスを入力してください",
+      "phone": "電話番号",
+      "phonePlaceholder": "電話番号を入力してください",
+      "company": "会社名",
+      "companyPlaceholder": "会社名を入力してください",
+      "subject": "件名",
+      "subjectPlaceholder": "お問い合わせ件名を入力してください",
+      "message": "メッセージ",
+      "messagePlaceholder": "メッセージを入力してください",
+      "submit": "送信",
+      "submitting": "送信中...",
+      "error": {
+        "incomplete": "すべての必須項目を入力してください",
+        "failed": "送信に失敗しました。後でもう一度お試しください"
+      }
+    },
+    "info": {
+      "company": "会社名",
+      "companyName": "SAYCO Information Technology (Shanghai) Co., Ltd.",
+      "email": "メールアドレス",
+      "workingHours": "営業時間",
+      "workingHoursValue": "月曜日〜金曜日 9:00-18:00"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "ログイン - TomyBot",
+      "heading": "ログイン",
+      "description": "おかえりなさい",
+      "email": "メールアドレス",
+      "emailPlaceholder": "メールアドレスを入力してください",
+      "password": "パスワード",
+      "passwordPlaceholder": "パスワードを入力してください",
+      "submit": "ログイン",
+      "submitting": "ログイン中...",
+      "noAccount": "アカウントをお持ちでないですか？",
+      "registerLink": "新規登録",
+      "error": {
+        "incomplete": "メールアドレスとパスワードを入力してください",
+        "failed": "ログインに失敗しました。メールアドレスとパスワードをご確認ください",
+        "retry": "ログインに失敗しました。もう一度お試しください"
+      }
+    },
+    "register": {
+      "title": "新規登録 - TomyBot",
+      "heading": "新規登録",
+      "description": "アカウントを作成",
+      "name": "お名前",
+      "namePlaceholder": "お名前を入力してください",
+      "email": "メールアドレス",
+      "emailPlaceholder": "メールアドレスを入力してください",
+      "password": "パスワード",
+      "passwordPlaceholder": "パスワードを入力してください（6文字以上）",
+      "confirmPassword": "パスワード確認",
+      "confirmPasswordPlaceholder": "パスワードを再入力してください",
+      "submit": "登録",
+      "submitting": "登録中...",
+      "hasAccount": "すでにアカウントをお持ちですか？",
+      "loginLink": "ログイン",
+      "error": {
+        "incomplete": "すべての必須項目を入力してください",
+        "passwordLength": "パスワードは6文字以上で入力してください",
+        "passwordMismatch": "パスワードが一致しません",
+        "failed": "登録に失敗しました。このメールアドレスは既に登録されている可能性があります",
+        "retry": "登録に失敗しました。もう一度お試しください"
+      }
+    }
+  },
+  "account": {
+    "title": "アカウントセンター - TomyBot",
+    "heading": "アカウントセンター",
+    "tokenBalance": "トークン残高",
+    "recharge": "チャージ",
+    "basicInfo": {
+      "title": "基本情報",
+      "name": "お名前",
+      "namePlaceholder": "お名前を入力してください",
+      "email": "メールアドレス",
+      "company": "会社名",
+      "companyPlaceholder": "会社名を入力してください",
+      "save": "保存",
+      "saving": "保存中..."
+    },
+    "overview": {
+      "title": "アカウント概要",
+      "status": "アカウントステータス",
+      "statusNormal": "正常",
+      "registeredAt": "登録日",
+      "emailVerified": "メール認証",
+      "verified": "認証済み",
+      "notVerified": "未認証"
+    },
+    "password": {
+      "title": "パスワード変更",
+      "current": "現在のパスワード",
+      "currentPlaceholder": "現在のパスワードを入力してください",
+      "new": "新しいパスワード",
+      "newPlaceholder": "新しいパスワードを入力してください（6文字以上）",
+      "confirm": "新しいパスワードの確認",
+      "confirmPlaceholder": "新しいパスワードを再入力してください",
+      "submit": "パスワードを変更",
+      "submitting": "変更中..."
+    },
+    "phone": {
+      "title": "電話番号登録",
+      "placeholder": "電話番号を入力してください",
+      "bind": "登録",
+      "change": "変更",
+      "verified": "認証済み"
+    },
+    "embed": {
+      "title": "埋め込みコード",
+      "description": "以下のコードをウェブサイトにコピーして、TomyBotチャットウィンドウを埋め込んでください",
+      "copyCode": "コードをコピー",
+      "copied": "コピーしました",
+      "copyFailed": "コピーに失敗しました"
+    },
+    "shortcuts": {
+      "title": "クイックアクセス",
+      "billing": "請求明細",
+      "orders": "注文履歴"
+    },
+    "alerts": {
+      "saveSuccess": "保存しました",
+      "saveFailed": "保存に失敗しました",
+      "passwordChangeSuccess": "パスワードを変更しました",
+      "passwordChangeFailed": "パスワードの変更に失敗しました",
+      "passwordMismatch": "パスワードが一致しません",
+      "passwordTooShort": "パスワードは6文字以上で入力してください",
+      "phoneBindSuccess": "電話番号を登録しました",
+      "phoneBindFailed": "電話番号の登録に失敗しました",
+      "phoneInvalid": "正しい電話番号を入力してください"
+    }
+  },
+  "chat": {
+    "welcome": {
+      "title": "TomyBotへようこそ",
+      "description": "私はAIアシスタントです。何かお手伝いできることはございますか？"
+    },
+    "input": {
+      "placeholder": "質問を入力してください..."
+    },
+    "newConversation": "新しい会話",
+    "noConversations": "会話履歴がありません",
+    "options": {
+      "deepThinking": "深い思考",
+      "webSearch": "ウェブ検索"
+    },
+    "date": {
+      "today": "今日",
+      "yesterday": "昨日"
+    },
+    "errors": {
+      "noAnswer": "申し訳ございません、現在この質問にお答えできません",
+      "serviceUnavailable": "サービスは一時的にご利用いただけません。後でもう一度お試しください"
+    }
+  },
+  "knowledgeBase": {
+    "heading": "ナレッジベース",
+    "description": "ナレッジベースのドキュメントを管理",
+    "newDocument": "新規ドキュメント",
+    "uploadFile": "ファイルをアップロード",
+    "noDescription": "説明なし",
+    "empty": {
+      "title": "ナレッジベースが空です",
+      "description": "ドキュメントをアップロードしてナレッジベースの構築を始めましょう",
+      "uploadFirst": "最初のドキュメントをアップロード"
+    },
+    "upload": {
+      "title": "ドキュメントをアップロード",
+      "selectFile": "ファイルを選択",
+      "dragOrClick": "ファイルをドラッグ＆ドロップするか、クリックして選択",
+      "supportedFormats": "対応形式：PDF、Word、TXT、Markdown"
+    },
+    "alerts": {
+      "deleteFailed": "削除に失敗しました"
+    }
+  },
+  "embed": {
+    "title": "TomyBotアシスタント",
+    "status": {
+      "online": "オンライン"
+    },
+    "input": {
+      "placeholder": "質問を入力してください..."
+    },
+    "welcome": {
+      "greeting": "こんにちは！",
+      "help": "私はTomyBotアシスタントです。何かお手伝いできることはございますか？"
+    },
+    "error": "サービスは一時的にご利用いただけません。後でもう一度お試しください"
+  },
+  "privacy": {
+    "title": "プライバシーポリシー - TomyBot",
+    "heading": "プライバシーポリシー",
+    "lastUpdated": "最終更新日：2026年1月1日",
+    "content": {
+      "company": "SAYCO Information Technology (Shanghai) Co., Ltd.",
+      "intro": "お客様のプライバシーを大切にしております。本プライバシーポリシーは、お客様の個人情報をどのように収集、使用、保存、保護するかを説明します。",
+      "sections": {
+        "collection": {
+          "title": "情報の収集",
+          "account": {
+            "title": "アカウント情報",
+            "description": "登録時に収集する情報",
+            "items": {
+              "name": "氏名",
+              "email": "メールアドレス",
+              "password": "パスワード（暗号化済み）",
+              "phone": "電話番号（任意）"
+            }
+          },
+          "chat": {
+            "title": "会話情報",
+            "description": "サービス利用時に収集する情報",
+            "items": {
+              "conversations": "会話履歴",
+              "memory": "ユーザー記憶設定",
+              "knowledge": "ナレッジベースドキュメント"
+            }
+          },
+          "transaction": {
+            "title": "取引情報",
+            "description": "購入時に収集する情報",
+            "items": {
+              "orders": "注文履歴",
+              "payment": "支払い情報"
+            }
+          }
+        },
+        "usage": {
+          "title": "情報の利用"
+        },
+        "sharing": {
+          "title": "情報の共有",
+          "share": {
+            "title": "共有の状況",
+            "description": "お客様の個人情報を第三者に販売することはありません。以下の場合にのみ共有いたします：",
+            "items": {
+              "0": "お客様の明示的な同意がある場合",
+              "1": "法律で義務付けられている場合",
+              "2": "当社の法的権利を保護するため"
+            }
+          },
+          "disclosure": {
+            "title": "情報の開示",
+            "description": "お客様の明示的な同意がある場合、または法律で義務付けられている場合を除き、お客様の個人情報を公開することはありません。"
+          },
+          "transfer": {
+            "title": "情報の移転",
+            "description": "合併、買収、または資産売却が発生した場合、お客様に通知し、プライバシーを保護し続けます。"
+          }
+        },
+        "security": {
+          "title": "情報のセキュリティ",
+          "description": "業界標準のセキュリティ対策を使用してお客様の情報を保護しています。データの暗号化やアクセス制御などが含まれます。"
+        },
+        "rights": {
+          "title": "お客様の権利",
+          "items": {
+            "access": "個人情報へのアクセス",
+            "correct": "不正確な情報の訂正",
+            "delete": "個人情報の削除",
+            "export": "データのエクスポート",
+            "withdraw": "同意の撤回"
+          }
+        },
+        "cookie": {
+          "title": "Cookieポリシー",
+          "description": "お客様の体験を向上させるためにCookieを使用しています。ブラウザの設定でCookieを管理できます。"
+        },
+        "minors": {
+          "title": "未成年者の保護",
+          "description": "当社のサービスは13歳未満の児童を対象としていません。児童の情報を誤って収集したことが判明した場合、速やかに削除いたします。"
+        },
+        "updates": {
+          "title": "ポリシーの更新",
+          "description": "本プライバシーポリシーを随時更新する場合があります。重要な変更はメールまたはウェブサイトでお知らせします。"
+        },
+        "contact": {
+          "title": "お問い合わせ",
+          "description": "プライバシーに関するご質問は、お問い合わせページよりご連絡ください。"
+        }
+      }
+    }
+  },
+  "terms": {
+    "title": "利用規約 - TomyBot",
+    "heading": "利用規約",
+    "lastUpdated": "最終更新日：2026年1月1日",
+    "content": {
+      "company": "SAYCO Information Technology (Shanghai) Co., Ltd.",
+      "intro": "TomyBotサービスへようこそ。本サービスをご利用いただくことで、以下の規約に同意したものとみなされます。",
+      "acceptance": "本サービスをご利用いただくことで、本利用規約に拘束されることに同意したものとみなされます。本規約に同意されない場合は、本サービスをご利用いただけません。",
+      "sections": {
+        "service": {
+          "title": "サービスの説明",
+          "description": {
+            "title": "サービス内容",
+            "intro": "TomyBotはAIチャット、ナレッジベース管理、スマートカスタマーサービスなどのサービスを提供しています。"
+          },
+          "changes": {
+            "title": "サービスの変更",
+            "description": "当社は予告なく、いつでもサービスの一部または全部を変更、一時停止、終了する権利を留保します。"
+          }
+        },
+        "account": {
+          "title": "アカウント管理",
+          "registration": {
+            "title": "アカウント登録"
+          },
+          "security": {
+            "title": "アカウントセキュリティ"
+          }
+        },
+        "billing": {
+          "title": "有料サービス",
+          "method": {
+            "title": "支払い方法"
+          },
+          "validity": {
+            "title": "サービス有効期限"
+          },
+          "description": {
+            "title": "課金説明",
+            "intro": "サービスはトークンベースで課金されます。具体的な価格は購入ページに表示されます。"
+          }
+        },
+        "conduct": {
+          "title": "利用規範",
+          "prohibited": {
+            "title": "禁止事項",
+            "description": "違法行為、他人の権利侵害、有害情報の拡散などの目的で本サービスを利用することは禁止されています。"
+          },
+          "responsibility": {
+            "title": "ユーザーの責任",
+            "description": "お客様は本サービスのご利用時の行動に責任を負い、関連する法律や規制を遵守する必要があります。"
+          }
+        },
+        "intellectualProperty": {
+          "title": "知的財産権",
+          "ours": {
+            "title": "当社の権利",
+            "description": "本サービスのすべてのコンテンツ、技術、商標、その他の知的財産権は当社に帰属します。"
+          },
+          "yours": {
+            "title": "お客様の権利",
+            "description": "お客様がアップロードしたコンテンツはお客様に帰属しますが、使用、保存、処理するライセンスを当社に付与していただきます。"
+          }
+        },
+        "disclaimer": {
+          "title": "免責事項",
+          "aiOutput": {
+            "title": "AI出力の免責",
+            "description": "AIが生成したコンテンツは参考用であり、専門的なアドバイスを構成するものではありません。正確性については保証いたしかねます。"
+          },
+          "interruption": {
+            "title": "サービスの中断",
+            "description": "不可抗力、システムメンテナンス、その他の理由によるサービスの中断について、当社は責任を負いません。"
+          }
+        },
+        "termination": {
+          "title": "サービスの終了",
+          "user": {
+            "title": "ユーザーによる終了",
+            "description": "お客様はいつでもアカウントを削除し、サービスの利用を停止できます。"
+          },
+          "us": {
+            "title": "当社による終了",
+            "description": "お客様が本規約に違反した場合、当社はアカウントの一時停止または終了の権利を留保します。"
+          }
+        },
+        "refund": {
+          "title": "返金ポリシー"
+        },
+        "modifications": {
+          "title": "規約の変更",
+          "description": "当社はいつでも本規約を変更する権利を留保します。重要な変更は事前に通知いたします。"
+        },
+        "disputes": {
+          "title": "紛争解決",
+          "description": "本規約に起因する紛争は、友好的な協議により解決するものとします。協議が不調に終わった場合、法的手段による解決が可能です。"
+        },
+        "contact": {
+          "title": "お問い合わせ",
+          "description": "ご質問は、お問い合わせページよりご連絡ください。"
+        },
+        "other": {
+          "title": "その他の条項"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,578 @@
+{
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "contact": "Contact",
+    "cart": "Cart",
+    "knowledgeBase": "Knowledge Base",
+    "chat": "Start Chat",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "account": "Account",
+    "billing": "Billing",
+    "orders": "Orders",
+    "embedSDK": "Embed SDK"
+  },
+  "footer": {
+    "description": "TomyBot AI Assistant - Smarter customer service, more efficient service",
+    "product": "Product",
+    "features": "Features",
+    "cases": "Cases",
+    "support": "Support",
+    "helpCenter": "Help Center",
+    "apiDocs": "API Docs",
+    "copyright": "2026 SAYCO Information Technology. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "common": {
+    "edit": "Edit",
+    "loading": "Loading...",
+    "view": "View"
+  },
+  "close": "Close",
+  "saved": "Saved",
+  "uploaded": "Uploaded",
+  "home": {
+    "title": "TomyBot - AI Assistant",
+    "description": "TomyBot AI Assistant - Smarter customer service, more efficient service",
+    "banner": "Official website coming soon",
+    "hero": {
+      "title": "TomyBot",
+      "subtitle": "AI Assistant",
+      "description": "Smarter customer service, more efficient service",
+      "cta": "Try Now",
+      "contact": "Contact Us"
+    },
+    "stats": {
+      "hours": "24/7",
+      "response": "Instant Response",
+      "security": "Secure & Reliable"
+    },
+    "features": {
+      "title": "Core Features",
+      "subtitle": "Comprehensive AI services for you",
+      "items": {
+        "chat": {
+          "title": "Smart Chat",
+          "description": "Natural and fluent conversations powered by advanced AI models"
+        },
+        "knowledge": {
+          "title": "Knowledge Base",
+          "description": "Upload documents to build your专属 knowledge base"
+        },
+        "memory": {
+          "title": "Smart Memory",
+          "description": "Remember user preferences and conversation history for personalized service"
+        },
+        "search": {
+          "title": "Web Search",
+          "description": "Real-time internet information for accurate and comprehensive answers"
+        },
+        "embed": {
+          "title": "Embed Integration",
+          "description": "Easily embed into your website for quick customer service deployment"
+        },
+        "analytics": {
+          "title": "Data Analytics",
+          "description": "Complete conversation data analysis to support business decisions"
+        }
+      }
+    },
+    "highlights": {
+      "title": "Feature Highlights",
+      "subtitle": "Powerful AI capabilities to empower your business",
+      "webSearch": {
+        "title": "Web Search",
+        "description": "Real-time internet information retrieval",
+        "features": {
+          "0": "Real-time information access",
+          "1": "Multi-source data integration",
+          "2": "Intelligent information filtering"
+        }
+      },
+      "knowledge": {
+        "title": "Knowledge Base Management",
+        "description": "Build your exclusive knowledge base",
+        "features": {
+          "0": "Multi-format document support",
+          "1": "Intelligent semantic search",
+          "2": "Automatic update sync"
+        }
+      },
+      "memory": {
+        "title": "Smart Memory",
+        "description": "Personalized user experience",
+        "features": {
+          "0": "User preference memory",
+          "1": "Context understanding",
+          "2": "Smart recommendations"
+        }
+      },
+      "embed": {
+        "title": "Embed Integration",
+        "description": "One-click embed to your website",
+        "features": {
+          "0": "Simple code embedding",
+          "1": "Custom styling",
+          "2": "Cross-platform support"
+        }
+      }
+    },
+    "contact": {
+      "title": "Contact Us",
+      "subtitle": "Feel free to contact us anytime",
+      "description": "Questions or partnership? Contact us anytime",
+      "onlineMessage": "Online Message"
+    }
+  },
+  "services": {
+    "title": "Services - TomyBot",
+    "heading": "Purchase Services",
+    "description": "Choose the package that suits you",
+    "popular": "Popular",
+    "tokens": "tokens",
+    "permanent": "Permanent",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to Cart",
+    "info": {
+      "title": "Purchase Info",
+      "whatIsToken": {
+        "title": "What is Token",
+        "description": "Token is the billing unit for AI services. Each conversation consumes a certain number of tokens. The number of tokens determines how many times and for how long you can use the AI service."
+      },
+      "howToCalculate": {
+        "title": "How Consumption is Calculated",
+        "description": "Token consumption is related to conversation length. Generally, 1000 Chinese characters equal approximately 1500 tokens. The system displays your token balance and consumption in real-time."
+      },
+      "validityRules": {
+        "title": "Validity Rules",
+        "description": "Purchased tokens can be used anytime within the validity period. Unused tokens will expire after the validity period. Permanent packages have no time limit."
+      },
+      "refundPolicy": {
+        "title": "Refund Policy",
+        "description": "Purchased token packages support a 7-day no-questions-asked refund (if unused). Please contact customer service for any issues."
+      }
+    },
+    "alerts": {
+      "addedToCart": "Added to cart",
+      "addFailed": "Failed to add",
+      "loginRequired": "Please login first",
+      "purchaseSuccess": "Purchase successful",
+      "purchaseFailed": "Purchase failed",
+      "pendingItemsAdded": "Previous items added to cart"
+    }
+  },
+  "contact": {
+    "title": "Contact - TomyBot",
+    "heading": "Contact Us",
+    "description": "Feel free to contact us anytime",
+    "info": {
+      "company": "Company",
+      "companyName": "SAYCO Information Technology (Shanghai) Co., Ltd.",
+      "email": "Email"
+    }
+  },
+  "contactPage": {
+    "title": "Contact - TomyBot",
+    "heading": "Contact Us",
+    "description": "Feel free to contact us anytime",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Enter your name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "phone": "Phone",
+      "phonePlaceholder": "Enter your phone number",
+      "company": "Company",
+      "companyPlaceholder": "Enter your company name",
+      "subject": "Subject",
+      "subjectPlaceholder": "Enter the subject",
+      "message": "Message",
+      "messagePlaceholder": "Enter your message",
+      "submit": "Submit",
+      "submitting": "Submitting...",
+      "error": {
+        "incomplete": "Please fill in all required fields",
+        "failed": "Submission failed, please try again later"
+      }
+    },
+    "info": {
+      "company": "Company",
+      "companyName": "SAYCO Information Technology (Shanghai) Co., Ltd.",
+      "email": "Email",
+      "workingHours": "Working Hours",
+      "workingHoursValue": "Monday to Friday 9:00-18:00"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Login - TomyBot",
+      "heading": "Login",
+      "description": "Welcome back",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Login",
+      "submitting": "Logging in...",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Register now",
+      "error": {
+        "incomplete": "Please enter email and password",
+        "failed": "Login failed, please check your email and password",
+        "retry": "Login failed, please try again"
+      }
+    },
+    "register": {
+      "title": "Register - TomyBot",
+      "heading": "Register",
+      "description": "Create your account",
+      "name": "Name",
+      "namePlaceholder": "Enter your name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter password (at least 6 characters)",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Enter password again",
+      "submit": "Register",
+      "submitting": "Registering...",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Login now",
+      "error": {
+        "incomplete": "Please fill in all required fields",
+        "passwordLength": "Password must be at least 6 characters",
+        "passwordMismatch": "Passwords do not match",
+        "failed": "Registration failed, this email may already be registered",
+        "retry": "Registration failed, please try again"
+      }
+    }
+  },
+  "account": {
+    "title": "Account Center - TomyBot",
+    "heading": "Account Center",
+    "tokenBalance": "Token Balance",
+    "recharge": "Recharge",
+    "basicInfo": {
+      "title": "Basic Info",
+      "name": "Name",
+      "namePlaceholder": "Enter your name",
+      "email": "Email",
+      "company": "Company",
+      "companyPlaceholder": "Enter company name",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "overview": {
+      "title": "Account Overview",
+      "status": "Account Status",
+      "statusNormal": "Normal",
+      "registeredAt": "Registered At",
+      "emailVerified": "Email Verified",
+      "verified": "Verified",
+      "notVerified": "Not Verified"
+    },
+    "password": {
+      "title": "Change Password",
+      "current": "Current Password",
+      "currentPlaceholder": "Enter current password",
+      "new": "New Password",
+      "newPlaceholder": "Enter new password (at least 6 characters)",
+      "confirm": "Confirm New Password",
+      "confirmPlaceholder": "Enter new password again",
+      "submit": "Change Password",
+      "submitting": "Changing..."
+    },
+    "phone": {
+      "title": "Phone Binding",
+      "placeholder": "Enter phone number",
+      "bind": "Bind",
+      "change": "Change",
+      "verified": "Verified"
+    },
+    "embed": {
+      "title": "Embed Code",
+      "description": "Copy the code below to your website to embed the TomyBot chat window",
+      "copyCode": "Copy Code",
+      "copied": "Copied",
+      "copyFailed": "Copy Failed"
+    },
+    "shortcuts": {
+      "title": "Quick Access",
+      "billing": "Billing",
+      "orders": "Orders"
+    },
+    "alerts": {
+      "saveSuccess": "Saved successfully",
+      "saveFailed": "Save failed",
+      "passwordChangeSuccess": "Password changed successfully",
+      "passwordChangeFailed": "Password change failed",
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "phoneBindSuccess": "Phone bound successfully",
+      "phoneBindFailed": "Phone binding failed",
+      "phoneInvalid": "Please enter a valid phone number"
+    }
+  },
+  "chat": {
+    "welcome": {
+      "title": "Welcome to TomyBot",
+      "description": "I'm your AI assistant. How can I help you today?"
+    },
+    "input": {
+      "placeholder": "Type your question..."
+    },
+    "newConversation": "New Conversation",
+    "noConversations": "No conversations yet",
+    "options": {
+      "deepThinking": "Deep Thinking",
+      "webSearch": "Web Search"
+    },
+    "date": {
+      "today": "Today",
+      "yesterday": "Yesterday"
+    },
+    "errors": {
+      "noAnswer": "Sorry, I cannot answer this question at the moment",
+      "serviceUnavailable": "Service temporarily unavailable, please try again later"
+    }
+  },
+  "knowledgeBase": {
+    "heading": "Knowledge Base",
+    "description": "Manage your knowledge base documents",
+    "newDocument": "New Document",
+    "uploadFile": "Upload File",
+    "noDescription": "No description",
+    "empty": {
+      "title": "Knowledge Base is Empty",
+      "description": "Upload documents to start building your knowledge base",
+      "uploadFirst": "Upload your first document"
+    },
+    "upload": {
+      "title": "Upload Document",
+      "selectFile": "Select File",
+      "dragOrClick": "Drag and drop files here, or click to select",
+      "supportedFormats": "Supported formats: PDF, Word, TXT, Markdown"
+    },
+    "alerts": {
+      "deleteFailed": "Delete failed"
+    }
+  },
+  "embed": {
+    "title": "TomyBot Assistant",
+    "status": {
+      "online": "Online"
+    },
+    "input": {
+      "placeholder": "Type your question..."
+    },
+    "welcome": {
+      "greeting": "Hello!",
+      "help": "I'm TomyBot assistant. How can I help you today?"
+    },
+    "error": "Service temporarily unavailable, please try again later"
+  },
+  "privacy": {
+    "title": "Privacy Policy - TomyBot",
+    "heading": "Privacy Policy",
+    "lastUpdated": "Last Updated: January 1, 2026",
+    "content": {
+      "company": "SAYCO Information Technology (Shanghai) Co., Ltd.",
+      "intro": "We value your privacy. This Privacy Policy explains how we collect, use, store, and protect your personal information.",
+      "sections": {
+        "collection": {
+          "title": "Information Collection",
+          "account": {
+            "title": "Account Information",
+            "description": "Information collected during registration",
+            "items": {
+              "name": "Name",
+              "email": "Email address",
+              "password": "Password (encrypted)",
+              "phone": "Phone number (optional)"
+            }
+          },
+          "chat": {
+            "title": "Conversation Information",
+            "description": "Information collected during service use",
+            "items": {
+              "conversations": "Conversation history",
+              "memory": "User memory settings",
+              "knowledge": "Knowledge base documents"
+            }
+          },
+          "transaction": {
+            "title": "Transaction Information",
+            "description": "Information collected during purchases",
+            "items": {
+              "orders": "Order records",
+              "payment": "Payment information"
+            }
+          }
+        },
+        "usage": {
+          "title": "Information Usage"
+        },
+        "sharing": {
+          "title": "Information Sharing",
+          "share": {
+            "title": "Sharing Circumstances",
+            "description": "We do not sell your personal information to third parties. We only share in the following circumstances:",
+            "items": {
+              "0": "With your explicit consent",
+              "1": "As required by law",
+              "2": "To protect our legal rights"
+            }
+          },
+          "disclosure": {
+            "title": "Information Disclosure",
+            "description": "We do not publicly disclose your personal information unless you explicitly consent or as required by law."
+          },
+          "transfer": {
+            "title": "Information Transfer",
+            "description": "In the event of a merger, acquisition, or asset sale, we will notify you and continue to protect your privacy."
+          }
+        },
+        "security": {
+          "title": "Information Security",
+          "description": "We use industry-standard security measures to protect your information, including data encryption and access control."
+        },
+        "rights": {
+          "title": "Your Rights",
+          "items": {
+            "access": "Access your personal information",
+            "correct": "Correct inaccurate information",
+            "delete": "Delete your personal information",
+            "export": "Export your data",
+            "withdraw": "Withdraw consent"
+          }
+        },
+        "cookie": {
+          "title": "Cookie Policy",
+          "description": "We use cookies to improve your experience. You can manage cookies in your browser settings."
+        },
+        "minors": {
+          "title": "Protection of Minors",
+          "description": "Our service is not intended for children under 13. If we discover we have collected information from a child, we will delete it promptly."
+        },
+        "updates": {
+          "title": "Policy Updates",
+          "description": "We may update this Privacy Policy from time to time. Significant changes will be notified via email or website."
+        },
+        "contact": {
+          "title": "Contact Us",
+          "description": "For privacy-related questions, please contact us through the Contact page."
+        }
+      }
+    }
+  },
+  "terms": {
+    "title": "Terms of Service - TomyBot",
+    "heading": "Terms of Service",
+    "lastUpdated": "Last Updated: January 1, 2026",
+    "content": {
+      "company": "SAYCO Information Technology (Shanghai) Co., Ltd.",
+      "intro": "Welcome to TomyBot services. By using this service, you agree to the following terms.",
+      "acceptance": "By using this service, you agree to be bound by these Terms of Service. If you do not agree with these terms, please do not use this service.",
+      "sections": {
+        "service": {
+          "title": "Service Description",
+          "description": {
+            "title": "Service Content",
+            "intro": "TomyBot provides AI chat, knowledge base management, intelligent customer service, and other services."
+          },
+          "changes": {
+            "title": "Service Changes",
+            "description": "We reserve the right to modify, suspend, or terminate any part or all of the service at any time without notice."
+          }
+        },
+        "account": {
+          "title": "Account Management",
+          "registration": {
+            "title": "Account Registration"
+          },
+          "security": {
+            "title": "Account Security"
+          }
+        },
+        "billing": {
+          "title": "Paid Services",
+          "method": {
+            "title": "Payment Methods"
+          },
+          "validity": {
+            "title": "Service Validity"
+          },
+          "description": {
+            "title": "Billing Description",
+            "intro": "Services are billed based on tokens. Specific prices are shown on the purchase page."
+          }
+        },
+        "conduct": {
+          "title": "Usage Guidelines",
+          "prohibited": {
+            "title": "Prohibited Activities",
+            "description": "It is prohibited to use this service for illegal activities, infringing on others' rights, or spreading harmful information."
+          },
+          "responsibility": {
+            "title": "User Responsibility",
+            "description": "You are responsible for your actions when using this service and should comply with relevant laws and regulations."
+          }
+        },
+        "intellectualProperty": {
+          "title": "Intellectual Property",
+          "ours": {
+            "title": "Our Rights",
+            "description": "All content, technology, trademarks, and other intellectual property of this service belong to us."
+          },
+          "yours": {
+            "title": "Your Rights",
+            "description": "Content you upload remains yours, but you grant us a license to use, store, and process it."
+          }
+        },
+        "disclaimer": {
+          "title": "Disclaimer",
+          "aiOutput": {
+            "title": "AI Output Disclaimer",
+            "description": "AI-generated content is for reference only and does not constitute professional advice. We make no guarantees about its accuracy."
+          },
+          "interruption": {
+            "title": "Service Interruption",
+            "description": "We are not liable for service interruptions due to force majeure, system maintenance, or other reasons."
+          }
+        },
+        "termination": {
+          "title": "Service Termination",
+          "user": {
+            "title": "User Termination",
+            "description": "You may cancel your account and stop using the service at any time."
+          },
+          "us": {
+            "title": "Our Termination",
+            "description": "If you violate these terms, we reserve the right to suspend or terminate your account."
+          }
+        },
+        "refund": {
+          "title": "Refund Policy"
+        },
+        "modifications": {
+          "title": "Terms Modifications",
+          "description": "We reserve the right to modify these terms at any time. Significant changes will be notified in advance."
+        },
+        "disputes": {
+          "title": "Dispute Resolution",
+          "description": "Disputes arising from these terms should be resolved through friendly negotiation. If negotiation fails, legal channels may be pursued."
+        },
+        "contact": {
+          "title": "Contact Us",
+          "description": "For questions, please contact us through the Contact page."
+        },
+        "other": {
+          "title": "Other Terms"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tomybot-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NUXT_HOST=0.0.0.0
+      - NUXT_PORT=3000
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-7d}
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=tomybot
+      - DB_USER=tomybot
+      - DB_PASSWORD=${DB_PASSWORD:-tomybot-password}
+      - QWEN_API_KEY=${QWEN_API_KEY}
+      - QWEN_MODEL=${QWEN_MODEL:-qwen-plus}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - CONTACT_EMAIL=${CONTACT_EMAIL:-info@sayco.com.cn}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tomybot-network
+
+  db:
+    image: mysql:8.0
+    container_name: tomybot-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root-password}
+      - MYSQL_DATABASE=tomybot
+      - MYSQL_USER=tomybot
+      - MYSQL_PASSWORD=${DB_PASSWORD:-tomybot-password}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tomybot-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: tomybot-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - tomybot-network
+
+networks:
+  tomybot-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
