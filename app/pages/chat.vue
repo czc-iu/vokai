@@ -1,117 +1,101 @@
 <template>
   <div class="chat-page h-[calc(100vh-4rem)] flex bg-gradient-to-br from-purple-50/30 via-white to-indigo-50/20">
-    <aside class="hidden md:flex w-72 bg-white/80 backdrop-blur-sm border-r border-purple-100/50 flex-col shadow-sm">
-      <div class="p-5">
+    <aside class="hidden md:flex w-56 lg:w-64 bg-white/80 backdrop-blur-sm border-r border-purple-100/50 flex-col shadow-sm">
+      <div class="p-2 lg:p-3">
         <button
           @click="newConversation"
-          class="w-full btn-primary text-sm py-3 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20"
+          class="w-full btn-primary text-xs lg:text-sm py-2 lg:py-2.5 flex items-center justify-center gap-1.5 shadow-lg shadow-purple-500/20"
         >
-          <Icon name="heroicons:plus" class="w-5 h-5" />
+          <Icon name="heroicons:plus" class="w-3.5 h-3.5 lg:w-4 lg:h-4" />
           <span class="font-medium">新建对话</span>
         </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto px-3">
-        <div v-if="conversations.length === 0" class="text-center py-12 px-4">
-          <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
-            <Icon name="heroicons:chat-bubble-left-right" class="w-8 h-8 text-purple-500" />
+      <div class="flex-1 overflow-y-auto px-1.5 lg:px-2">
+        <div v-if="conversations.length === 0" class="text-center py-6 lg:py-8 px-2">
+          <div class="w-10 h-10 lg:w-12 lg:h-12 mx-auto mb-2 lg:mb-3 rounded-lg lg:rounded-xl bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
+            <Icon name="heroicons:chat-bubble-left-right" class="w-5 h-5 lg:w-6 lg:h-6 text-purple-500" />
           </div>
-          <p class="text-sm text-gray-500 leading-relaxed">
-            开始您的第一次对话<br>探索AI的无限可能
+          <p class="text-[10px] lg:text-xs text-gray-500 leading-relaxed">
+            开始您的第一次对话
           </p>
         </div>
 
-        <div v-else class="space-y-1.5">
+        <div v-else class="space-y-0.5">
           <div
             v-for="conv in conversations"
             :key="conv.id"
             @click="loadConversation(conv.id)"
-            class="conversation-item group cursor-pointer p-3.5 rounded-xl transition-all duration-200"
+            class="conversation-item group cursor-pointer p-1.5 lg:p-2 rounded-md lg:rounded-lg transition-all duration-200"
             :class="{ 
-              'bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200/50 shadow-sm': currentConversationId === conv.id,
+              'bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200/50': currentConversationId === conv.id,
               'hover:bg-purple-50/50': currentConversationId !== conv.id
             }"
           >
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
-                <Icon name="heroicons:chat-bubble-left" class="w-4 h-4 text-purple-600" />
+            <div class="flex items-center gap-1.5 lg:gap-2">
+              <div class="w-5 h-5 lg:w-6 lg:h-6 rounded bg-purple-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <Icon name="heroicons:chat-bubble-left" class="w-2.5 h-2.5 lg:w-3 lg:h-3 text-purple-600" />
               </div>
               <div class="flex-1 min-w-0">
-                <div class="text-sm font-medium text-gray-800 truncate">{{ conv.title }}</div>
-                <div class="text-xs text-gray-400 mt-1">{{ formatDate(conv.updated_at) }}</div>
+                <div class="text-[10px] lg:text-xs font-medium text-gray-800 truncate leading-tight">{{ conv.title }}</div>
+                <div class="text-[9px] lg:text-[10px] text-gray-400 mt-0.5">{{ formatDate(conv.updated_at) }}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="p-5 border-t border-purple-100/50 bg-gradient-to-br from-purple-50/50 to-indigo-50/30">
-        <div class="bg-white rounded-xl p-4 shadow-sm border border-purple-100/50">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center">
-                <Icon name="heroicons:beaker" class="w-4 h-4 text-white" />
+      <div class="p-2 lg:p-3 border-t border-purple-100/50 bg-gradient-to-br from-purple-50/50 to-indigo-50/30">
+        <div class="bg-white rounded-lg p-2 lg:p-2.5 shadow-sm border border-purple-100/50">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-1">
+              <div class="w-5 h-5 lg:w-6 lg:h-6 rounded bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center">
+                <Icon name="heroicons:beaker" class="w-2.5 h-2.5 lg:w-3 lg:h-3 text-white" />
               </div>
-              <span class="text-sm font-medium text-gray-700">Token 余额</span>
+              <span class="text-[10px] lg:text-xs font-medium text-gray-700">Token</span>
             </div>
             <NuxtLink 
               to="/services" 
-              class="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 transition-colors"
+              class="text-[9px] lg:text-[10px] text-purple-600 hover:text-purple-700 flex items-center gap-0.5"
             >
-              <Icon name="heroicons:plus-circle" class="w-4 h-4" />
+              <Icon name="heroicons:plus-circle" class="w-2.5 h-2.5 lg:w-3 lg:h-3" />
               充值
             </NuxtLink>
           </div>
           
-          <div class="flex items-baseline gap-1.5 mb-3">
-            <span class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+          <div class="flex items-center gap-1 mb-1">
+            <span class="text-sm lg:text-base font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
               {{ formatNumber(tokenBalance) }}
             </span>
-            <span class="text-sm text-gray-400">/ {{ formatNumber(totalTokens) }}</span>
+            <span class="text-[9px] lg:text-[10px] text-gray-400">/ {{ formatNumber(totalTokens) }}</span>
           </div>
           
-          <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-1 bg-gray-100 rounded-full overflow-hidden">
             <div 
               class="h-full transition-all duration-500 ease-out rounded-full"
               :class="tokenBalance <= 1000 ? 'bg-gradient-to-r from-red-500 to-orange-500' : 'bg-gradient-to-r from-purple-500 to-indigo-500'"
               :style="{ width: `${tokenPercentage}%` }"
             ></div>
           </div>
-          
-          <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
-            <span>已使用 {{ formatNumber(totalTokens - tokenBalance) }}</span>
-            <span>{{ tokenPercentage.toFixed(1) }}%</span>
-          </div>
 
-          <div v-if="tokenBalance <= 1000 && tokenBalance > 0" class="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-            <div class="flex items-start gap-2">
-              <Icon name="heroicons:exclamation-triangle" class="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
-              <div class="flex-1">
-                <p class="text-xs text-orange-800 font-medium">余额不足提醒</p>
-                <p class="text-xs text-orange-700 mt-1">
-                  当前余额仅剩 {{ formatNumber(tokenBalance) }} tokens，建议尽快充值
-                </p>
-              </div>
+          <div v-if="tokenBalance <= 1000 && tokenBalance > 0" class="mt-1.5 p-1.5 bg-orange-50 border border-orange-200 rounded">
+            <div class="flex items-center gap-1">
+              <Icon name="heroicons:exclamation-triangle" class="w-2.5 h-2.5 text-orange-600 flex-shrink-0" />
+              <p class="text-[9px] text-orange-700">余额不足，建议充值</p>
             </div>
           </div>
 
-          <div v-if="tokenBalance <= 0" class="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <div class="flex items-start gap-2">
-              <Icon name="heroicons:x-circle" class="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
-              <div class="flex-1">
-                <p class="text-xs text-red-800 font-medium">余额已耗尽</p>
-                <p class="text-xs text-red-700 mt-1">
-                  请充值后继续使用
-                </p>
-                <NuxtLink 
-                  to="/services" 
-                  class="inline-flex items-center gap-1 mt-2 px-3 py-1.5 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  <Icon name="heroicons:credit-card" class="w-3.5 h-3.5" />
-                  立即充值
-                </NuxtLink>
-              </div>
+          <div v-if="tokenBalance <= 0" class="mt-1.5 p-1.5 bg-red-50 border border-red-200 rounded">
+            <div class="flex items-center gap-1">
+              <Icon name="heroicons:x-circle" class="w-2.5 h-2.5 text-red-600 flex-shrink-0" />
+              <p class="text-[9px] text-red-700">余额耗尽</p>
             </div>
+            <NuxtLink 
+              to="/services" 
+              class="inline-flex items-center gap-0.5 mt-1 px-1.5 py-0.5 bg-red-600 text-white text-[9px] rounded hover:bg-red-700"
+            >
+              充值
+            </NuxtLink>
           </div>
         </div>
       </div>
@@ -120,31 +104,31 @@
     <div class="flex-1 flex flex-col h-full">
       <div 
         ref="messagesContainer" 
-        class="flex-1 overflow-y-auto px-4 md:px-8 py-6 scroll-smooth"
+        class="flex-1 overflow-y-auto px-2 md:px-8 py-3 md:py-6 scroll-smooth"
         @scroll="handleScroll"
       >
         <div v-if="messages.length === 0" class="h-full flex items-center justify-center">
-          <div class="text-center max-w-lg">
-            <div class="relative inline-block mb-8">
-              <div class="absolute inset-0 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-3xl blur-2xl opacity-30 animate-pulse-slow"></div>
-              <div class="relative w-24 h-24 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-purple-500/30">
-                <Icon name="heroicons:sparkles" class="w-12 h-12 text-white" />
+          <div class="text-center max-w-lg px-4">
+            <div class="relative inline-block mb-4 md:mb-8">
+              <div class="absolute inset-0 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-xl md:rounded-3xl blur-2xl opacity-30 animate-pulse-slow"></div>
+              <div class="relative w-12 h-12 md:w-24 md:h-24 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-xl md:rounded-3xl flex items-center justify-center shadow-2xl shadow-purple-500/30">
+                <Icon name="heroicons:sparkles" class="w-6 h-6 md:w-12 md:h-12 text-white" />
               </div>
             </div>
             
-            <h2 class="text-3xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
+            <h2 class="text-lg md:text-3xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2 md:mb-4">
               {{ $t('chat.welcome.title') }}
             </h2>
-            <p class="text-gray-600 text-lg leading-relaxed mb-8">
+            <p class="text-gray-600 text-sm md:text-lg leading-relaxed mb-4 md:mb-8">
               {{ $t('chat.welcome.description') }}
             </p>
             
-            <div class="flex flex-wrap gap-3 justify-center">
+            <div class="flex flex-wrap gap-1.5 md:gap-3 justify-center">
               <button
                 v-for="suggestion in suggestions"
                 :key="suggestion"
                 @click="inputMessage = suggestion"
-                class="px-4 py-2.5 bg-white border border-purple-200 rounded-xl text-sm text-gray-700 hover:border-purple-400 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+                class="px-2.5 md:px-4 py-1.5 md:py-2.5 bg-white border border-purple-200 rounded-lg md:rounded-xl text-[10px] md:text-sm text-gray-700 hover:border-purple-400 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
               >
                 {{ suggestion }}
               </button>
@@ -152,7 +136,7 @@
           </div>
         </div>
 
-        <div v-else class="max-w-4xl mx-auto space-y-6 pb-40">
+        <div v-else class="max-w-4xl mx-auto space-y-2 md:space-y-6 pb-20 md:pb-40">
           <TransitionGroup name="message">
             <ChatMessage
               v-for="msg in messages"
@@ -175,47 +159,47 @@
             :reasoning-content="streamingReasoning"
           />
 
-          <div v-else-if="isLoading" class="flex items-start gap-4 animate-fade-in">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/20 flex-shrink-0">
-              <Icon name="heroicons:sparkles" class="w-5 h-5 text-white animate-pulse" />
+          <div v-else-if="isLoading" class="flex items-start gap-2 md:gap-4 animate-fade-in">
+            <div class="w-6 h-6 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/20 flex-shrink-0">
+              <Icon name="heroicons:sparkles" class="w-3 h-3 md:w-5 md:h-5 text-white animate-pulse" />
             </div>
-            <div class="flex-1 bg-white rounded-2xl border border-purple-100 shadow-sm p-5">
-              <div class="flex gap-2">
-                <span class="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0ms;"></span>
-                <span class="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 150ms;"></span>
-                <span class="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 300ms;"></span>
+            <div class="flex-1 bg-white rounded-lg md:rounded-2xl border border-purple-100 shadow-sm p-3 md:p-5">
+              <div class="flex gap-1.5 md:gap-2">
+                <span class="w-1.5 h-1.5 md:w-2.5 md:h-2.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0ms;"></span>
+                <span class="w-1.5 h-1.5 md:w-2.5 md:h-2.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 150ms;"></span>
+                <span class="w-1.5 h-1.5 md:w-2.5 md:h-2.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 300ms;"></span>
               </div>
-              <p class="text-sm text-gray-400 mt-3">AI 正在思考中...</p>
+              <p class="text-[10px] md:text-sm text-gray-400 mt-1.5 md:mt-3">AI 正在思考中...</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="fixed bottom-0 left-0 md:left-72 right-0 bg-gradient-to-t from-white via-white to-transparent pt-6 pb-4 px-4 md:px-8 z-10">
+      <div class="fixed bottom-0 left-0 md:left-56 lg:left-64 right-0 bg-gradient-to-t from-white via-white to-transparent pt-1.5 md:pt-6 pb-2 md:pb-4 px-2 md:px-8 z-10">
         <form @submit.prevent="sendMessage" class="max-w-4xl mx-auto">
-          <div class="bg-white rounded-2xl shadow-xl shadow-purple-500/10 border border-purple-100 overflow-hidden">
-            <div class="flex items-center gap-2 p-3 bg-gradient-to-r from-purple-50/50 to-indigo-50/50 border-b border-purple-100/50">
+          <div class="bg-white rounded-lg md:rounded-2xl shadow-md md:shadow-xl shadow-purple-500/10 border border-purple-100 overflow-hidden">
+            <div class="flex items-center gap-1 md:gap-2 p-1.5 md:p-3 bg-gradient-to-r from-purple-50/50 to-indigo-50/50 border-b border-purple-100/50">
               <button
                 type="button"
                 @click="enableSearch = !enableSearch"
-                class="feature-button"
+                class="feature-button text-[9px] md:text-xs px-1.5 md:px-3 py-0.5 md:py-1.5"
                 :class="{ 'active': enableSearch }"
               >
-                <Icon name="heroicons:globe-alt" class="w-4 h-4" />
-                <span>联网搜索</span>
+                <Icon name="heroicons:globe-alt" class="w-2.5 h-2.5 md:w-4 md:h-4" />
+                <span class="hidden sm:inline">联网</span>
               </button>
               <button
                 type="button"
                 @click="enableThinking = !enableThinking"
-                class="feature-button"
+                class="feature-button text-[9px] md:text-xs px-1.5 md:px-3 py-0.5 md:py-1.5"
                 :class="{ 'active': enableThinking }"
               >
-                <Icon name="heroicons:light-bulb" class="w-4 h-4" />
-                <span>深度思考</span>
+                <Icon name="heroicons:light-bulb" class="w-2.5 h-2.5 md:w-4 md:h-4" />
+                <span class="hidden sm:inline">思考</span>
               </button>
             </div>
 
-            <div class="flex items-end gap-3 p-4">
+            <div class="flex items-end gap-1.5 md:gap-3 p-2 md:p-4">
               <div class="flex-1 relative">
                 <textarea
                   v-model="inputMessage"
@@ -223,26 +207,22 @@
                   @input="autoResize"
                   ref="textareaRef"
                   rows="1"
-                  class="w-full px-4 py-3 text-gray-800 placeholder-gray-400 resize-none focus:outline-none text-base leading-relaxed"
-                  :placeholder="$t('chat.input.placeholder')"
+                  class="w-full px-2 md:px-4 py-1.5 md:py-3 text-xs md:text-base text-gray-800 placeholder-gray-400 resize-none focus:outline-none leading-relaxed"
+                  :placeholder="`${$t('chat.input.placeholder')}（按 Enter 发送 · Shift + Enter 换行）`"
                   :disabled="isLoading"
-                  style="max-height: 200px;"
+                  style="max-height: 40px;"
                 ></textarea>
               </div>
               
               <button
                 type="submit"
                 :disabled="!inputMessage.trim() || isLoading"
-                class="send-button"
+                class="send-button w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl"
                 :class="{ 'active': inputMessage.trim() && !isLoading }"
               >
-                <Icon name="heroicons:paper-airplane" class="w-5 h-5" />
+                <Icon name="heroicons:paper-airplane" class="w-3.5 h-3.5 md:w-5 md:h-5" />
               </button>
             </div>
-          </div>
-          
-          <div class="text-center mt-3 text-xs text-gray-400">
-            按 Enter 发送 · Shift + Enter 换行
           </div>
         </form>
       </div>
@@ -634,7 +614,7 @@ const formatDate = (dateStr: string) => {
 }
 
 .feature-button {
-  @apply flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg transition-all duration-200
+  @apply flex items-center gap-1 md:gap-1.5 px-1.5 md:px-3 py-0.5 md:py-1.5 text-[9px] md:text-xs rounded md:rounded-lg transition-all duration-200
          bg-white border border-purple-200 text-gray-600
          hover:border-purple-400 hover:text-purple-600;
 }
@@ -645,7 +625,7 @@ const formatDate = (dateStr: string) => {
 }
 
 .send-button {
-  @apply w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200
+  @apply w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center transition-all duration-200
          bg-gray-100 text-gray-400;
 }
 

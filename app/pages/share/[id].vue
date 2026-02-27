@@ -1,17 +1,6 @@
 <template>
   <div class="min-h-screen bg-cream flex flex-col">
-    <header class="bg-white border-b border-sakura">
-      <div class="max-w-4xl mx-auto px-4 py-4">
-        <div class="flex items-center justify-between">
-          <NuxtLink to="/" class="text-xl font-bold text-charcoal">TomyBot</NuxtLink>
-          <NuxtLink to="/login" class="text-sm text-indigo hover:text-charcoal transition-colors">
-            开始使用
-          </NuxtLink>
-        </div>
-      </div>
-    </header>
-
-    <main class="flex-1 flex items-start justify-center p-8">
+    <main class="flex-1 flex items-start justify-center p-4 md:p-8">
       <div v-if="loading" class="text-center">
         <div class="w-12 h-12 border-4 border-sakura border-t-indigo rounded-full animate-spin mx-auto mb-4"></div>
         <p class="text-stone">加载中...</p>
@@ -64,18 +53,16 @@
         </div>
       </div>
     </main>
-
-    <footer class="bg-white border-t border-sakura py-4">
-      <div class="max-w-4xl mx-auto px-4 text-center text-xs text-stone">
-        © 2026 赛熠可信息技术（上海）有限公司 版权所有
-      </div>
-    </footer>
   </div>
 </template>
 
 <script setup lang="ts">
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
+
+definePageMeta({
+  layout: 'blank'
+})
 
 const route = useRoute()
 const shareId = route.params.id as string

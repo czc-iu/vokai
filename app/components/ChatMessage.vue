@@ -7,80 +7,78 @@
       v-if="!isUser"
       class="avatar assistant flex-shrink-0"
     >
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
-        <Icon name="heroicons:sparkles" class="w-5 h-5 text-white" />
+      <div class="w-6 h-6 md:w-10 md:h-10 rounded md:rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
+        <Icon name="heroicons:sparkles" class="w-3 h-3 md:w-5 md:h-5 text-white" />
       </div>
     </div>
 
     <div class="message-wrapper flex-1" :class="{ 'flex flex-col items-end': isUser }">
       <div class="message-bubble" :class="bubbleClass">
-        <div v-if="reasoningContent" class="reasoning-block mb-4">
+        <div v-if="reasoningContent" class="reasoning-block mb-2 md:mb-4">
           <button
             @click="showReasoning = !showReasoning"
-            class="flex items-center gap-2 text-xs font-medium text-purple-600 hover:text-purple-700 transition-colors mb-3 px-3 py-1.5 rounded-lg hover:bg-purple-50"
+            class="flex items-center gap-1 md:gap-2 text-[9px] md:text-xs font-medium text-purple-600 hover:text-purple-700 transition-colors mb-1.5 md:mb-3 px-1.5 md:px-3 py-0.5 md:py-1.5 rounded hover:bg-purple-50"
           >
             <Icon
               :name="showReasoning ? 'heroicons:chevron-down' : 'heroicons:chevron-right'"
-              class="w-4 h-4 transition-transform"
+              class="w-2.5 h-2.5 md:w-4 md:h-4 transition-transform"
               :class="{ 'rotate-0': showReasoning, '-rotate-90': !showReasoning }"
             />
-            <span>思考过程</span>
+            <span>思考</span>
           </button>
           <Transition name="expand">
-            <div v-if="showReasoning" class="reasoning-content text-sm text-gray-600 leading-relaxed">
+            <div v-if="showReasoning" class="reasoning-content text-[10px] md:text-sm text-gray-600 leading-relaxed">
               {{ reasoningContent }}
             </div>
           </Transition>
         </div>
 
-        <div v-if="isUser" class="text-white whitespace-pre-wrap leading-relaxed">{{ content }}</div>
-        <div v-else class="prose prose-sm max-w-none" v-html="renderedContent"></div>
+        <div v-if="isUser" class="text-white whitespace-pre-wrap leading-relaxed text-xs md:text-base">{{ content }}</div>
+        <div v-else class="prose prose-sm max-w-none text-xs md:text-base" v-html="renderedContent"></div>
 
-        <div v-if="isStreaming && !isUser" class="typing-indicator mt-3">
+        <div v-if="isStreaming && !isUser" class="typing-indicator mt-1.5 md:mt-3">
           <span class="dot"></span>
           <span class="dot"></span>
           <span class="dot"></span>
         </div>
       </div>
 
-      <Transition name="fade">
-        <div v-if="!isUser && !isStreaming" class="message-actions mt-2 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <div v-if="tokens && tokens > 0" class="token-info">
-            <Icon name="heroicons:beaker" class="w-3.5 h-3.5 text-purple-500" />
-            <span v-if="inputTokens && outputTokens" class="text-xs text-gray-500">
-              输入 {{ inputTokens }} / 输出 {{ outputTokens }} (共 {{ tokens }})
-            </span>
-            <span v-else class="text-xs text-gray-500">{{ tokens }} tokens</span>
-          </div>
-          
-          <button
-            @click="copyToClipboard"
-            class="action-button"
-            :class="{ 'copied': copied }"
-            title="复制内容"
-          >
-            <Icon :name="copied ? 'heroicons:check' : 'heroicons:clipboard-document'" class="w-3.5 h-3.5" />
-            <span>{{ copied ? '已复制' : '复制' }}</span>
-          </button>
-
-          <button
-            @click="shareMessage"
-            class="action-button"
-            title="分享回答"
-          >
-            <Icon name="heroicons:share" class="w-3.5 h-3.5" />
-            <span>分享</span>
-          </button>
+      <div v-if="!isUser && !isStreaming" class="message-actions mt-1 md:mt-2 flex items-center gap-1.5 md:gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div v-if="tokens && tokens > 0" class="token-info">
+          <Icon name="heroicons:beaker" class="w-2.5 h-2.5 md:w-3.5 md:h-3.5 text-purple-500" />
+          <span v-if="inputTokens && outputTokens" class="text-[9px] md:text-xs text-gray-500">
+            {{ tokens }}
+          </span>
+          <span v-else class="text-[9px] md:text-xs text-gray-500">{{ tokens }}</span>
         </div>
-      </Transition>
+        
+        <button
+          @click="copyToClipboard"
+          class="action-button"
+          :class="{ 'copied': copied }"
+          title="复制内容"
+        >
+          <Icon :name="copied ? 'heroicons:check' : 'heroicons:clipboard-document'" class="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
+          <span class="hidden sm:inline">{{ copied ? '已复制' : '复制' }}</span>
+        </button>
+
+        <button
+          @click="shareMessage"
+          class="action-button"
+          title="分享回答"
+        >
+          <Icon name="heroicons:share" class="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
+          <span class="hidden sm:inline">分享</span>
+        </button>
+      </div>
     </div>
 
     <div
       v-if="isUser"
       class="avatar user flex-shrink-0"
     >
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center shadow-lg">
-        <Icon name="heroicons:user" class="w-5 h-5 text-white" />
+      <div class="w-6 h-6 md:w-10 md:h-10 rounded md:rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center shadow-lg">
+        <Icon name="heroicons:user" class="w-3 h-3 md:w-5 md:h-5 text-white" />
       </div>
     </div>
   </div>
@@ -170,7 +168,7 @@ const shareMessage = async () => {
 
 <style scoped>
 .chat-message {
-  @apply flex items-start gap-4;
+  @apply flex items-start gap-1.5 md:gap-4;
 }
 
 .avatar {
@@ -182,34 +180,49 @@ const shareMessage = async () => {
 }
 
 .user-bubble {
-  @apply bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-2xl rounded-tr-md px-5 py-3.5 max-w-[85%] shadow-lg shadow-purple-500/20;
+  @apply bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-lg md:rounded-2xl rounded-tr-sm px-2.5 md:px-5 py-1.5 md:py-3.5 max-w-[85%] md:max-w-[85%] shadow-lg shadow-purple-500/20;
 }
 
 .assistant-bubble {
-  @apply bg-white border border-purple-100 rounded-2xl rounded-tl-md px-5 py-3.5 max-w-[85%] shadow-sm;
+  @apply bg-white border border-purple-100 rounded-lg md:rounded-2xl rounded-tl-sm px-2.5 md:px-5 py-1.5 md:py-3.5 w-[calc(100%-2rem)] md:w-auto md:max-w-[85%] shadow-sm;
 }
 
 .reasoning-block {
-  padding: 12px 16px;
+  padding: 6px 8px;
   background: linear-gradient(to right, rgba(139, 92, 246, 0.05), rgba(99, 102, 241, 0.05));
-  border-radius: 12px;
-  border-left: 3px solid #8B5CF6;
+  border-radius: 6px;
+  border-left: 2px solid #8B5CF6;
+}
+
+@media (min-width: 768px) {
+  .reasoning-block {
+    padding: 12px 16px;
+    border-radius: 12px;
+    border-left-width: 3px;
+  }
 }
 
 .reasoning-content {
   white-space: pre-wrap;
   word-break: break-word;
-  padding: 8px 12px;
+  padding: 4px 6px;
   background: rgba(139, 92, 246, 0.03);
-  border-radius: 8px;
+  border-radius: 4px;
+}
+
+@media (min-width: 768px) {
+  .reasoning-content {
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
 }
 
 .token-info {
-  @apply flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 rounded-lg;
+  @apply flex items-center gap-0.5 md:gap-1.5 px-1.5 md:px-3 py-0.5 md:py-1.5 bg-purple-50 rounded md:rounded-lg;
 }
 
 .action-button {
-  @apply flex items-center gap-1 px-3 py-1.5 text-xs text-gray-500 rounded-lg transition-all duration-200
+  @apply flex items-center gap-0.5 md:gap-1 px-1.5 md:px-3 py-0.5 md:py-1.5 text-[9px] md:text-xs text-gray-500 rounded md:rounded-lg transition-all duration-200
          hover:bg-purple-50 hover:text-purple-600;
 }
 
@@ -219,16 +232,30 @@ const shareMessage = async () => {
 
 .typing-indicator {
   display: flex;
-  gap: 6px;
-  padding: 4px 0;
+  gap: 4px;
+  padding: 2px 0;
+}
+
+@media (min-width: 768px) {
+  .typing-indicator {
+    gap: 6px;
+    padding: 4px 0;
+  }
 }
 
 .typing-indicator .dot {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   background: linear-gradient(135deg, #8B5CF6, #6366F1);
   border-radius: 50%;
   animation: bounce 1.4s infinite ease-in-out both;
+}
+
+@media (min-width: 768px) {
+  .typing-indicator .dot {
+    width: 6px;
+    height: 6px;
+  }
 }
 
 .typing-indicator .dot:nth-child(1) {
@@ -298,7 +325,7 @@ const shareMessage = async () => {
 }
 
 .prose :deep(p) {
-  @apply mb-3 leading-relaxed;
+  @apply mb-1.5 md:mb-3 leading-relaxed;
 }
 
 .prose :deep(p:last-child) {
@@ -306,47 +333,47 @@ const shareMessage = async () => {
 }
 
 .prose :deep(code) {
-  @apply bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded text-sm;
+  @apply bg-purple-50 text-purple-700 px-1 py-0.5 rounded text-[10px] md:text-sm;
 }
 
 .prose :deep(pre) {
-  @apply bg-gray-900 text-gray-100 p-4 rounded-xl overflow-x-auto my-4;
+  @apply bg-gray-900 text-gray-100 p-2 md:p-4 rounded-lg md:rounded-xl overflow-x-auto my-2 md:my-4;
 }
 
 .prose :deep(pre code) {
-  @apply bg-transparent p-0 text-sm;
+  @apply bg-transparent p-0 text-[10px] md:text-sm;
 }
 
 .prose :deep(ul),
 .prose :deep(ol) {
-  @apply my-3 pl-6;
+  @apply my-1.5 md:my-3 pl-4 md:pl-6;
 }
 
 .prose :deep(li) {
-  @apply mb-2;
+  @apply mb-1 md:mb-2;
 }
 
 .prose :deep(h1),
 .prose :deep(h2),
 .prose :deep(h3),
 .prose :deep(h4) {
-  @apply font-semibold text-gray-900 mb-3 mt-6 first:mt-0;
+  @apply font-semibold text-gray-900 mb-1.5 md:mb-3 mt-3 md:mt-6 first:mt-0;
 }
 
 .prose :deep(h1) {
-  @apply text-xl;
+  @apply text-base md:text-xl;
 }
 
 .prose :deep(h2) {
-  @apply text-lg;
+  @apply text-sm md:text-lg;
 }
 
 .prose :deep(h3) {
-  @apply text-base;
+  @apply text-xs md:text-base;
 }
 
 .prose :deep(blockquote) {
-  @apply border-l-4 border-purple-500 pl-4 my-4 italic text-gray-600;
+  @apply border-l-2 md:border-l-4 border-purple-500 pl-2 md:pl-4 my-2 md:my-4 italic text-gray-600;
 }
 
 .prose :deep(a) {
@@ -354,12 +381,12 @@ const shareMessage = async () => {
 }
 
 .prose :deep(table) {
-  @apply w-full border-collapse my-4;
+  @apply w-full border-collapse my-2 md:my-4 text-[10px] md:text-sm;
 }
 
 .prose :deep(th),
 .prose :deep(td) {
-  @apply border border-purple-200 px-3 py-2 text-left;
+  @apply border border-purple-200 px-1.5 md:px-3 py-1 md:py-2 text-left;
 }
 
 .prose :deep(th) {
