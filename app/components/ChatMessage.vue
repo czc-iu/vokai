@@ -112,11 +112,11 @@ const bubbleClass = computed(() => ({
   'assistant-bubble': !isUser.value
 }))
 
-const md = new MarkdownIt({
+const md: MarkdownIt = new MarkdownIt({
   html: false,
   linkify: true,
   typographer: true,
-  highlight: (str: string, lang: string) => {
+  highlight: (str: string, lang: string): string => {
     if (lang && hljs.getLanguage(lang)) {
       try {
         return `<pre class="hljs"><code>${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`
@@ -156,7 +156,7 @@ const shareMessage = async () => {
       }
     })
     
-    if (response.success) {
+    if (response.success && response.data) {
       const shareUrl = `${window.location.origin}/share/${response.data.shareId}`
       await navigator.clipboard.writeText(shareUrl)
       alert('分享链接已复制到剪贴板！')

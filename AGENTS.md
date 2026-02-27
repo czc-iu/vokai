@@ -23,13 +23,16 @@ npm run preview
 ### Database Setup
 ```bash
 # Initialize MySQL database
-mysql -u root -p < database/init.sql
+mysql -u root -p < deploy/database/init.sql
+
+# Set admin role (optional)
+mysql -u root -p < deploy/database/set-admin.sql
 ```
 
 ### Docker Deployment
 ```bash
 # Build and start all services
-docker-compose up -d
+cd deploy/docker && docker-compose up -d
 
 # View logs
 docker-compose logs -f
@@ -65,11 +68,17 @@ Tomybot/
 ├── app/                          # Nuxt application
 │   ├── assets/css/               # Global styles (main.css)
 │   ├── components/               # Vue components
-│   │   └── ChatMessage.vue       # Chat message with Markdown rendering
+│   │   ├── ChatMessage.vue       # Chat message with Markdown rendering
+│   │   ├── LanguageSwitcher.vue  # Language switcher
+│   │   ├── Notification.vue      # Toast notifications
+│   │   ├── EditModal.vue         # Edit modal
+│   │   ├── UploadModal.vue       # File upload modal
+│   │   └── ViewModal.vue         # View modal
 │   ├── composables/              # Vue composables
 │   │   └── useAuth.ts            # Auth state management
 │   ├── layouts/                  # Layout components
-│   │   └── default.vue           # Main layout with nav/footer
+│   │   ├── default.vue           # Main layout with nav/footer
+│   │   └── admin.vue             # Admin layout with sidebar
 │   ├── middleware/               # Route middleware
 │   │   └── auth.ts               # Auth guard (requireAuth)
 │   ├── pages/                    # Page components
@@ -78,6 +87,23 @@ Tomybot/
 │   │   ├── register.vue          # Registration page
 │   │   ├── chat.vue              # AI chat interface (streaming + markdown)
 │   │   ├── contact.vue           # Contact form
+│   │   ├── services.vue          # Service packages
+│   │   ├── cart.vue              # Shopping cart
+│   │   ├── checkout.vue          # Checkout page
+│   │   ├── billing.vue           # Billing management
+│   │   ├── account.vue           # User account
+│   │   ├── orders/               # Order pages
+│   │   ├── knowledge-base/       # Knowledge base management
+│   │   ├── admin/                # Admin pages
+│   │   │   ├── index.vue         # Admin dashboard
+│   │   │   ├── rag.vue           # RAG management
+│   │   │   ├── mcp.vue           # MCP management
+│   │   │   ├── skills.vue        # Skills management
+│   │   │   └── commands.vue      # Command whitelist
+│   │   ├── embed.vue             # Embedded chat
+│   │   ├── share/[id].vue        # Shared conversation
+│   │   ├── privacy.vue           # Privacy policy
+│   │   ├── terms.vue             # Terms of service
 │   │   └── coming-soon.vue       # Placeholder page
 │   ├── __tests__/                # App tests
 │   │   └── useAuth.test.ts       # Auth composable tests
@@ -101,6 +127,45 @@ Tomybot/
 │   │   │   ├── index.get.ts
 │   │   │   ├── index.post.ts
 │   │   │   └── [key].delete.ts
+│   │   ├── services/             # Service packages
+│   │   │   ├── index.get.ts
+│   │   │   └── [id].get.ts
+│   │   ├── cart/                 # Shopping cart
+│   │   │   ├── index.get.ts
+│   │   │   ├── index.post.ts
+│   │   │   ├── [id].put.ts
+│   │   │   └── [id].delete.ts
+│   │   ├── orders/               # Order management
+│   │   │   ├── index.get.ts
+│   │   │   ├── index.post.ts
+│   │   │   ├── [id].get.ts
+│   │   │   ├── checkout.post.ts
+│   │   │   ├── [id]/pay.post.ts
+│   │   │   └── [id]/cancel.post.ts
+│   │   ├── billing/              # Billing system
+│   │   │   ├── balance.get.ts
+│   │   │   ├── stats.get.ts
+│   │   │   └── transactions.get.ts
+│   │   ├── points/               # Points system
+│   │   │   ├── info.get.ts
+│   │   │   └── redeem.post.ts
+│   │   ├── account/              # Account management
+│   │   │   ├── index.get.ts
+│   │   │   ├── index.put.ts
+│   │   │   ├── password.put.ts
+│   │   │   └── phone.put.ts
+│   │   ├── knowledge-base/       # User knowledge base
+│   │   │   ├── index.get.ts
+│   │   │   ├── index.post.ts
+│   │   │   ├── [id].get.ts
+│   │   │   ├── [id].put.ts
+│   │   │   └── [id].delete.ts
+│   │   ├── embed/                # Embedded chat
+│   │   │   ├── config.get.ts
+│   │   │   └── chat.post.ts
+│   │   ├── share/                # Share functionality
+│   │   │   ├── index.post.ts
+│   │   │   └── [id].get.ts
 │   │   └── admin/                # Admin management endpoints
 │   │       ├── rag/              # RAG document management
 │   │       │   ├── index.get.ts
@@ -113,22 +178,32 @@ Tomybot/
 │   │       │   ├── index.get.ts
 │   │       │   ├── scan.post.ts
 │   │       │   └── [id].delete.ts
-│   │       └── commands/         # Command whitelist management
+│   │       ├── commands/         # Command whitelist management
+│   │       │   ├── index.get.ts
+│   │       │   ├── index.post.ts
+│   │       │   └── [id].delete.ts
+│   │       └── admins/           # Admin management
 │   │           ├── index.get.ts
-│   │           ├── index.post.ts
-│   │           └── [id].delete.ts
+│   │           └── index.post.ts
 │   ├── middleware/               # Server middleware
 │   │   └── auth.ts               # JWT verification
 │   ├── utils/                    # Server utilities
 │   │   ├── ai.ts                 # Qwen API (OpenAI-compatible format)
 │   │   ├── auth.ts               # JWT + bcrypt utilities
+│   │   ├── adminAuth.ts          # Admin role verification
 │   │   ├── constants.ts          # Error messages, HTTP codes
 │   │   ├── db.ts                 # MySQL operations
+│   │   ├── billing.ts            # Billing utilities
+│   │   ├── orders.ts             # Order utilities
+│   │   ├── services.ts           # Service package utilities
 │   │   ├── embedding.ts          # Text embeddings (DashScope)
 │   │   ├── executor.ts           # Command execution with whitelist
 │   │   ├── mcp.ts                # MCP service integration
 │   │   ├── memory.ts             # User memory management
 │   │   ├── rag.ts                # RAG vector search (Vectra)
+│   │   ├── userRag.ts            # User RAG management
+│   │   ├── membership.ts         # Membership management
+│   │   ├── tokenCalculator.ts    # Token calculation
 │   │   ├── response.ts           # API response helpers
 │   │   ├── skills.ts             # Skills system management
 │   │   └── validation.ts         # Zod schemas
@@ -142,19 +217,38 @@ Tomybot/
 │       ├── api.chat.test.ts
 │       └── api.contact.test.ts
 │
-├── database/                     # Database scripts
-│   └── init.sql                  # MySQL initialization (10 tables)
+├── deploy/                       # Deployment configuration
+│   ├── docker/                   # Docker configuration
+│   │   ├── Dockerfile            # Docker image config
+│   │   └── docker-compose.yml    # Docker Compose config
+│   ├── nginx/                    # Nginx configuration
+│   │   └── nginx.conf            # Nginx reverse proxy config
+│   └── database/                 # Database scripts
+│       ├── init.sql              # MySQL initialization (16 tables)
+│       ├── set-admin.sql         # Set admin role
+│       ├── add_embed_configs.sql
+│       ├── add_member_points.sql
+│       ├── add_user_knowledge_base.sql
+│       └── init_tokens.sql
 │
 ├── docs/                         # RAG document storage
 ├── skills/                       # Custom skills directory
+│   ├── xlsx/                     # Excel processing (official)
+│   ├── pdf/                      # PDF processing (official)
+│   ├── docx/                     # Word processing (official)
+│   ├── pptx/                     # PPT processing (official)
+│   ├── faq-handler/              # FAQ handler
+│   ├── order-tracking/           # Order tracking
+│   ├── product-recommendation/   # Product recommendation
+│   ├── appointment-booking/      # Appointment booking
+│   ├── complaint-handling/       # Complaint handling
+│   └── return-refund/            # Return and refund
 ├── .vectra/                      # Vectra vector index storage
 │
 ├── nuxt.config.ts                # Nuxt configuration
 ├── tailwind.config.ts            # TailwindCSS configuration
-├── docker-compose.yml            # Docker Compose config
-├── Dockerfile                    # Docker image config
-├── nginx.conf                    # Nginx reverse proxy config
 ├── vitest.config.ts              # Vitest test config
+├── requirements.txt              # Python dependencies
 ├── package.json                  # Dependencies
 ├── .env.example                  # Environment template
 ├── README.md                     # Project documentation
@@ -166,59 +260,131 @@ Tomybot/
 ## API Endpoints
 
 ### Authentication
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /api/auth/register | User registration |
-| POST | /api/auth/login | User login |
-| GET | /api/auth/me | Get current user |
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | /api/auth/register | User registration | No |
+| POST | /api/auth/login | User login | No |
+| GET | /api/auth/me | Get current user | Yes |
 
 ### Chat
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /api/chat | Send message to AI (standard) |
-| POST | /api/chat/stream | Send message to AI (SSE streaming) |
-| POST | /api/chat/execute | Execute whitelisted command |
-| GET | /api/chat/conversations | Get user conversations |
-| GET | /api/chat/conversations/:id | Get conversation messages |
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | /api/chat | Send message to AI (standard) | Yes |
+| POST | /api/chat/stream | Send message to AI (SSE streaming) | Yes |
+| POST | /api/chat/execute | Execute whitelisted command | Yes |
+| GET | /api/chat/conversations | Get user conversations | Yes |
+| GET | /api/chat/conversations/:id | Get conversation messages | Yes |
 
 ### Memory
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/memory | Get user memories |
-| POST | /api/memory | Create/update memory |
-| DELETE | /api/memory/:key | Delete memory |
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/memory | Get user memories | Yes |
+| POST | /api/memory | Create/update memory | Yes |
+| DELETE | /api/memory/:key | Delete memory | Yes |
 
-### Admin - RAG
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/admin/rag | Get index status and documents |
-| POST | /api/admin/rag | Index documents |
+### Services
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/services | Get service list | No |
+| GET | /api/services/:id | Get service details | No |
 
-### Admin - MCP
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/admin/mcp | List MCP services |
-| POST | /api/admin/mcp | Create MCP service |
-| DELETE | /api/admin/mcp/:id | Delete MCP service |
+### Cart
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/cart | Get shopping cart | Yes |
+| POST | /api/cart | Add to cart | Yes |
+| PUT | /api/cart/:id | Update cart item | Yes |
+| DELETE | /api/cart/:id | Remove cart item | Yes |
 
-### Admin - Skills
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/admin/skills | List skills |
-| POST | /api/admin/skills/scan | Scan skills directory |
-| DELETE | /api/admin/skills/:id | Delete skill |
+### Orders
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/orders | Get order list | Yes |
+| POST | /api/orders | Create order | Yes |
+| GET | /api/orders/:id | Get order details | Yes |
+| POST | /api/orders/checkout | Checkout cart | Yes |
+| POST | /api/orders/:id/pay | Pay order | Yes |
+| POST | /api/orders/:id/cancel | Cancel order | Yes |
 
-### Admin - Commands
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/admin/commands | List whitelisted commands |
-| POST | /api/admin/commands | Add command to whitelist |
-| DELETE | /api/admin/commands/:id | Remove command |
+### Billing
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/billing/balance | Get token balance | Yes |
+| GET | /api/billing/stats | Get consumption stats | Yes |
+| GET | /api/billing/transactions | Get transaction history | Yes |
+
+### Points
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/points/info | Get points info | Yes |
+| POST | /api/points/redeem | Redeem points | Yes |
+
+### Account
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/account | Get account info | Yes |
+| PUT | /api/account | Update account info | Yes |
+| PUT | /api/account/password | Change password | Yes |
+| PUT | /api/account/phone | Bind phone | Yes |
+
+### Knowledge Base
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/knowledge-base | Get knowledge base list | Yes |
+| POST | /api/knowledge-base | Create knowledge base | Yes |
+| GET | /api/knowledge-base/:id | Get knowledge base details | Yes |
+| PUT | /api/knowledge-base/:id | Update knowledge base | Yes |
+| DELETE | /api/knowledge-base/:id | Delete knowledge base | Yes |
+
+### Embed
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/embed/config | Get embed config | No |
+| POST | /api/embed/chat | Embedded chat | No |
+
+### Share
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | /api/share | Create share | Yes |
+| GET | /api/share/:id | Get shared content | No |
 
 ### Contact
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /api/contact | Submit contact form |
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | /api/contact | Submit contact form | No |
+
+### Admin - RAG
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/admin/rag | Get index status and documents | Admin |
+| POST | /api/admin/rag | Index documents | Admin |
+
+### Admin - MCP
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/admin/mcp | List MCP services | Admin |
+| POST | /api/admin/mcp | Create MCP service | Admin |
+| DELETE | /api/admin/mcp/:id | Delete MCP service | Admin |
+
+### Admin - Skills
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/admin/skills | List skills | Admin |
+| POST | /api/admin/skills/scan | Scan skills directory | Admin |
+| DELETE | /api/admin/skills/:id | Delete skill | Admin |
+
+### Admin - Commands
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/admin/commands | List whitelisted commands | Admin |
+| POST | /api/admin/commands | Add command to whitelist | Admin |
+| DELETE | /api/admin/commands/:id | Remove command | Admin |
+
+### Admin - Admins
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/admin/admins | List admins | Admin |
+| POST | /api/admin/admins | Set admin role | Admin |
 
 ---
 
@@ -232,6 +398,7 @@ ERROR_MESSAGES = {
   AI_NOT_CONFIGURED: 'AI服务未配置',
   AI_REQUEST_FAILED: 'AI服务请求失败',
   AUTH_REQUIRED: '请先登录',
+  ADMIN_REQUIRED: '需要管理员权限',
   // ...
 }
 
@@ -240,6 +407,7 @@ HTTP_STATUS = {
   CREATED: 201,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
   // ...
 }
 ```
@@ -252,6 +420,7 @@ successResponse(data)           // Success response
 errorResponse(message)          // Error response
 throwBadRequest(message)        // Throw 400 error
 throwUnauthorized(message)      // Throw 401 error
+throwForbidden(message)         // Throw 403 error
 throwNotFound(message)          // Throw 404 error
 ```
 
@@ -264,6 +433,13 @@ comparePassword(password, hash) // Verify password
 generateToken(payload)          // Generate JWT
 verifyToken(token)              // Verify JWT
 requireAuth(event)              // Extract auth from event context
+```
+
+### adminAuth.ts
+Admin role verification.
+
+```typescript
+requireAdmin(event)             // Verify admin role, throw 403 if not admin
 ```
 
 ### db.ts
@@ -316,6 +492,16 @@ deleteDocument(uri)            // Remove from index
 getIndexStatus()               // Get index statistics
 ```
 
+### userRag.ts
+User knowledge base management.
+
+```typescript
+createKnowledgeBase(userId, data)    // Create user knowledge base
+getUserKnowledgeBases(userId)        // Get user knowledge bases
+updateKnowledgeBase(id, data)        // Update knowledge base
+deleteKnowledgeBase(id)              // Delete knowledge base
+```
+
 ### memory.ts
 User memory management.
 
@@ -365,6 +551,34 @@ executeCommand(command, timeout) // Execute command (30s timeout)
 getExecutionTools()             // Get OpenAI function format
 ```
 
+### billing.ts
+Billing and token management.
+
+```typescript
+getUserBalance(userId)          // Get user token balance
+updateBalance(userId, amount)   // Update balance
+consumeTokens(userId, amount)   // Consume tokens
+getTransactionHistory(userId)   // Get transaction history
+```
+
+### orders.ts
+Order management utilities.
+
+```typescript
+createOrder(userId, data)       // Create order
+getOrderById(id)                // Get order details
+getUserOrders(userId)           // Get user orders
+updateOrderStatus(id, status)   // Update order status
+```
+
+### services.ts
+Service package utilities.
+
+```typescript
+getAllServices()                // Get all services
+getServiceById(id)              // Get service details
+```
+
 ### validation.ts
 Zod schemas for input validation.
 
@@ -405,7 +619,7 @@ validate(schema, data) // Validate helper
 
 | Table | Description |
 |-------|-------------|
-| users | User accounts |
+| users | User accounts (with role field) |
 | conversations | Chat sessions |
 | messages | Chat messages |
 | contacts | Contact form submissions |
@@ -415,6 +629,32 @@ validate(schema, data) // Validate helper
 | skills | Skill definitions |
 | whitelisted_commands | Command whitelist |
 | system_config | System configuration |
+| services | Service packages |
+| cart_items | Shopping cart items |
+| orders | Orders |
+| order_items | Order items |
+| transactions | Transaction records |
+| user_knowledge | User knowledge bases |
+
+### ER Relations
+
+```
+users ──┬──< conversations ──< messages
+        ├──< user_sessions
+        ├──< user_memories
+        ├──< cart_items
+        ├──< orders ──< order_items
+        ├──< transactions
+        └──< user_knowledge
+
+services ──< cart_items
+services ──< order_items
+
+mcp_services (standalone)
+skills (standalone)
+whitelisted_commands (standalone)
+contacts (standalone)
+```
 
 ---
 
@@ -512,6 +752,7 @@ npm run test:coverage
 - DashScope text-embedding-v3 for embeddings
 - Markdown document indexing
 - Semantic search for context retrieval
+- User knowledge base support
 
 ### User Memory
 - Auto-extraction from conversations
@@ -528,10 +769,66 @@ npm run test:coverage
 - Auto-discovery from skills directory
 - Prompt injection for enabled skills
 
+**Official Skills (from skills.sh):**
+- xlsx - Excel file processing
+- pdf - PDF file processing
+- docx - Word document processing
+- pptx - PowerPoint processing
+
+**Custom Skills:**
+- faq-handler - FAQ auto-response
+- order-tracking - Order tracking
+- product-recommendation - Product recommendations
+- appointment-booking - Appointment booking
+- complaint-handling - Complaint handling
+- return-refund - Return and refund processing
+
 ### Command Execution
 - Whitelist-based security
 - 30-second timeout
 - stdout/stderr capture
+
+### Commercial Features
+- Service packages with different tiers
+- Shopping cart with batch checkout
+- Order management (create, pay, cancel)
+- Token-based billing
+- Points system for rewards
+
+### Multilingual Support
+- Chinese (zh-CN) - Full support
+- English (en-US) - Full support
+- Japanese (ja-JP) - Full support
+
+---
+
+## Admin Backend
+
+### Access
+```sql
+-- Set admin role
+UPDATE users SET role = 'admin' WHERE id = 1;
+```
+
+Access at: `http://localhost:3000/admin`
+
+### Features
+- Dashboard - System overview, quick actions
+- RAG Management - Document indexing
+- MCP Management - MCP services
+- Skills Management - Skills scanning and management
+- Commands Management - Command whitelist
+
+---
+
+## Service Packages
+
+| Package | Price | Tokens | Validity |
+|---------|-------|--------|----------|
+| Trial | ¥9.90/mo | 10K | 1 month |
+| Basic | ¥39.90/mo | 50K | 3 months |
+| Pro | ¥129.90/mo | 200K | 6 months |
+| Enterprise | ¥499.90/mo | 1M | Permanent |
 
 ---
 
@@ -548,3 +845,13 @@ npm run test:coverage
   ```bash
   npm install --cache=/tmp/npm-cache
   ```
+
+---
+
+## Related Documentation
+
+- [Admin Documentation](./docs/ADMIN.md)
+- [Admin Test Report](./docs/ADMIN_TEST_REPORT.md)
+- [Skills Install Report](./docs/SKILLS_INSTALL_REPORT.md)
+- [Official Skills Import Report](./docs/OFFICIAL_SKILLS_IMPORT_REPORT.md)
+- [README](./README.md)

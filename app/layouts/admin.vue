@@ -39,7 +39,7 @@
         <NuxtLink 
           to="/admin/skills" 
           class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors"
-          :class="$route.path === '/admin/sills' ? 'bg-indigo text-white' : 'text-gray-700 hover:bg-gray-100'"
+          :class="$route.path === '/admin/skills' ? 'bg-indigo text-white' : 'text-gray-700 hover:bg-gray-100'"
         >
           <Icon name="heroicons:light-bulb" class="w-5 h-5" />
           {{ $t('admin.nav.skills') }}
@@ -72,6 +72,13 @@
       <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
         <h1 class="text-xl font-medium text-charcoal">{{ pageTitle }}</h1>
         <div class="flex items-center gap-4">
+          <NuxtLink 
+            to="/chat" 
+            class="text-sm text-indigo hover:text-indigo-dark transition-colors"
+          >
+            {{ $t('nav.chat') }}
+          </NuxtLink>
+          <span class="text-gray-300">|</span>
           <span class="text-sm text-gray-600">{{ user?.email }}</span>
           <button 
             @click="handleLogout"

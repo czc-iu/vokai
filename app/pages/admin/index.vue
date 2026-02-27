@@ -1,6 +1,5 @@
 <template>
-  <NuxtLayout name="admin">
-    <div class="space-y-6">
+  <div class="space-y-6">
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="bg-white rounded-lg border border-gray-200 p-6">
@@ -120,12 +119,12 @@
         </div>
       </div>
     </div>
-  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth'
+  layout: 'admin',
+  middleware: 'admin'
 })
 
 const { t } = useI18n()
@@ -156,20 +155,20 @@ const loadStats = async () => {
       $fetch('/api/admin/commands')
     ])
 
-    if (ragRes.success) {
+    if (ragRes.success && ragRes.data) {
       stats.value.documents = ragRes.data.documents?.length || 0
       ragStatus.value = ragRes.data.isCreated ? t('admin.dashboard.indexed') : t('admin.dashboard.notIndexed')
     }
 
-    if (mcpRes.success) {
+    if (mcpRes.success && mcpRes.data) {
       stats.value.mcpServices = mcpRes.data.length
     }
 
-    if (skillsRes.success) {
-      stats.value.skills = skillsRes.data.filter((s: any) => s.is_enabled).length
+    if (skillsRes.success && skillsRes.data) {
+      stats.value.skills = skillsRes.data.filter((s: any) => s.enabled).length
     }
 
-    if (commandsRes.success) {
+    if (commandsRes.success && commandsRes.data) {
       stats.value.commands = commandsRes.data.length
     }
   } catch (error) {

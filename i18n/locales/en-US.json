@@ -12,7 +12,8 @@
     "account": "Account",
     "billing": "Billing",
     "orders": "Orders",
-    "embedSDK": "Embed SDK"
+    "embedSDK": "Embed SDK",
+    "admin": "Admin Panel"
   },
   "footer": {
     "description": "TomyBot AI Assistant - Smarter customer service, more efficient service",

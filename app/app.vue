@@ -2,6 +2,7 @@
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
+  <Notification />
 </template>
 
 <script setup lang="ts">

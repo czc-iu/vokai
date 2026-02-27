@@ -271,11 +271,11 @@ const loadAccount = async () => {
     const response = await $fetch('/api/account', {
       headers: auth.getAuthHeaders()
     })
-    if (response.success) {
+    if (response.success && response.data) {
       account.value = response.data
-      form.value.name = response.data.name || ''
-      form.value.company = response.data.company || ''
-      phoneForm.value.phone = response.data.phone || ''
+      form.value.name = response.data?.name || ''
+      form.value.company = response.data?.company || ''
+      phoneForm.value.phone = response.data?.phone || ''
     }
   } catch (error) {
     console.error('Failed to load account:', error)

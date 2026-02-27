@@ -1,6 +1,5 @@
 <template>
-  <NuxtLayout name="admin">
-    <div class="space-y-6">
+  <div class="space-y-6">
       <div class="flex justify-between items-center">
         <div>
           <h2 class="text-lg font-medium text-charcoal">{{ $t('admin.commands.commandList') }}</h2>
@@ -64,12 +63,12 @@
         </div>
       </div>
     </div>
-  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth'
+  layout: 'admin',
+  middleware: 'admin'
 })
 
 const { t } = useI18n()
@@ -98,7 +97,7 @@ onMounted(async () => {
 const loadCommands = async () => {
   try {
     const response = await $fetch('/api/admin/commands')
-    if (response.success) {
+    if (response.success && response.data) {
       commands.value = response.data
     }
   } catch (error) {

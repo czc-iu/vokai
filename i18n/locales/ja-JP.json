@@ -12,7 +12,8 @@
     "account": "アカウント設定",
     "billing": "利用明細",
     "orders": "注文",
-    "embedSDK": "埋め込みSDK"
+    "embedSDK": "埋め込みSDK",
+    "admin": "管理画面"
   },
   "footer": {
     "description": "TomyBot AIアシスタント - よりスマートなカスタマーサービス、より効率的なサービスを",

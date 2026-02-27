@@ -1,24 +1,20 @@
+import { requireAdmin, logAdminAction } from '../../utils/adminAuth'
 import { query } from '../../utils/db'
-import { successResponse, throwForbidden } from '../../utils/response'
-import { requireAuth } from '../../utils/auth'
+import { successResponse } from '../../utils/response'
 
 export default defineEventHandler(async (event) => {
-  const auth = requireAuth(event)
-  
-  // 简单的管理员检查
-  const adminEmails = ['taoliang@wangji.ltd', 'admin@example.com']
-  if (!adminEmails.includes(auth.email)) {
-    throwForbidden('无权访问')
-  }
+  const admin = await requireAdmin(event)
 
   try {
     // 1. 查找没有余额记录的用户
-    const usersWithoutBalance = await query<{
-      id: number
-      email: string
-      name: string
-      created_at: Date
-    }>(
+    const usersWithoutBalance = await query<
+      Array<{
+        id: number
+        email: string
+        name: string
+        created_at: Date
+      }>
+    >(
       `SELECT u.id, u.email, u.name, u.created_at
        FROM users u
        LEFT JOIN token_balances tb ON u.id = tb.user_id
@@ -67,14 +63,16 @@ export default defineEventHandler(async (event) => {
     }
 
     // 4. 获取所有用户的余额状态
-    const allUsers = await query<{
-      id: number
-      email: string
-      name: string
-      balance: number
-      total_purchased: number
-      total_consumed: number
-    }>(
+    const allUsers = await query<
+      Array<{
+        id: number
+        email: string
+        name: string
+        balance: number
+        total_purchased: number
+        total_consumed: number
+      }>
+    >(
       `SELECT 
           u.id,
           u.email,
@@ -85,6 +83,16 @@ export default defineEventHandler(async (event) => {
        FROM users u
        LEFT JOIN token_balances tb ON u.id = tb.user_id
        ORDER BY u.id`
+    )
+
+    // 记录操作日志
+    await logAdminAction(
+      admin.adminId,
+      'init_user_balances',
+      {
+        usersWithoutBalance: usersWithoutBalance.length,
+        totalUsers: allUsers.length
+      }
     )
 
     return successResponse({

@@ -39,6 +39,11 @@
                     <p class="text-sm font-medium text-charcoal truncate">{{ user.name || user.email }}</p>
                     <p class="text-xs text-stone truncate">{{ user.email }}</p>
                   </div>
+                  <NuxtLink to="/admin" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-indigo hover:bg-sakura/30 transition-colors">
+                    <Icon name="heroicons:cog-6-tooth" class="w-4 h-4" />
+                    {{ t('nav.admin') }}
+                  </NuxtLink>
+                  <div class="border-t border-sakura my-1"></div>
                   <NuxtLink to="/account" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
                     <Icon name="heroicons:user" class="w-4 h-4" />
                     {{ t('nav.account') }}
@@ -110,6 +115,7 @@
           </div>
           <template v-if="user">
             <div class="flex flex-col gap-2 pt-4 border-t border-sakura">
+              <NuxtLink to="/admin" class="py-2 text-indigo text-sm font-medium" @click="mobileMenuOpen = false">{{ t('nav.admin') }}</NuxtLink>
               <NuxtLink to="/billing" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.billing') }}</NuxtLink>
               <NuxtLink to="/orders" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.orders') }}</NuxtLink>
               <NuxtLink to="/cart" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.cart') }}</NuxtLink>

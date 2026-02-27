@@ -1,0 +1,51 @@
+# TomyBot Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# ============================================
+# Excel Processing (xlsx skill)
+# ============================================
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# ============================================
+# PDF Processing (pdf skill)
+# ============================================
+pypdf>=4.0.0
+pdfplumber>=0.10.0
+reportlab>=4.0.0
+
+# PDF OCR Support
+pytesseract>=0.3.10
+pdf2image>=1.16.0
+
+# ============================================
+# PowerPoint Processing (pptx skill)
+# ============================================
+markitdown[pptx]>=0.0.1
+Pillow>=10.0.0
+
+# ============================================
+# Word Document Processing (docx skill)
+# ============================================
+# Note: docx uses JavaScript (docx-js), not Python
+# pandoc is required for text extraction (install via system package manager)
+
+# ============================================
+# Optional System Dependencies
+# ============================================
+# These require system package managers:
+# 
+# Ubuntu/Debian:
+#   sudo apt-get install -y poppler-utils qpdf tesseract-ocr libreoffice
+#
+# macOS:
+#   brew install poppler qpdf tesseract libreoffice
+#
+# The poppler-utils package provides:
+#   - pdftotext: Extract text from PDFs
+#   - pdfimages: Extract images from PDFs
+#   - pdftoppm: Convert PDF to images
+#
+# qpdf: PDF manipulation (merge, split, rotate, decrypt)
+# tesseract-ocr: OCR engine for scanned PDFs
+# libreoffice: Document conversion (doc to docx, pptx to pdf)

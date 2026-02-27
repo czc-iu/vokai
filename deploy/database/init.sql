@@ -347,4 +347,43 @@ CREATE TABLE IF NOT EXISTS `shared_messages` (
   KEY `idx_shared_messages_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 管理员表
+CREATE TABLE IF NOT EXISTS `admins` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '关联用户ID',
+  `role` ENUM('super_admin', 'admin', 'moderator') DEFAULT 'admin' COMMENT '角色',
+  `permissions` JSON DEFAULT NULL COMMENT '权限列表',
+  `status` ENUM('active', 'inactive', 'suspended') DEFAULT 'active' COMMENT '状态',
+  `last_login_at` DATETIME DEFAULT NULL COMMENT '最后登录时间',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_admins_user_id` (`user_id`),
+  KEY `idx_admins_role` (`role`),
+  KEY `idx_admins_status` (`status`),
+  CONSTRAINT `fk_admins_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 插入默认管理员（需要根据实际用户ID修改）
+INSERT INTO `admins` (`user_id`, `role`, `permissions`, `status`) VALUES
+(1, 'super_admin', '["all"]', 'active');
+
+-- 管理员操作日志表
+CREATE TABLE IF NOT EXISTS `admin_logs` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `admin_id` BIGINT UNSIGNED NOT NULL COMMENT '管理员ID',
+  `action` VARCHAR(100) NOT NULL COMMENT '操作类型',
+  `resource_type` VARCHAR(50) DEFAULT NULL COMMENT '资源类型',
+  `resource_id` BIGINT UNSIGNED DEFAULT NULL COMMENT '资源ID',
+  `details` JSON DEFAULT NULL COMMENT '操作详情',
+  `ip_address` VARCHAR(45) DEFAULT NULL COMMENT 'IP地址',
+  `user_agent` VARCHAR(500) DEFAULT NULL COMMENT '用户代理',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_admin_logs_admin_id` (`admin_id`),
+  KEY `idx_admin_logs_action` (`action`),
+  KEY `idx_admin_logs_created_at` (`created_at`),
+  CONSTRAINT `fk_admin_logs_admin` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;

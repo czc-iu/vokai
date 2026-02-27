@@ -146,7 +146,7 @@ const loadCart = async () => {
     const response = await $fetch('/api/cart', {
       headers: auth.getAuthHeaders()
     })
-    if (response.success) {
+    if (response.success && response.data) {
       cart.value = response.data
     }
   } catch (error) {

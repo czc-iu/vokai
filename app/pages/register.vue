@@ -96,6 +96,7 @@ useHead({
 
 const auth = useAuth()
 const router = useRouter()
+const route = useRoute()
 
 const form = reactive({
   name: '',

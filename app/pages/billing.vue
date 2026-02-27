@@ -134,7 +134,6 @@ interface DailyStat {
 }
 
 const auth = useAuth()
-const router = useRouter()
 
 const balance = ref({
   balance: 0,
@@ -168,7 +167,7 @@ const loadBalance = async () => {
     const response = await $fetch('/api/billing/balance', {
       headers: auth.getAuthHeaders()
     })
-    if (response.success) {
+    if (response.success && response.data) {
       balance.value = response.data
     }
   } catch (error) {
@@ -189,7 +188,7 @@ const loadTransactions = async (page = 1) => {
     const response = await $fetch(`/api/billing/transactions?${params}`, {
       headers: auth.getAuthHeaders()
     })
-    if (response.success) {
+    if (response.success && response.data) {
       transactions.value = response.data.transactions
       pagination.value = response.data.pagination
     }

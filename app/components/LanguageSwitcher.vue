@@ -51,8 +51,15 @@ const dropdownRef = ref<HTMLElement | null>(null)
 
 const currentLocale = computed(() => locale.value)
 
+type LocaleCode = 'zh' | 'en' | 'ja'
+
+interface LocaleInfo {
+  code: LocaleCode
+  name: string
+}
+
 const availableLocales = computed(() => {
-  return locales.value.filter((l): l is { code: string; name: string } => 
+  return locales.value.filter((l): l is LocaleInfo => 
     typeof l === 'object' && 'code' in l && 'name' in l
   )
 })
@@ -63,7 +70,7 @@ const currentLanguageName = computed(() => {
 })
 
 const changeLanguage = async (code: string) => {
-  await setLocale(code)
+  await setLocale(code as LocaleCode)
   isOpen.value = false
 }
 

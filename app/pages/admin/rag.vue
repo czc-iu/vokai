@@ -1,6 +1,5 @@
 <template>
-  <NuxtLayout name="admin">
-    <div class="space-y-6">
+  <div class="space-y-6">
       <!-- Header Actions -->
       <div class="flex justify-between items-center">
         <div>
@@ -87,12 +86,12 @@
         </div>
       </div>
     </div>
-  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth'
+  layout: 'admin',
+  middleware: 'admin'
 })
 
 const { t } = useI18n()
@@ -126,7 +125,7 @@ onMounted(async () => {
 const loadData = async () => {
   try {
     const response = await $fetch('/api/admin/rag')
-    if (response.success) {
+    if (response.success && response.data) {
       documents.value = response.data.documents || []
       indexStatus.value = response.data
     }

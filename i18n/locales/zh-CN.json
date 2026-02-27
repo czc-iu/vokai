@@ -12,7 +12,8 @@
     "account": "账户设置",
     "billing": "消费",
     "orders": "订单",
-    "embedSDK": "嵌入式SDK"
+    "embedSDK": "嵌入式SDK",
+    "admin": "管理后台"
   },
   "footer": {
     "description": "专业的AI智能对话助手，为企业提供7×24小时智能客服解决方案",

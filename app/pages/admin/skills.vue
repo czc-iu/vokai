@@ -1,6 +1,5 @@
 <template>
-  <NuxtLayout name="admin">
-    <div class="space-y-6">
+  <div class="space-y-6">
       <div class="flex justify-between items-center">
         <div>
           <h2 class="text-lg font-medium text-charcoal">{{ $t('admin.skills.skillList') }}</h2>
@@ -26,7 +25,7 @@
               <div class="flex-1">
                 <div class="flex items-center gap-3">
                   <h3 class="text-sm font-medium text-charcoal">{{ skill.name }}</h3>
-                  <span v-if="skill.is_enabled" class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                  <span v-if="skill.enabled" class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded-full">
                     {{ $t('admin.skills.enabled') }}
                   </span>
                   <span v-else class="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
@@ -46,12 +45,12 @@
         </div>
       </div>
     </div>
-  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth'
+  layout: 'admin',
+  middleware: 'admin'
 })
 
 const { t } = useI18n()
@@ -64,7 +63,7 @@ interface Skill {
   id: number
   name: string
   path: string
-  is_enabled: boolean
+  enabled: boolean
 }
 
 const skills = ref<Skill[]>([])
@@ -77,7 +76,7 @@ onMounted(async () => {
 const loadSkills = async () => {
   try {
     const response = await $fetch('/api/admin/skills')
-    if (response.success) {
+    if (response.success && response.data) {
       skills.value = response.data
     }
   } catch (error) {

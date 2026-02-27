@@ -54,6 +54,13 @@
               </div>
               <span class="text-sm font-medium text-gray-700">Token 余额</span>
             </div>
+            <NuxtLink 
+              to="/services" 
+              class="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 transition-colors"
+            >
+              <Icon name="heroicons:plus-circle" class="w-4 h-4" />
+              充值
+            </NuxtLink>
           </div>
           
           <div class="flex items-baseline gap-1.5 mb-3">
@@ -65,7 +72,8 @@
           
           <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
             <div 
-              class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-500 ease-out rounded-full"
+              class="h-full transition-all duration-500 ease-out rounded-full"
+              :class="tokenBalance <= 1000 ? 'bg-gradient-to-r from-red-500 to-orange-500' : 'bg-gradient-to-r from-purple-500 to-indigo-500'"
               :style="{ width: `${tokenPercentage}%` }"
             ></div>
           </div>
@@ -73,6 +81,37 @@
           <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
             <span>已使用 {{ formatNumber(totalTokens - tokenBalance) }}</span>
             <span>{{ tokenPercentage.toFixed(1) }}%</span>
+          </div>
+
+          <div v-if="tokenBalance <= 1000 && tokenBalance > 0" class="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+            <div class="flex items-start gap-2">
+              <Icon name="heroicons:exclamation-triangle" class="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
+              <div class="flex-1">
+                <p class="text-xs text-orange-800 font-medium">余额不足提醒</p>
+                <p class="text-xs text-orange-700 mt-1">
+                  当前余额仅剩 {{ formatNumber(tokenBalance) }} tokens，建议尽快充值
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="tokenBalance <= 0" class="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div class="flex items-start gap-2">
+              <Icon name="heroicons:x-circle" class="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+              <div class="flex-1">
+                <p class="text-xs text-red-800 font-medium">余额已耗尽</p>
+                <p class="text-xs text-red-700 mt-1">
+                  请充值后继续使用
+                </p>
+                <NuxtLink 
+                  to="/services" 
+                  class="inline-flex items-center gap-1 mt-2 px-3 py-1.5 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  <Icon name="heroicons:credit-card" class="w-3.5 h-3.5" />
+                  立即充值
+                </NuxtLink>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -242,7 +281,7 @@ interface Conversation {
 }
 
 const auth = useAuth()
-const router = useRouter()
+const notification = useNotification()
 
 const messages = ref<Message[]>([])
 const conversations = ref<Conversation[]>([])
@@ -261,6 +300,7 @@ const lastTokens = ref(0)
 const lastInputTokens = ref(0)
 const lastOutputTokens = ref(0)
 const showScrollButton = ref(false)
+const hasShownLowBalanceWarning = ref(false)
 
 const suggestions = [
   '介绍一下你自己',
@@ -282,9 +322,26 @@ const loadTokenBalance = async () => {
     const response = await $fetch('/api/billing/balance', {
       headers: auth.getAuthHeaders()
     })
-    if (response.success) {
+    if (response.success && response.data) {
       tokenBalance.value = response.data.balance
       totalTokens.value = response.data.totalPurchased || 0
+      
+      // 余额预警
+      if (tokenBalance.value <= 1000 && tokenBalance.value > 0 && !hasShownLowBalanceWarning.value) {
+        hasShownLowBalanceWarning.value = true
+        notification.warning(
+          '余额不足提醒',
+          `当前余额仅剩 ${formatNumber(tokenBalance.value)} tokens，建议尽快充值`,
+          8000
+        )
+      } else if (tokenBalance.value <= 0 && !hasShownLowBalanceWarning.value) {
+        hasShownLowBalanceWarning.value = true
+        notification.error(
+          '余额已耗尽',
+          '请前往充值页面购买token后继续使用',
+          0 // 不自动关闭
+        )
+      }
     }
   } catch (error) {
     console.error('Failed to load token balance:', error)
@@ -310,7 +367,7 @@ const loadConversations = async () => {
     const response = await $fetch('/api/chat/conversations', {
       headers: auth.getAuthHeaders()
     })
-    if (response.success) {
+    if (response.success && response.data) {
       conversations.value = response.data
     }
   } catch (error) {
@@ -382,9 +439,18 @@ const sendMessage = async () => {
     messages.value.push({
       id: Date.now(),
       role: 'assistant',
-      content: '⚠️ 当前tokens余额不足，请充值后继续使用。',
+      content: `⚠️ **当前tokens余额不足**
+
+您的token余额已耗尽，无法继续对话。
+
+💡 **解决方案：**
+- 前往 [充值页面](/services) 购买token套餐
+- 选择适合您的套餐，即可继续使用AI助手
+
+如有疑问，请联系客服支持。`,
       created_at: new Date().toISOString()
     })
+    scrollToBottom()
     return
   }
 

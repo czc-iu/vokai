@@ -16,7 +16,7 @@ ALTER TABLE users ADD COLUMN role ENUM('user', 'admin') DEFAULT 'user' AFTER com
 
 ```bash
 # 方法1: 通过用户ID设置
-mysql -u root -p tomybot < database/set-admin.sql
+mysql -u root -p tomybot < deploy/database/set-admin.sql
 
 # 方法2: 或者直接执行 SQL
 mysql -u root -p tomybot -e "UPDATE users SET role = 'admin' WHERE id = 1;"
