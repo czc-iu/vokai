@@ -6,7 +6,20 @@
           <h1 class="text-2xl font-medium text-charcoal">{{ $t('knowledgeBase.heading') }}</h1>
           <p class="text-stone text-sm mt-1">{{ $t('knowledgeBase.description') }}</p>
         </div>
-        <div class="flex gap-3">
+        <div class="flex gap-3 items-center">
+          <div class="flex items-center gap-2 mr-4 px-3 py-1.5 bg-white rounded-lg border border-sakura">
+            <span class="text-sm text-stone">根据知识库回答</span>
+            <button
+              @click="toggleRag"
+              class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200"
+              :class="enableRag ? 'bg-matcha' : 'bg-gray-300'"
+            >
+              <span
+                class="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200"
+                :class="enableRag ? 'translate-x-6' : 'translate-x-1'"
+              />
+            </button>
+          </div>
           <button @click="showUploadModal = true" class="btn-primary">
             <Icon name="heroicons:cloud-arrow-up" class="w-5 h-5 inline mr-1" />
             {{ $t('knowledgeBase.uploadFile') }}
@@ -119,10 +132,41 @@ const showUploadModal = ref(false)
 const showEditModal = ref(false)
 const showViewModal = ref(false)
 const currentDocument = ref<Document | null>(null)
+const enableRag = ref(true)
 
 onMounted(async () => {
-  await loadDocuments()
+  await Promise.all([
+    loadDocuments(),
+    loadSettings()
+  ])
 })
+
+const loadSettings = async () => {
+  try {
+    const response = await $fetch<{ success: boolean; data: { enableRag: boolean } }>('/api/settings', {
+      headers: auth.getAuthHeaders()
+    })
+    if (response.success && response.data) {
+      enableRag.value = response.data.enableRag
+    }
+  } catch (error) {
+    console.error('Failed to load settings:', error)
+  }
+}
+
+const toggleRag = async () => {
+  const newValue = !enableRag.value
+  try {
+    await $fetch('/api/settings', {
+      method: 'PUT',
+      headers: auth.getAuthHeaders(),
+      body: { enableRag: newValue }
+    })
+    enableRag.value = newValue
+  } catch (error) {
+    console.error('Failed to update settings:', error)
+  }
+}
 
 const loadDocuments = async () => {
   loading.value = true

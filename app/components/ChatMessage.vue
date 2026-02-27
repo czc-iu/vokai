@@ -171,8 +171,71 @@ function normalizeLineBreaks(content: string): string {
   return result
 }
 
+function processNestedCodeBlocks(content: string): string {
+  const lines = content.split('\n')
+  const result: string[] = []
+  let i = 0
+  
+  while (i < lines.length) {
+    const line = lines[i]
+    
+    if (line.trim().match(/^```(?:markdown|md)$/i)) {
+      const blockLines: string[] = []
+      i++
+      
+      while (i < lines.length) {
+        const innerLine = lines[i]
+        if (innerLine.trim() === '```') {
+          i++
+          break
+        }
+        
+        if (innerLine.trim().match(/^```\w*$/)) {
+          const innerBlockLines: string[] = [innerLine]
+          const innerLang = innerLine.trim().slice(3)
+          i++
+          
+          while (i < lines.length) {
+            const nestedLine = lines[i]
+            innerBlockLines.push(nestedLine)
+            if (nestedLine.trim() === '```') {
+              i++
+              break
+            }
+            i++
+          }
+          
+          blockLines.push(`┌── 代码块: ${innerLang || 'text'} ──`)
+          innerBlockLines.slice(1, -1).forEach(l => blockLines.push(l))
+          blockLines.push('└── 代码块结束 ──')
+        } else {
+          blockLines.push(innerLine)
+          i++
+        }
+      }
+      
+      result.push('```text')
+      result.push(...blockLines)
+      result.push('```')
+    } else {
+      result.push(line)
+      i++
+    }
+  }
+  
+  return result.join('\n')
+}
+
+function flattenNestedMarkdown(content: string): string {
+  return content
+}
+
 function fixMarkdownFormat(content: string): string {
   let result = content
+  
+  result = flattenNestedMarkdown(result)
+  
+  result = processNestedCodeBlocks(result)
   
   result = result.replace(/—/g, '\n\n---\n\n')
   

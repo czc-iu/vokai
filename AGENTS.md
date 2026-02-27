@@ -191,11 +191,15 @@ Tomybot/
 │   │   ├── ai.ts                 # Qwen API (OpenAI-compatible format)
 │   │   ├── auth.ts               # JWT + bcrypt utilities
 │   │   ├── adminAuth.ts          # Admin role verification
+│   │   ├── adminOrders.ts        # Admin order utilities
+│   │   ├── adminUsers.ts         # Admin user utilities
 │   │   ├── constants.ts          # Error messages, HTTP codes
 │   │   ├── db.ts                 # MySQL operations
 │   │   ├── billing.ts            # Billing utilities
 │   │   ├── orders.ts             # Order utilities
 │   │   ├── services.ts           # Service package utilities
+│   │   ├── alipay.ts             # Alipay payment
+│   │   ├── wechat.ts             # WeChat payment
 │   │   ├── embedding.ts          # Text embeddings (DashScope)
 │   │   ├── executor.ts           # Command execution with whitelist
 │   │   ├── mcp.ts                # MCP service integration
@@ -224,11 +228,12 @@ Tomybot/
 │   ├── nginx/                    # Nginx configuration
 │   │   └── nginx.conf            # Nginx reverse proxy config
 │   └── database/                 # Database scripts
-│       ├── init.sql              # MySQL initialization (16 tables)
+│       ├── init.sql              # MySQL initialization (20 tables)
 │       ├── set-admin.sql         # Set admin role
 │       ├── add_embed_configs.sql
 │       ├── add_member_points.sql
 │       ├── add_user_knowledge_base.sql
+│       ├── add_websearch_mcp.sql
 │       └── init_tokens.sql
 │
 ├── knowledge/                    # RAG knowledge base storage
@@ -353,6 +358,17 @@ Tomybot/
 |--------|----------|-------------|------|
 | POST | /api/contact | Submit contact form | No |
 
+### Payments
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/bank-info | Get bank transfer info | No |
+| POST | /api/payments/alipay | Create Alipay payment | Yes |
+| POST | /api/payments/wechat | Create WeChat payment | Yes |
+| GET | /api/payments/status/:paymentNo | Query payment status | Yes |
+| POST | /api/payments/notify | Alipay async notification | No |
+| GET | /api/payments/return | Alipay sync redirect | No |
+| POST | /api/payments/wechat/notify | WeChat async notification | No |
+
 ### Admin - RAG
 | Method | Endpoint | Description | Auth |
 |--------|----------|-------------|------|
@@ -385,6 +401,52 @@ Tomybot/
 |--------|----------|-------------|------|
 | GET | /api/admin/admins | List admins | Admin |
 | POST | /api/admin/admins | Set admin role | Admin |
+
+### Admin - Stats
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/admin/stats/overview | System overview stats | Admin |
+| GET | /api/admin/stats/trends | Data trends | Admin |
+
+### Admin - Users
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/admin/users | User list | Admin |
+| GET | /api/admin/users/:id | User details | Admin |
+| PUT | /api/admin/users/:id | Update user | Admin |
+
+### Admin - Orders
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/admin/orders | Order list | Admin |
+| GET | /api/admin/orders/:id | Order details | Admin |
+| PUT | /api/admin/orders/:id | Update order | Admin |
+
+### Admin - Transactions
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/admin/transactions | Transaction records | Admin |
+
+### Admin - Services
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/admin/services | Service packages | Admin |
+| POST | /api/admin/services | Create service | Admin |
+| PUT | /api/admin/services/:id | Update service | Admin |
+| DELETE | /api/admin/services/:id | Delete service | Admin |
+
+### Admin - System
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | /api/admin/init-balances | Initialize user balances | Admin |
+| POST | /api/admin/seed-admin | Create admin account | Admin |
+| GET | /api/admin/check | Check admin status | Admin |
+
+### Admin - Usage
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /api/admin/usage/daily | Daily usage stats | Admin |
+| GET | /api/admin/usage/summary | Usage summary | Admin |
 
 ---
 
@@ -624,17 +686,22 @@ validate(schema, data) // Validate helper
 | messages | Chat messages |
 | contacts | Contact form submissions |
 | user_sessions | JWT refresh tokens |
+| system_config | System configuration |
 | user_memories | User memory/context |
 | mcp_services | MCP service configurations |
 | skills | Skill definitions |
 | whitelisted_commands | Command whitelist |
-| system_config | System configuration |
+| token_balances | Token balance |
+| token_transactions | Token transaction records |
+| token_daily_stats | Daily token consumption stats |
 | services | Service packages |
 | cart_items | Shopping cart items |
 | orders | Orders |
 | order_items | Order items |
-| transactions | Transaction records |
-| user_knowledge | User knowledge bases |
+| payments | Payment records |
+| shared_messages | Shared messages |
+| admins | Admin accounts |
+| admin_logs | Admin operation logs |
 
 ### ER Relations
 
@@ -642,10 +709,12 @@ validate(schema, data) // Validate helper
 users ──┬──< conversations ──< messages
         ├──< user_sessions
         ├──< user_memories
+        ├──< token_balances ──< token_transactions
+        ├──< token_daily_stats
         ├──< cart_items
-        ├──< orders ──< order_items
-        ├──< transactions
-        └──< user_knowledge
+        ├──< orders ──< order_items ──< payments
+        ├──< shared_messages
+        ├──< admins ──< admin_logs
 
 services ──< cart_items
 services ──< order_items
@@ -654,6 +723,7 @@ mcp_services (standalone)
 skills (standalone)
 whitelisted_commands (standalone)
 contacts (standalone)
+system_config (standalone)
 ```
 
 ---

@@ -29,6 +29,8 @@ export interface IndexStatus {
 export interface RAGConfig {
   docsPath: string
   indexPath: string
+  systemPromptHeader: string
+  userPromptHeader: string
 }
 
 const DEFAULT_TOP_K = 5
@@ -44,7 +46,9 @@ function getConfig(): RAGConfig {
   const config = useRuntimeConfig()
   return {
     docsPath: (config.ragDocsPath as string) || './knowledge',
-    indexPath: (config.ragIndexPath as string) || './.vectra'
+    indexPath: (config.ragIndexPath as string) || './.vectra',
+    systemPromptHeader: (config.ragSystemPromptHeader as string) || '相关文档内容：',
+    userPromptHeader: (config.ragUserPromptHeader as string) || '用户知识库内容：'
   }
 }
 
@@ -162,8 +166,9 @@ export async function searchDocuments(query: string, topK = DEFAULT_TOP_K): Prom
 }
 
 export async function getRAGContext(query: string, maxTokens = DEFAULT_MAX_TOKENS): Promise<string> {
+  const { systemPromptHeader } = getConfig()
   const results = await searchDocuments(query, DEFAULT_TOP_K)
-  return buildContextFromResults(results, '相关文档内容：\n', maxTokens)
+  return buildContextFromResults(results, systemPromptHeader + '\n', maxTokens)
 }
 
 export async function listDocuments(): Promise<DocumentInfo[]> {

@@ -115,13 +115,22 @@ export async function isCommandWhitelisted(command: string): Promise<boolean> {
 
 async function validateCommandForExecution(command: string): Promise<{ valid: boolean; parsed: ParsedCommand; error?: ExecutionResult }> {
   const parsed = parseCommand(command)
-  const isWhitelisted = await isCommandWhitelisted(command)
 
-  if (!isWhitelisted) {
+  try {
+    const isWhitelisted = await isCommandWhitelisted(command)
+
+    if (!isWhitelisted) {
+      return {
+        valid: false,
+        parsed,
+        error: createErrorResult(`Command "${parsed.command}" is not whitelisted`)
+      }
+    }
+  } catch (error) {
     return {
       valid: false,
       parsed,
-      error: createErrorResult(`Command "${parsed.command}" is not whitelisted`)
+      error: createErrorResult(`Command validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 

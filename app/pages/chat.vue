@@ -288,8 +288,6 @@ const lastInputTokens = ref(0)
 const lastOutputTokens = ref(0)
 const showScrollButton = ref(false)
 const hasShownLowBalanceWarning = ref(false)
-const hadToolCallError = ref(false)
-const toolCallErrorDetail = ref('')
 
 const suggestions = [
   '介绍一下你自己',
@@ -486,8 +484,6 @@ const sendMessage = async () => {
   isLoading.value = true
   streamingContent.value = ''
   streamingReasoning.value = ''
-  hadToolCallError.value = false
-  toolCallErrorDetail.value = ''
 
   try {
     const requestBody: any = {
@@ -552,17 +548,7 @@ const sendMessage = async () => {
           } else if (event.type === 'tool_error') {
             streamingContent.value += `工具错误: ${event.error}\n`
           } else if (event.type === 'content') {
-            let content = event.content
-            if (content && (content.includes('<invoke') || content.includes('<parameter') || content.includes('tool_call'))) {
-              if (!hadToolCallError.value) {
-                hadToolCallError.value = true
-                toolCallErrorDetail.value = '检测到工具调用格式错误：模型返回了 XML 格式的工具调用而非标准格式。'
-              }
-              content = content.replace(/<invoke[^>]*>[\s\S]*?<\/invoke>/gi, '')
-              content = content.replace(/<parameter[^>]*>[\s\S]*?<\/parameter>/gi, '')
-              content = content.replace(/minimax:tool_call[\s\S]*/gi, '')
-              content = content.trim()
-            }
+            const content = event.content
             if (content) {
               streamingContent.value += content
               scrollToBottom()
@@ -575,16 +561,10 @@ const sendMessage = async () => {
             lastInputTokens.value = event.inputTokens
             lastOutputTokens.value = event.outputTokens
           } else if (event.type === 'done') {
-            let finalContent = streamingContent.value
-            finalContent = finalContent
-              .replace(/<invoke[^>]*>[\s\S]*?<\/invoke>/gi, '')
-              .replace(/<parameter[^>]*>[\s\S]*?<\/parameter>/gi, '')
-              .trim()
+            const finalContent = streamingContent.value.trim()
             
             const isEmpty = !finalContent || finalContent.trim() === ''
-            const errorMessage = hadToolCallError.value 
-              ? (toolCallErrorDetail.value || '工具调用格式错误，内容被过滤')
-              : (isEmpty ? '回答内容为空' : undefined)
+            const errorMessage = isEmpty ? '回答内容为空' : undefined
             
             messages.value.push({
               id: Date.now() + 1,
@@ -599,8 +579,6 @@ const sendMessage = async () => {
             })
             streamingContent.value = ''
             streamingReasoning.value = ''
-            hadToolCallError.value = false
-            toolCallErrorDetail.value = ''
             await Promise.all([
               loadConversations(),
               loadTokenBalance()
@@ -615,8 +593,6 @@ const sendMessage = async () => {
             })
             streamingContent.value = ''
             streamingReasoning.value = ''
-            hadToolCallError.value = false
-            toolCallErrorDetail.value = ''
           }
         } catch {
           // Ignore parsing errors
