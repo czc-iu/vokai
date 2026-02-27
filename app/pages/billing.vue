@@ -41,7 +41,7 @@
           <div class="bg-white rounded-sm border border-sakura">
             <div class="p-4 border-b border-sakura flex items-center justify-between">
               <h2 class="text-lg font-medium text-charcoal">交易记录</h2>
-              <select v-model="filterType" class="input-field w-auto text-sm py-1">
+              <select v-model="filterType" class="input-field w-1/5 min-w-fit text-sm py-1">
                 <option value="">全部</option>
                 <option value="purchase">购买</option>
                 <option value="consume">消耗</option>

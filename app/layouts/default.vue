@@ -14,73 +14,79 @@
 
         <div class="hidden md:flex items-center gap-4">
           <LanguageSwitcher />
-          <template v-if="user">
-            <NuxtLink to="/chat" class="btn-soft">{{ t('nav.chat') }}</NuxtLink>
-            <div class="relative" ref="userMenuRef">
-              <button
-                @click="userMenuOpen = !userMenuOpen"
-                class="w-9 h-9 rounded-full bg-indigo text-white flex items-center justify-center text-sm font-medium hover:bg-indigo-dark transition-colors"
-              >
-                {{ userInitial }}
-              </button>
-              <Transition
-                enter-active-class="transition ease-out duration-100"
-                enter-from-class="transform opacity-0 scale-95"
-                enter-to-class="transform opacity-100 scale-100"
-                leave-active-class="transition ease-in duration-75"
-                leave-from-class="transform opacity-100 scale-100"
-                leave-to-class="transform opacity-0 scale-95"
-              >
-                <div
-                  v-if="userMenuOpen"
-                  class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-sakura py-1 z-50"
+          <ClientOnly>
+            <template v-if="user">
+              <NuxtLink to="/chat" class="btn-soft">{{ t('nav.chat') }}</NuxtLink>
+              <div class="relative" ref="userMenuRef">
+                <button
+                  @click="userMenuOpen = !userMenuOpen"
+                  class="w-9 h-9 rounded-full bg-indigo text-white flex items-center justify-center text-sm font-medium hover:bg-indigo-dark transition-colors"
                 >
-                  <div class="px-4 py-2 border-b border-sakura">
-                    <p class="text-sm font-medium text-charcoal truncate">{{ user.name || user.email }}</p>
-                    <p class="text-xs text-stone truncate">{{ user.email }}</p>
+                  {{ userInitial }}
+                </button>
+                <Transition
+                  enter-active-class="transition ease-out duration-100"
+                  enter-from-class="transform opacity-0 scale-95"
+                  enter-to-class="transform opacity-100 scale-100"
+                  leave-active-class="transition ease-in duration-75"
+                  leave-from-class="transform opacity-100 scale-100"
+                  leave-to-class="transform opacity-0 scale-95"
+                >
+                  <div
+                    v-if="userMenuOpen"
+                    class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-sakura py-1 z-50"
+                  >
+                    <div class="px-4 py-2 border-b border-sakura">
+                      <p class="text-sm font-medium text-charcoal truncate">{{ user.name || user.email }}</p>
+                      <p class="text-xs text-stone truncate">{{ user.email }}</p>
+                    </div>
+                    <NuxtLink to="/admin" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-indigo hover:bg-sakura/30 transition-colors">
+                      <Icon name="heroicons:cog-6-tooth" class="w-4 h-4" />
+                      {{ t('nav.admin') }}
+                    </NuxtLink>
+                    <div class="border-t border-sakura my-1"></div>
+                    <NuxtLink to="/account" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
+                      <Icon name="heroicons:user" class="w-4 h-4" />
+                      {{ t('nav.account') }}
+                    </NuxtLink>
+                    <NuxtLink to="/billing" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
+                      <Icon name="heroicons:credit-card" class="w-4 h-4" />
+                      {{ t('nav.billing') }}
+                    </NuxtLink>
+                    <NuxtLink to="/orders" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
+                      <Icon name="heroicons:document-text" class="w-4 h-4" />
+                      {{ t('nav.orders') }}
+                    </NuxtLink>
+                    <NuxtLink to="/cart" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
+                      <Icon name="heroicons:shopping-cart" class="w-4 h-4" />
+                      {{ t('nav.cart') }}
+                    </NuxtLink>
+                    <NuxtLink to="/knowledge-base" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
+                      <Icon name="heroicons:book-open" class="w-4 h-4" />
+                      {{ t('nav.knowledgeBase') }}
+                    </NuxtLink>
+                    <NuxtLink to="/account#embed" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
+                      <Icon name="heroicons:code-bracket" class="w-4 h-4" />
+                      {{ t('nav.embedSDK') }}
+                    </NuxtLink>
+                    <div class="border-t border-sakura my-1"></div>
+                    <button @click="handleLogout" class="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                      <Icon name="heroicons:arrow-right-on-rectangle" class="w-4 h-4" />
+                      {{ t('nav.logout') }}
+                    </button>
                   </div>
-                  <NuxtLink to="/admin" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-indigo hover:bg-sakura/30 transition-colors">
-                    <Icon name="heroicons:cog-6-tooth" class="w-4 h-4" />
-                    {{ t('nav.admin') }}
-                  </NuxtLink>
-                  <div class="border-t border-sakura my-1"></div>
-                  <NuxtLink to="/account" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
-                    <Icon name="heroicons:user" class="w-4 h-4" />
-                    {{ t('nav.account') }}
-                  </NuxtLink>
-                  <NuxtLink to="/billing" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
-                    <Icon name="heroicons:credit-card" class="w-4 h-4" />
-                    {{ t('nav.billing') }}
-                  </NuxtLink>
-                  <NuxtLink to="/orders" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
-                    <Icon name="heroicons:document-text" class="w-4 h-4" />
-                    {{ t('nav.orders') }}
-                  </NuxtLink>
-                  <NuxtLink to="/cart" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
-                    <Icon name="heroicons:shopping-cart" class="w-4 h-4" />
-                    {{ t('nav.cart') }}
-                  </NuxtLink>
-                  <NuxtLink to="/knowledge-base" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
-                    <Icon name="heroicons:book-open" class="w-4 h-4" />
-                    {{ t('nav.knowledgeBase') }}
-                  </NuxtLink>
-                  <NuxtLink to="/account#embed" @click="userMenuOpen = false" class="flex items-center gap-2 px-4 py-2 text-sm text-charcoal hover:bg-sakura/30 transition-colors">
-                    <Icon name="heroicons:code-bracket" class="w-4 h-4" />
-                    {{ t('nav.embedSDK') }}
-                  </NuxtLink>
-                  <div class="border-t border-sakura my-1"></div>
-                  <button @click="handleLogout" class="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                    <Icon name="heroicons:arrow-right-on-rectangle" class="w-4 h-4" />
-                    {{ t('nav.logout') }}
-                  </button>
-                </div>
-              </Transition>
-            </div>
-          </template>
-          <template v-else>
-            <NuxtLink to="/login" class="btn-outline text-sm px-6 py-2">{{ t('nav.login') }}</NuxtLink>
-            <NuxtLink to="/register" class="btn-primary text-sm px-6 py-2">{{ t('nav.register') }}</NuxtLink>
-          </template>
+                </Transition>
+              </div>
+            </template>
+            <template v-else>
+              <NuxtLink to="/login" class="btn-outline text-sm px-6 py-2">{{ t('nav.login') }}</NuxtLink>
+              <NuxtLink to="/register" class="btn-primary text-sm px-6 py-2">{{ t('nav.register') }}</NuxtLink>
+            </template>
+            <template #fallback>
+              <NuxtLink to="/login" class="btn-outline text-sm px-6 py-2">{{ t('nav.login') }}</NuxtLink>
+              <NuxtLink to="/register" class="btn-primary text-sm px-6 py-2">{{ t('nav.register') }}</NuxtLink>
+            </template>
+          </ClientOnly>
         </div>
 
         <button 
@@ -103,26 +109,34 @@
             <LanguageSwitcher />
           </div>
           <div class="flex gap-4 pt-4 border-t border-sakura">
-            <template v-if="user">
-              <NuxtLink to="/chat" class="btn-soft flex-1 text-center" @click="mobileMenuOpen = false">{{ t('nav.chat') }}</NuxtLink>
-              <NuxtLink to="/account" class="btn-outline flex-1 text-center" @click="mobileMenuOpen = false">{{ t('nav.account') }}</NuxtLink>
-              <button @click="handleLogout" class="btn-outline flex-1 text-red-600">{{ t('nav.logout') }}</button>
-            </template>
-            <template v-else>
-              <NuxtLink to="/login" class="btn-outline flex-1 text-center text-sm" @click="mobileMenuOpen = false">{{ t('nav.login') }}</NuxtLink>
-              <NuxtLink to="/register" class="btn-primary flex-1 text-center text-sm" @click="mobileMenuOpen = false">{{ t('nav.register') }}</NuxtLink>
-            </template>
+            <ClientOnly>
+              <template v-if="user">
+                <NuxtLink to="/chat" class="btn-soft flex-1 text-center" @click="mobileMenuOpen = false">{{ t('nav.chat') }}</NuxtLink>
+                <NuxtLink to="/account" class="btn-outline flex-1 text-center" @click="mobileMenuOpen = false">{{ t('nav.account') }}</NuxtLink>
+                <button @click="handleLogout" class="btn-outline flex-1 text-red-600">{{ t('nav.logout') }}</button>
+              </template>
+              <template v-else>
+                <NuxtLink to="/login" class="btn-outline flex-1 text-center text-sm" @click="mobileMenuOpen = false">{{ t('nav.login') }}</NuxtLink>
+                <NuxtLink to="/register" class="btn-primary flex-1 text-center text-sm" @click="mobileMenuOpen = false">{{ t('nav.register') }}</NuxtLink>
+              </template>
+              <template #fallback>
+                <NuxtLink to="/login" class="btn-outline flex-1 text-center text-sm" @click="mobileMenuOpen = false">{{ t('nav.login') }}</NuxtLink>
+                <NuxtLink to="/register" class="btn-primary flex-1 text-center text-sm" @click="mobileMenuOpen = false">{{ t('nav.register') }}</NuxtLink>
+              </template>
+            </ClientOnly>
           </div>
-          <template v-if="user">
-            <div class="flex flex-col gap-2 pt-4 border-t border-sakura">
-              <NuxtLink to="/admin" class="py-2 text-indigo text-sm font-medium" @click="mobileMenuOpen = false">{{ t('nav.admin') }}</NuxtLink>
-              <NuxtLink to="/billing" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.billing') }}</NuxtLink>
-              <NuxtLink to="/orders" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.orders') }}</NuxtLink>
-              <NuxtLink to="/cart" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.cart') }}</NuxtLink>
-              <NuxtLink to="/knowledge-base" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.knowledgeBase') }}</NuxtLink>
-              <NuxtLink to="/account#embed" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.embedSDK') }}</NuxtLink>
-            </div>
-          </template>
+          <ClientOnly>
+            <template v-if="user">
+              <div class="flex flex-col gap-2 pt-4 border-t border-sakura">
+                <NuxtLink to="/admin" class="py-2 text-indigo text-sm font-medium" @click="mobileMenuOpen = false">{{ t('nav.admin') }}</NuxtLink>
+                <NuxtLink to="/billing" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.billing') }}</NuxtLink>
+                <NuxtLink to="/orders" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.orders') }}</NuxtLink>
+                <NuxtLink to="/cart" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.cart') }}</NuxtLink>
+                <NuxtLink to="/knowledge-base" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.knowledgeBase') }}</NuxtLink>
+                <NuxtLink to="/account#embed" class="py-2 text-charcoal text-sm" @click="mobileMenuOpen = false">{{ t('nav.embedSDK') }}</NuxtLink>
+              </div>
+            </template>
+          </ClientOnly>
         </div>
       </div>
     </header>

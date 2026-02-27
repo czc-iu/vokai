@@ -76,10 +76,9 @@
             </div>
             <button
               @click="checkout"
-              :disabled="checkingOut"
               class="btn-primary w-full mt-6"
             >
-              {{ checkingOut ? '结算中...' : '去结算' }}
+              去结算
             </button>
             <NuxtLink to="/services" class="block text-center text-sm text-stone hover:text-charcoal mt-4">
               继续购物
@@ -129,8 +128,6 @@ const cart = ref<Cart>({
   totalAmount: 0,
   totalTokens: 0
 })
-
-const checkingOut = ref(false)
 
 onMounted(async () => {
   await auth.fetchUser()
@@ -184,39 +181,8 @@ const removeItem = async (itemId: number) => {
   }
 }
 
-const checkout = async () => {
-  checkingOut.value = true
-
-  try {
-    const items = cart.value.items.map((item) => ({
-      serviceId: item.service_id,
-      quantity: item.quantity
-    }))
-
-    const response = await $fetch('/api/orders/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...auth.getAuthHeaders() },
-      body: {
-        method: 'balance',
-        items
-      }
-    })
-
-    if (response.success) {
-      alert('支付成功！')
-      router.push('/billing')
-    } else {
-      router.push(`/checkout?cart=1`)
-    }
-  } catch (error: any) {
-    if (error.data?.message?.includes('余额不足')) {
-      router.push(`/checkout?cart=1`)
-    } else {
-      alert(error.data?.message || '结算失败')
-    }
-  } finally {
-    checkingOut.value = false
-  }
+const checkout = () => {
+  router.push('/checkout?cart=1')
 }
 
 const formatNumber = (num: number) => {

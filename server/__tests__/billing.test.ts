@@ -49,24 +49,40 @@ describe('Billing Utils', () => {
     })
 
     it('should create new balance if not found', async () => {
-      vi.mocked(queryOne)
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce({
-          id: 1,
-          user_id: 456,
-          balance: 0,
-          total_purchased: 0,
-          total_consumed: 0,
-          created_at: new Date(),
-          updated_at: new Date()
-        })
+      const initialBalance = {
+        id: 1,
+        user_id: 456,
+        balance: 0,
+        total_purchased: 0,
+        total_consumed: 0,
+        created_at: new Date(),
+        updated_at: new Date()
+      }
+      const afterBonusBalance = {
+        id: 1,
+        user_id: 456,
+        balance: 10000,
+        total_purchased: 10000,
+        total_consumed: 0,
+        created_at: new Date(),
+        updated_at: new Date()
+      }
 
-      vi.mocked(insert).mockResolvedValueOnce({ insertId: 1, affectedRows: 1 })
+      let callCount = 0
+      vi.mocked(queryOne).mockImplementation(async () => {
+        callCount++
+        if (callCount === 1) return null
+        if (callCount <= 3) return initialBalance
+        return afterBonusBalance
+      })
+
+      vi.mocked(insert).mockResolvedValue({ insertId: 1, affectedRows: 1 })
+      vi.mocked(query).mockResolvedValue({ affectedRows: 1 })
 
       const { getOrCreateBalance } = await import('../utils/billing')
       const result = await getOrCreateBalance(456)
 
-      expect(result.balance).toBe(0)
+      expect(result.balance).toBe(10000)
       expect(insert).toHaveBeenCalledWith('token_balances', {
         user_id: 456,
         balance: 0,
@@ -94,25 +110,41 @@ describe('Billing Utils', () => {
       expect(result).toBe(500)
     })
 
-    it('should return 0 for new user', async () => {
-      vi.mocked(queryOne)
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce({
-          id: 1,
-          user_id: 789,
-          balance: 0,
-          total_purchased: 0,
-          total_consumed: 0,
-          created_at: new Date(),
-          updated_at: new Date()
-        })
+    it('should return welcome bonus for new user', async () => {
+      const initialBalance = {
+        id: 1,
+        user_id: 789,
+        balance: 0,
+        total_purchased: 0,
+        total_consumed: 0,
+        created_at: new Date(),
+        updated_at: new Date()
+      }
+      const afterBonusBalance = {
+        id: 1,
+        user_id: 789,
+        balance: 10000,
+        total_purchased: 10000,
+        total_consumed: 0,
+        created_at: new Date(),
+        updated_at: new Date()
+      }
 
-      vi.mocked(insert).mockResolvedValueOnce({ insertId: 1, affectedRows: 1 })
+      let callCount = 0
+      vi.mocked(queryOne).mockImplementation(async () => {
+        callCount++
+        if (callCount === 1) return null
+        if (callCount <= 3) return initialBalance
+        return afterBonusBalance
+      })
+
+      vi.mocked(insert).mockResolvedValue({ insertId: 1, affectedRows: 1 })
+      vi.mocked(query).mockResolvedValue({ affectedRows: 1 })
 
       const { getBalance } = await import('../utils/billing')
       const result = await getBalance(789)
 
-      expect(result).toBe(0)
+      expect(result).toBe(10000)
     })
   })
 
@@ -670,7 +702,7 @@ describe('Billing Utils', () => {
 
       expect(insert).toHaveBeenCalledWith('token_transactions', expect.objectContaining({
         type: 'gift',
-        amount: 1000,
+        amount: 10000,
         description: '新用户注册赠送',
         reference_type: 'welcome_bonus',
         reference_id: 123

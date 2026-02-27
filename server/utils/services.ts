@@ -250,3 +250,86 @@ export async function getCartTotal(userId: number): Promise<CartTotals> {
   const items = await getCartItems(userId)
   return calculateCartTotals(items)
 }
+
+export async function getAllServicesAdmin(): Promise<Service[]> {
+  const services = await query<Service[]>('SELECT * FROM services ORDER BY sort_order ASC, id ASC')
+  return mapServicesWithFeatures(services)
+}
+
+export async function createService(data: {
+  name: string
+  description?: string
+  tokens: number
+  price: number
+  original_price?: number
+  validity_days?: number
+  features?: string[]
+  is_popular?: boolean
+  sort_order?: number
+}): Promise<Service> {
+  const result = await insert('services', {
+    name: data.name,
+    description: data.description || null,
+    tokens: data.tokens,
+    price: data.price,
+    original_price: data.original_price || null,
+    validity_days: data.validity_days || null,
+    features: data.features ? JSON.stringify(data.features) : null,
+    is_popular: data.is_popular || false,
+    is_active: true,
+    sort_order: data.sort_order || 0
+  })
+
+  const service = await getService(result.insertId)
+  if (!service) throw new Error('Failed to create service')
+  return service
+}
+
+export async function updateService(id: number, data: Record<string, unknown>): Promise<Service | null> {
+  const updateData: Record<string, unknown> = {}
+  
+  if (data.name !== undefined) updateData.name = data.name
+  if (data.description !== undefined) updateData.description = data.description
+  if (data.tokens !== undefined) updateData.tokens = data.tokens
+  if (data.price !== undefined) updateData.price = data.price
+  if (data.original_price !== undefined) updateData.original_price = data.original_price
+  if (data.validity_days !== undefined) updateData.validity_days = data.validity_days
+  if (data.features !== undefined) updateData.features = data.features ? JSON.stringify(data.features) : null
+  if (data.is_popular !== undefined) updateData.is_popular = data.is_popular
+  if (data.sort_order !== undefined) updateData.sort_order = data.sort_order
+
+  if (Object.keys(updateData).length === 0) {
+    return getService(id)
+  }
+
+  await update('services', updateData, 'id = ?', [id])
+  return getService(id)
+}
+
+export async function setServiceStatus(id: number, isActive: boolean): Promise<boolean> {
+  const result = await update('services', { is_active: isActive }, 'id = ?', [id])
+  return result.affectedRows > 0
+}
+
+export async function deleteService(id: number): Promise<boolean> {
+  const result = await remove('services', 'id = ?', [id])
+  return result.affectedRows > 0
+}
+
+export async function getServiceStats(): Promise<{
+  total: number
+  active: number
+  totalTokens: number
+}> {
+  const [totalResult, activeResult, tokensResult] = await Promise.all([
+    queryOne<{ count: number }>('SELECT COUNT(*) as count FROM services'),
+    queryOne<{ count: number }>('SELECT COUNT(*) as count FROM services WHERE is_active = TRUE'),
+    queryOne<{ total: number }>('SELECT COALESCE(SUM(tokens), 0) as total FROM services WHERE is_active = TRUE')
+  ])
+
+  return {
+    total: totalResult?.count ?? 0,
+    active: activeResult?.count ?? 0,
+    totalTokens: tokensResult?.total ?? 0
+  }
+}

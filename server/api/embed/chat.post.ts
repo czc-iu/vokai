@@ -1,6 +1,7 @@
 import type { QwenMessage } from '../../utils/ai'
 import { streamChatWithQwen } from '../../utils/ai'
 import { getRAGContext } from '../../utils/rag'
+import { getSkillsPrompt } from '../../utils/skills'
 import { queryOne } from '../../utils/db'
 
 interface EmbedConfig {
@@ -48,8 +49,14 @@ export default defineEventHandler(async (event) => {
   const systemPrompt = config?.custom_prompt || 
     '你是TomyBot智能助手，一个专业、友好、高效的客服AI。请用简洁、专业的语言回答用户问题。'
 
+  let skillsPrompt = ''
+  try {
+    skillsPrompt = await getSkillsPrompt()
+  } catch (error) {
+    console.error('Skills prompt error:', error)
+  }
+
   const aiMessages: QwenMessage[] = [
-    { role: 'system', content: systemPrompt },
     { role: 'user', content: message }
   ]
 
@@ -57,7 +64,7 @@ export default defineEventHandler(async (event) => {
     try {
       const ragContext = await getRAGContext(message, 1000)
       if (ragContext) {
-        aiMessages[1].content = `${ragContext}\n\n用户问题：${message}`
+        aiMessages[0].content = `${ragContext}\n\n用户问题：${message}`
       }
     } catch (error) {
       console.error('RAG context error:', error)
@@ -81,7 +88,8 @@ export default defineEventHandler(async (event) => {
       try {
         for await (const chunk of streamChatWithQwen(aiMessages, {
           enableSearch: false,
-          enableThinking: false
+          enableThinking: false,
+          additionalSystemPrompt: systemPrompt + (skillsPrompt ? '\n\n' + skillsPrompt : '')
         })) {
           if (chunk.done) {
             break

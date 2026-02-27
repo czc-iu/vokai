@@ -231,7 +231,7 @@ Tomybot/
 │       ├── add_user_knowledge_base.sql
 │       └── init_tokens.sql
 │
-├── docs/                         # RAG document storage
+├── knowledge/                    # RAG knowledge base storage
 ├── skills/                       # Custom skills directory
 │   ├── xlsx/                     # Excel processing (official)
 │   ├── pdf/                      # PDF processing (official)
@@ -484,7 +484,7 @@ getEmbeddings(texts)           // Get multiple embeddings
 RAG vector search with Vectra.
 
 ```typescript
-indexDocuments()               // Index .md files from docs/
+indexDocuments()               // Index .md files from knowledge/
 searchDocuments(query, topK)   // Semantic search
 getRAGContext(query, maxTokens) // Get formatted context for prompts
 listDocuments()                // List indexed documents
@@ -607,7 +607,7 @@ validate(schema, data) // Validate helper
 | QWEN_API_URL | Qwen API endpoint | No | dashscope.../compatible-mode/v1/chat/completions |
 | QWEN_MODEL | Qwen model name | No | qwen-plus |
 | QWEN_SYSTEM_PROMPT | System prompt | No | 你是TomyBot智能助手... |
-| RAG_DOCS_PATH | RAG documents path | No | ./docs |
+| RAG_DOCS_PATH | RAG documents path | No | ./knowledge |
 | RAG_INDEX_PATH | Vectra index path | No | ./.vectra |
 | SKILLS_PATH | Skills directory | No | ./skills |
 | CONTACT_EMAIL | Contact email | No | info@sayco.com.cn |
@@ -764,6 +764,13 @@ npm run test:coverage
 - Tool discovery and execution
 - OpenAI function format conversion
 
+**Configured MCP Services:**
+- **web-search** - Multi-provider web search (DuckDuckGo, Bing, SearXNG)
+  - Package: `@zhafron/mcp-web-search`
+  - Location: `/mcp-services/`
+  - Tools: `web-search:search`, `web-search:fetch_content`
+  - No API key required
+
 ### Skills System
 - SKILL.md based skill definitions
 - Auto-discovery from skills directory
@@ -784,9 +791,21 @@ npm run test:coverage
 - return-refund - Return and refund processing
 
 ### Command Execution
-- Whitelist-based security
+- Whitelist-based security for shell commands
+- Python code execution capability
 - 30-second timeout
 - stdout/stderr capture
+
+**Available Tools:**
+- `execute_command` - Execute whitelisted shell commands (e.g., date, echo, node, python3)
+- `execute_python` - Execute Python code for calculations, data processing, file operations
+
+**Whitelisted Commands:**
+- python3 - Python 3 interpreter
+- node - Node.js runtime
+- date - Display date/time
+- echo - Output text
+- zip/unzip - File compression
 
 ### Commercial Features
 - Service packages with different tiers

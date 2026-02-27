@@ -72,6 +72,7 @@ definePageMeta({
 })
 
 const { t } = useI18n()
+const auth = useAuth()
 
 useHead({
   title: () => t('admin.commands.title')
@@ -96,7 +97,9 @@ onMounted(async () => {
 
 const loadCommands = async () => {
   try {
-    const response = await $fetch('/api/admin/commands')
+    const response = await $fetch('/api/admin/commands', {
+      headers: auth.getAuthHeaders()
+    })
     if (response.success && response.data) {
       commands.value = response.data
     }
@@ -109,6 +112,7 @@ const addCommand = async () => {
   try {
     const response = await $fetch('/api/admin/commands', {
       method: 'POST',
+      headers: auth.getAuthHeaders(),
       body: newCommand.value
     })
     if (response.success) {
@@ -126,7 +130,10 @@ const deleteCommand = async (id: number) => {
   if (!confirm(t('admin.common.confirmDelete'))) return
   
   try {
-    await $fetch(`/api/admin/commands/${id}`, { method: 'DELETE' })
+    await $fetch(`/api/admin/commands/${id}`, { 
+      method: 'DELETE',
+      headers: auth.getAuthHeaders()
+    })
     await loadCommands()
   } catch (error) {
     console.error('Failed to delete command:', error)

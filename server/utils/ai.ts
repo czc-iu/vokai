@@ -16,6 +16,39 @@ export interface ToolCall {
   }
 }
 
+export interface XmlToolCall {
+  name: string
+  parameters: Record<string, string>
+}
+
+export function parseXmlToolCalls(content: string): XmlToolCall[] {
+  const toolCalls: XmlToolCall[] = []
+  
+  const invokeRegex = /<invoke\s+name=["']([^"']+)["'][^>]*>([\s\S]*?)<\/invoke>/gi
+  let match
+  
+  while ((match = invokeRegex.exec(content)) !== null) {
+    const name = match[1]
+    const paramsBlock = match[2]
+    
+    const parameters: Record<string, string> = {}
+    const paramRegex = /<parameter\s+name=["']([^"']+)["'][^>]*>([\s\S]*?)<\/parameter>/gi
+    let paramMatch
+    
+    while ((paramMatch = paramRegex.exec(paramsBlock)) !== null) {
+      parameters[paramMatch[1]] = paramMatch[2].trim()
+    }
+    
+    toolCalls.push({ name, parameters })
+  }
+  
+  return toolCalls
+}
+
+export function hasXmlToolCalls(content: string): boolean {
+  return /<invoke\s+name=/i.test(content)
+}
+
 export interface QwenResponse {
   id: string
   choices: Array<{
@@ -65,6 +98,7 @@ export interface ChatOptions {
   enableSearch?: boolean
   enableThinking?: boolean
   tools?: Tool[]
+  additionalSystemPrompt?: string
 }
 
 export interface ChatResult {
@@ -109,9 +143,14 @@ function buildRequestBody(
   defaultModel: string,
   stream = false
 ): Record<string, unknown> {
+  let finalSystemPrompt = systemPrompt
+  if (options.additionalSystemPrompt) {
+    finalSystemPrompt = systemPrompt + '\n\n' + options.additionalSystemPrompt
+  }
+  
   const body: Record<string, unknown> = {
     model: options.model || defaultModel,
-    messages: [{ role: 'system', content: systemPrompt }, ...messages],
+    messages: [{ role: 'system', content: finalSystemPrompt }, ...messages],
     temperature: options.temperature ?? QWEN_DEFAULT_TEMPERATURE,
     max_tokens: options.maxTokens ?? QWEN_DEFAULT_MAX_TOKENS,
     stream

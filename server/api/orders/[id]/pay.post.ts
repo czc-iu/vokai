@@ -1,16 +1,17 @@
 import { requireAuth } from '../../../utils/auth'
-import { getOrderById, createPayment, completePayment } from '../../../utils/orders'
+import { getOrderById, createPayment } from '../../../utils/orders'
 import { successResponse, throwBadRequest, throwNotFound } from '../../../utils/response'
 import { z } from 'zod'
 
 const paySchema = z.object({
-  method: z.enum(['alipay', 'wechat', 'balance'])
+  method: z.enum(['alipay', 'wechat', 'bank_transfer'])
 })
 
 export default defineEventHandler(async (event) => {
   const auth = requireAuth(event)
   const id = getRouterParam(event, 'id')
   const body = await readBody(event)
+  const config = useRuntimeConfig()
 
   if (!id) {
     throwNotFound('订单不存在')
@@ -38,26 +39,19 @@ export default defineEventHandler(async (event) => {
     Number(order.total_amount)
   )
 
-  if (result.data!.method === 'balance') {
-    const { consumeTokens } = await import('../../../utils/billing')
-    const success = await consumeTokens(
-      auth.userId,
-      order.total_tokens,
-      `购买服务：订单 ${order.order_no}`,
-      'order',
-      order.id
-    )
-
-    if (!success) {
-      throwBadRequest('余额不足，请先充值')
-    }
-
-    const completed = await completePayment(payment.payment_no, `BALANCE_${Date.now()}`)
-
+  if (result.data!.method === 'bank_transfer') {
     return successResponse({
       success: true,
-      order: completed.order,
-      message: '支付成功'
+      paymentNo: payment.payment_no,
+      method: payment.method,
+      amount: payment.amount,
+      bankInfo: {
+        bankName: config.bankName,
+        bankAccount: config.bankAccount,
+        accountName: config.bankAccountName,
+        branchName: config.bankBranch
+      },
+      message: '请按照银行汇款信息完成转账'
     })
   }
 

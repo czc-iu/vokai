@@ -2,10 +2,13 @@ import type { ChatInput } from '../../utils/validation'
 import { validate, chatSchema } from '../../utils/validation'
 import { requireAuth } from '../../utils/auth'
 import { queryOne, query, insert } from '../../utils/db'
-import { streamChatWithQwen, type QwenMessage } from '../../utils/ai'
+import { streamChatWithQwen, chatWithQwen, type QwenMessage, parseXmlToolCalls, hasXmlToolCalls } from '../../utils/ai'
 import { getRAGContext } from '../../utils/rag'
 import { getUserRAGContext } from '../../utils/userRag'
 import { getUserMemories, formatMemoriesForPrompt, extractMemoriesFromConversation } from '../../utils/memory'
+import { getSkillsPrompt } from '../../utils/skills'
+import { getAllTools, executeTool, convertToolsToOpenAIFormat } from '../../utils/mcp'
+import { getExecutionTools, executeCommand, executePythonCode } from '../../utils/executor'
 import { throwBadRequest } from '../../utils/response'
 import { consumeTokens, recordDailyConsumption, getBalance } from '../../utils/billing'
 import { calculateMessageTokens } from '../../utils/tokenCalculator'
@@ -112,6 +115,13 @@ export default defineEventHandler(async (event) => {
     console.error('Memory context error:', error)
   }
 
+  let skillsPrompt = ''
+  try {
+    skillsPrompt = await getSkillsPrompt()
+  } catch (error) {
+    console.error('Skills prompt error:', error)
+  }
+
   let contextPrefix = ''
   if (memoryContext) {
     contextPrefix += memoryContext + '\n\n'
@@ -132,6 +142,24 @@ export default defineEventHandler(async (event) => {
       }
     }
   }
+
+  let mcpTools: Array<{
+    type: 'function'
+    function: {
+      name: string
+      description: string
+      parameters: Record<string, unknown>
+    }
+  }> = []
+  try {
+    const tools = await getAllTools()
+    mcpTools = convertToolsToOpenAIFormat(tools)
+  } catch (error) {
+    console.error('MCP tools error:', error)
+  }
+
+  const executorTools = getExecutionTools()
+  const allTools = [...mcpTools, ...executorTools]
 
   setResponseHeaders(event, {
     'Content-Type': 'text/event-stream',
@@ -155,24 +183,215 @@ export default defineEventHandler(async (event) => {
       })
 
       try {
-        for await (const chunk of streamChatWithQwen(aiMessages, {
-          enableSearch,
-          enableThinking
-        })) {
-          if (chunk.done) {
-            break
+        let messagesForStream = [...aiMessages]
+        
+        if (allTools.length > 0) {
+          const toolCheckResult = await chatWithQwen(aiMessages, {
+            enableSearch,
+            enableThinking,
+            additionalSystemPrompt: skillsPrompt || undefined,
+            tools: allTools
+          })
+          
+          let hasToolExecution = false
+          
+          // 方式1: 标准 tool_calls
+          if (toolCheckResult.toolCalls?.length) {
+            const validToolCalls = toolCheckResult.toolCalls.filter(tc => {
+              const name = tc.function?.name
+              return name && (name === 'execute_command' || name === 'execute_python' || name.includes(':'))
+            })
+            
+            if (validToolCalls.length > 0) {
+              hasToolExecution = true
+              sendEvent({ type: 'tool_start', tools: validToolCalls.map(t => t.function.name) })
+              
+              messagesForStream.push({
+                role: 'assistant',
+                content: '',
+                tool_calls: validToolCalls as unknown as undefined
+              } as unknown as QwenMessage)
+              
+              for (const toolCall of validToolCalls) {
+                try {
+                  const args = JSON.parse(toolCall.function.arguments) as Record<string, unknown>
+                  let result: string
+                  
+                  if (toolCall.function.name === 'execute_command') {
+                    const cmd = args.command as string
+                    if (!cmd) {
+                      result = 'Error: Missing command parameter'
+                    } else {
+                      const execResult = await executeCommand(cmd)
+                      result = execResult.success 
+                        ? execResult.stdout || '(no output)'
+                        : `Error: ${execResult.stderr}`
+                    }
+                  } else if (toolCall.function.name === 'execute_python') {
+                    const code = args.code as string
+                    if (!code) {
+                      result = 'Error: Missing code parameter'
+                    } else {
+                      const execResult = await executePythonCode(code)
+                      result = execResult.success 
+                        ? execResult.stdout || '(no output)'
+                        : `Error: ${execResult.stderr}`
+                    }
+                  } else {
+                    result = await executeTool(toolCall.function.name, args)
+                  }
+                  
+                  messagesForStream.push({
+                    role: 'tool',
+                    content: result,
+                    tool_call_id: toolCall.id
+                  })
+                } catch (toolError) {
+                  const errorMsg = toolError instanceof Error ? toolError.message : 'Tool execution failed'
+                  messagesForStream.push({
+                    role: 'tool',
+                    content: `Error: ${errorMsg}`,
+                    tool_call_id: toolCall.id
+                  })
+                }
+              }
+            }
           }
-
-          if (chunk.content) {
-            fullContent += chunk.content
-            sendEvent({ type: 'content', content: chunk.content })
+          
+          // 方式2: XML 格式 function_calls (minimax 兼容)
+          if (!hasToolExecution && toolCheckResult.content && hasXmlToolCalls(toolCheckResult.content)) {
+            const xmlToolCalls = parseXmlToolCalls(toolCheckResult.content)
+            
+            if (xmlToolCalls.length > 0) {
+              hasToolExecution = true
+              sendEvent({ type: 'tool_start', tools: xmlToolCalls.map(t => t.name) })
+              
+              messagesForStream.push({
+                role: 'assistant',
+                content: ''
+              })
+              
+              for (const toolCall of xmlToolCalls) {
+                try {
+                  let result: string
+                  
+                  if (toolCall.name === 'execute_command') {
+                    const cmd = toolCall.parameters.command
+                    if (!cmd) {
+                      result = 'Error: Missing command parameter'
+                    } else {
+                      const execResult = await executeCommand(cmd)
+                      result = execResult.success 
+                        ? execResult.stdout || '(no output)'
+                        : `Error: ${execResult.stderr}`
+                    }
+                  } else if (toolCall.name === 'execute_python') {
+                    const code = toolCall.parameters.code
+                    if (!code) {
+                      result = 'Error: Missing code parameter'
+                    } else {
+                      const execResult = await executePythonCode(code)
+                      result = execResult.success 
+                        ? execResult.stdout || '(no output)'
+                        : `Error: ${execResult.stderr}`
+                    }
+                  } else {
+                    result = await executeTool(toolCall.name, toolCall.parameters)
+                  }
+                  
+                  messagesForStream.push({
+                    role: 'tool',
+                    content: result,
+                    tool_call_id: `xml_${Date.now()}_${Math.random()}`
+                  })
+                } catch (toolError) {
+                  const errorMsg = toolError instanceof Error ? toolError.message : 'Tool execution failed'
+                  messagesForStream.push({
+                    role: 'tool',
+                    content: `Error: ${errorMsg}`,
+                    tool_call_id: `xml_${Date.now()}_${Math.random()}`
+                  })
+                }
+              }
+            }
           }
-
-          if (chunk.reasoningContent) {
-            fullReasoning += chunk.reasoningContent
-            sendEvent({ type: 'reasoning', content: chunk.reasoningContent })
+          
+          // 如果有工具执行，继续流式获取最终回复
+          if (hasToolExecution) {
+            for await (const chunk of streamChatWithQwen(messagesForStream, {
+              enableSearch,
+              enableThinking,
+              additionalSystemPrompt: skillsPrompt || undefined
+            })) {
+              if (chunk.done) break
+              
+              if (chunk.content) {
+                const content = chunk.content
+                  .replace(/<invoke[^>]*>[\s\S]*?<\/invoke>/gi, '')
+                  .replace(/<parameter[^>]*>[\s\S]*?<\/parameter>/gi, '')
+                  .trim()
+                if (content) {
+                  fullContent += content
+                  sendEvent({ type: 'content', content })
+                }
+              }
+              
+              if (chunk.reasoningContent) {
+                fullReasoning += chunk.reasoningContent
+                sendEvent({ type: 'reasoning', content: chunk.reasoningContent })
+              }
+            }
+          } else {
+            // 没有工具执行，直接流式响应
+            for await (const chunk of streamChatWithQwen(messagesForStream, {
+              enableSearch,
+              enableThinking,
+              additionalSystemPrompt: skillsPrompt || undefined
+            })) {
+              if (chunk.done) break
+              
+              if (chunk.content) {
+                const content = chunk.content
+                  .replace(/<invoke[^>]*>[\s\S]*?<\/invoke>/gi, '')
+                  .replace(/<parameter[^>]*>[\s\S]*?<\/parameter>/gi, '')
+                  .trim()
+                if (content) {
+                  fullContent += content
+                  sendEvent({ type: 'content', content })
+                }
+              }
+              
+              if (chunk.reasoningContent) {
+                fullReasoning += chunk.reasoningContent
+                sendEvent({ type: 'reasoning', content: chunk.reasoningContent })
+              }
+            }
+          }
+        } else {
+          // 没有工具，直接流式响应
+          for await (const chunk of streamChatWithQwen(messagesForStream, {
+            enableSearch,
+            enableThinking,
+            additionalSystemPrompt: skillsPrompt || undefined
+          })) {
+            if (chunk.done) break
+            
+            if (chunk.content) {
+              fullContent += chunk.content
+              sendEvent({ type: 'content', content: chunk.content })
+            }
+            
+            if (chunk.reasoningContent) {
+              fullReasoning += chunk.reasoningContent
+              sendEvent({ type: 'reasoning', content: chunk.reasoningContent })
+            }
           }
         }
+
+        fullContent = fullContent
+          .replace(/<invoke[^>]*>[\s\S]*?<\/invoke>/gi, '')
+          .replace(/<parameter[^>]*>[\s\S]*?<\/parameter>/gi, '')
+          .trim()
 
         const responseContent = fullContent || '抱歉，我暂时无法回答这个问题。'
         

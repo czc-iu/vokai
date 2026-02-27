@@ -9,6 +9,11 @@ interface DbAdmin {
   status: string
 }
 
+interface DbUser {
+  id: number
+  role: string
+}
+
 export default defineEventHandler(async (event) => {
   try {
     const auth = requireAuth(event)
@@ -24,6 +29,18 @@ export default defineEventHandler(async (event) => {
       return successResponse({
         isAdmin: true,
         role: admin.role
+      })
+    }
+
+    const user = await queryOne<DbUser>(
+      `SELECT id, role FROM users WHERE id = ?`,
+      [auth.userId]
+    )
+
+    if (user && user.role === 'admin') {
+      return successResponse({
+        isAdmin: true,
+        role: 'admin'
       })
     }
     

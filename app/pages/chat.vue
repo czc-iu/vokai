@@ -25,14 +25,13 @@
           <div
             v-for="conv in conversations"
             :key="conv.id"
-            @click="loadConversation(conv.id)"
             class="conversation-item group cursor-pointer p-1.5 lg:p-2 rounded-md lg:rounded-lg transition-all duration-200"
             :class="{ 
               'bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200/50': currentConversationId === conv.id,
               'hover:bg-purple-50/50': currentConversationId !== conv.id
             }"
           >
-            <div class="flex items-center gap-1.5 lg:gap-2">
+            <div class="flex items-center gap-1.5 lg:gap-2" @click="loadConversation(conv.id)">
               <div class="w-5 h-5 lg:w-6 lg:h-6 rounded bg-purple-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                 <Icon name="heroicons:chat-bubble-left" class="w-2.5 h-2.5 lg:w-3 lg:h-3 text-purple-600" />
               </div>
@@ -41,6 +40,13 @@
                 <div class="text-[9px] lg:text-[10px] text-gray-400 mt-0.5">{{ formatDate(conv.updated_at) }}</div>
               </div>
             </div>
+            <button
+              @click.stop="deleteConversation(conv.id)"
+              class="absolute right-1 top-1/2 -translate-y-1/2 p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-red-100 transition-all"
+              title="删除对话"
+            >
+              <Icon name="heroicons:trash" class="w-3 h-3 lg:w-3.5 lg:h-3.5 text-red-500 hover:text-red-600" />
+            </button>
           </div>
         </div>
       </div>
@@ -148,6 +154,7 @@
               :input-tokens="msg.inputTokens"
               :output-tokens="msg.outputTokens"
               :message-id="msg.id"
+              :error="msg.error"
             />
           </TransitionGroup>
 
@@ -210,7 +217,6 @@
                   class="w-full px-2 md:px-4 py-1.5 md:py-3 text-xs md:text-base text-gray-800 placeholder-gray-400 resize-none focus:outline-none leading-relaxed"
                   :placeholder="`${$t('chat.input.placeholder')}（按 Enter 发送 · Shift + Enter 换行）`"
                   :disabled="isLoading"
-                  style="max-height: 40px;"
                 ></textarea>
               </div>
               
@@ -251,6 +257,7 @@ interface Message {
   tokens?: number
   inputTokens?: number
   outputTokens?: number
+  error?: string
 }
 
 interface Conversation {
@@ -281,6 +288,8 @@ const lastInputTokens = ref(0)
 const lastOutputTokens = ref(0)
 const showScrollButton = ref(false)
 const hasShownLowBalanceWarning = ref(false)
+const hadToolCallError = ref(false)
+const toolCallErrorDetail = ref('')
 
 const suggestions = [
   '介绍一下你自己',
@@ -359,10 +368,11 @@ const loadConversation = async (id: number) => {
   try {
     const response = await $fetch(`/api/chat/conversations/${id}`, {
       headers: auth.getAuthHeaders()
-    })
-    if (response.success) {
+    }) as { success: boolean; data?: Message[] }
+    
+    if (response.success && response.data) {
       currentConversationId.value = id
-      messages.value = response.data.map((m: Message) => ({
+      messages.value = response.data.map((m) => ({
         ...m,
         reasoningContent: undefined,
         tokens: m.tokens || 0
@@ -380,6 +390,27 @@ const newConversation = () => {
   inputMessage.value = ''
 }
 
+const deleteConversation = async (id: number) => {
+  if (!confirm('确定要删除这个对话吗？')) return
+  
+  try {
+    await $fetch(`/api/chat/conversations/${id}`, {
+      method: 'DELETE',
+      headers: auth.getAuthHeaders()
+    })
+    
+    if (currentConversationId.value === id) {
+      newConversation()
+    }
+    
+    await loadConversations()
+    notification.success('删除成功', '对话已删除')
+  } catch (error) {
+    console.error('Failed to delete conversation:', error)
+    notification.error('删除失败', '无法删除对话')
+  }
+}
+
 const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault()
@@ -390,7 +421,10 @@ const handleKeydown = (e: KeyboardEvent) => {
 const autoResize = () => {
   if (textareaRef.value) {
     textareaRef.value.style.height = 'auto'
-    textareaRef.value.style.height = textareaRef.value.scrollHeight + 'px'
+    const lineHeight = parseInt(getComputedStyle(textareaRef.value).lineHeight)
+    const maxHeight = lineHeight * 6
+    const newHeight = Math.min(textareaRef.value.scrollHeight, maxHeight)
+    textareaRef.value.style.height = newHeight + 'px'
   }
 }
 
@@ -452,6 +486,8 @@ const sendMessage = async () => {
   isLoading.value = true
   streamingContent.value = ''
   streamingReasoning.value = ''
+  hadToolCallError.value = false
+  toolCallErrorDetail.value = ''
 
   try {
     const requestBody: any = {
@@ -511,9 +547,26 @@ const sendMessage = async () => {
 
           if (event.type === 'conversation') {
             currentConversationId.value = event.conversationId
+          } else if (event.type === 'tool_start') {
+            streamingContent.value += `调用工具：${event.tools.join(', ')}\n`
+          } else if (event.type === 'tool_error') {
+            streamingContent.value += `工具错误: ${event.error}\n`
           } else if (event.type === 'content') {
-            streamingContent.value += event.content
-            scrollToBottom()
+            let content = event.content
+            if (content && (content.includes('<invoke') || content.includes('<parameter') || content.includes('tool_call'))) {
+              if (!hadToolCallError.value) {
+                hadToolCallError.value = true
+                toolCallErrorDetail.value = '检测到工具调用格式错误：模型返回了 XML 格式的工具调用而非标准格式。'
+              }
+              content = content.replace(/<invoke[^>]*>[\s\S]*?<\/invoke>/gi, '')
+              content = content.replace(/<parameter[^>]*>[\s\S]*?<\/parameter>/gi, '')
+              content = content.replace(/minimax:tool_call[\s\S]*/gi, '')
+              content = content.trim()
+            }
+            if (content) {
+              streamingContent.value += content
+              scrollToBottom()
+            }
           } else if (event.type === 'reasoning') {
             streamingReasoning.value += event.content
             scrollToBottom()
@@ -522,18 +575,32 @@ const sendMessage = async () => {
             lastInputTokens.value = event.inputTokens
             lastOutputTokens.value = event.outputTokens
           } else if (event.type === 'done') {
+            let finalContent = streamingContent.value
+            finalContent = finalContent
+              .replace(/<invoke[^>]*>[\s\S]*?<\/invoke>/gi, '')
+              .replace(/<parameter[^>]*>[\s\S]*?<\/parameter>/gi, '')
+              .trim()
+            
+            const isEmpty = !finalContent || finalContent.trim() === ''
+            const errorMessage = hadToolCallError.value 
+              ? (toolCallErrorDetail.value || '工具调用格式错误，内容被过滤')
+              : (isEmpty ? '回答内容为空' : undefined)
+            
             messages.value.push({
               id: Date.now() + 1,
               role: 'assistant',
-              content: streamingContent.value || t('chat.errors.noAnswer'),
+              content: isEmpty ? '抱歉，本次回答失败。' : finalContent,
               created_at: new Date().toISOString(),
               reasoningContent: streamingReasoning.value || undefined,
               tokens: lastTokens.value,
               inputTokens: lastInputTokens.value,
-              outputTokens: lastOutputTokens.value
+              outputTokens: lastOutputTokens.value,
+              error: errorMessage
             })
             streamingContent.value = ''
             streamingReasoning.value = ''
+            hadToolCallError.value = false
+            toolCallErrorDetail.value = ''
             await Promise.all([
               loadConversations(),
               loadTokenBalance()
@@ -542,11 +609,14 @@ const sendMessage = async () => {
             messages.value.push({
               id: Date.now() + 1,
               role: 'assistant',
-              content: event.message || t('chat.errors.serviceUnavailable'),
-              created_at: new Date().toISOString()
+              content: '抱歉，本次回答失败。',
+              created_at: new Date().toISOString(),
+              error: event.message || '服务暂时不可用'
             })
             streamingContent.value = ''
             streamingReasoning.value = ''
+            hadToolCallError.value = false
+            toolCallErrorDetail.value = ''
           }
         } catch {
           // Ignore parsing errors

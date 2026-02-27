@@ -187,18 +187,71 @@ export function getExecutionTools(): Array<{
       function: {
         name: 'execute_command',
         description:
-          'Execute a whitelisted command on the server. Use with caution. Only commands in the whitelist can be executed.',
+          'Execute a whitelisted shell command on the server. Only commands in the whitelist can be executed. Use this for system operations like checking date, echoing text, etc.',
         parameters: {
           type: 'object',
           properties: {
             command: {
               type: 'string',
-              description: 'The command to execute (must be in whitelist)'
+              description: 'The command to execute with arguments (e.g., "date", "echo hello")'
             }
           },
           required: ['command']
         }
       }
+    },
+    {
+      type: 'function' as const,
+      function: {
+        name: 'execute_python',
+        description:
+          'Execute Python code on the server. Use this for calculations, data processing, file operations, and other tasks that require programming. The code runs in an isolated environment.',
+        parameters: {
+          type: 'object',
+          properties: {
+            code: {
+              type: 'string',
+              description: 'The Python code to execute. Can include imports, function definitions, and statements. Print output to see results.'
+            }
+          },
+          required: ['code']
+        }
+      }
     }
   ]
+}
+
+export async function executePythonCode(
+  code: string,
+  timeout = DEFAULT_TIMEOUT
+): Promise<ExecutionResult> {
+  return new Promise((resolve) => {
+    let stdout = ''
+    let stderr = ''
+
+    const proc = spawn('python3', ['-c', code], {
+      timeout,
+      env: {
+        ...process.env,
+        PATH: process.env.PATH,
+        PYTHONIOENCODING: 'utf-8'
+      }
+    })
+
+    proc.stdout.on('data', (data) => {
+      stdout += data.toString()
+    })
+
+    proc.stderr.on('data', (data) => {
+      stderr += data.toString()
+    })
+
+    proc.on('close', (code) => {
+      resolve(createSuccessResult(stdout, stderr, code ?? 1))
+    })
+
+    proc.on('error', (error) => {
+      resolve(createSuccessResult(stdout, error.message, 1))
+    })
+  })
 }

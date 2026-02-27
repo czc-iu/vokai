@@ -1,5 +1,5 @@
 import { requireAdmin } from '../../../utils/adminAuth'
-import { createService } from '../../../utils/mcp'
+import { createMcpService } from '../../../utils/mcp'
 import { successResponse, throwBadRequest } from '../../../utils/response'
 import { z } from 'zod'
 
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
     throwBadRequest(result.error.errors[0]?.message || '验证失败')
   }
 
-  const id = await createService(result.data)
+  const id = await createMcpService(result.data)
 
   return successResponse({ id, ...result.data })
 })

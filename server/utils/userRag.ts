@@ -120,3 +120,27 @@ export function clearUserIndex(userId: number): void {
 export function clearAllUserIndexes(): void {
   userIndexes.clear()
 }
+
+export async function resetAllUserIndexes(): Promise<{ reindexed: number; errors: string[] }> {
+  const errors: string[] = []
+  let reindexed = 0
+  
+  userIndexes.clear()
+  
+  const users = await query<{ user_id: number; filename: string; content: string }[]>(
+    `SELECT ud.user_id, ud.filename, ud.content 
+     FROM user_documents ud 
+     WHERE ud.is_indexed = TRUE OR ud.is_indexed IS NULL`
+  )
+  
+  for (const doc of users) {
+    try {
+      await indexUserDocument(doc.user_id, doc.filename, doc.content)
+      reindexed++
+    } catch (error) {
+      errors.push(`User ${doc.user_id}/${doc.filename}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+  
+  return { reindexed, errors }
+}

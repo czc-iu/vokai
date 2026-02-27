@@ -11,6 +11,7 @@ function createPoolConfig(): mysql.PoolOptions {
     database: config.dbName,
     user: config.dbUser,
     password: config.dbPassword,
+    charset: 'utf8mb4',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,

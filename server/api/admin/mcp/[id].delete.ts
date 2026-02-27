@@ -1,5 +1,5 @@
 import { requireAdmin } from '../../../utils/adminAuth'
-import { deleteService, disconnectService } from '../../../utils/mcp'
+import { deleteMcpService, disconnectService } from '../../../utils/mcp'
 import { successResponse, throwNotFound } from '../../../utils/response'
 
 export default defineEventHandler(async (event) => {
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   }
 
   await disconnectService(id)
-  const deleted = await deleteService(parseInt(id))
+  const deleted = await deleteMcpService(parseInt(id))
 
   if (!deleted) {
     throwNotFound('服务不存在')

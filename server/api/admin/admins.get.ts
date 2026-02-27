@@ -35,7 +35,9 @@ export default defineEventHandler(async (event) => {
   
   const formattedAdmins = admins.map(admin => ({
     ...admin,
-    permissions: admin.permissions ? JSON.parse(admin.permissions) : []
+    permissions: typeof admin.permissions === 'string' 
+      ? JSON.parse(admin.permissions) 
+      : (admin.permissions || [])
   }))
   
   return successResponse({

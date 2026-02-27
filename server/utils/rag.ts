@@ -11,7 +11,10 @@ export interface SearchResult {
 
 export interface DocumentInfo {
   path: string
-  lastIndexed: Date
+  size: number
+  createdAt: Date
+  modifiedAt: Date
+  isIndexed: boolean
   chunkCount: number
 }
 
@@ -40,7 +43,7 @@ let documentIndex: LocalDocumentIndex | null = null
 function getConfig(): RAGConfig {
   const config = useRuntimeConfig()
   return {
-    docsPath: (config.ragDocsPath as string) || './docs',
+    docsPath: (config.ragDocsPath as string) || './knowledge',
     indexPath: (config.ragIndexPath as string) || './.vectra'
   }
 }
@@ -176,16 +179,28 @@ export async function listDocuments(): Promise<DocumentInfo[]> {
 
   for (const file of files) {
     try {
+      const filePath = path.join(docsPath, file)
+      const stats = fs.statSync(filePath)
       const docId = await index.getDocumentId(file)
+      
       documents.push({
         path: file,
-        lastIndexed: docId ? new Date() : new Date(0),
+        size: stats.size,
+        createdAt: stats.birthtime,
+        modifiedAt: stats.mtime,
+        isIndexed: !!docId,
         chunkCount: docId ? 1 : 0
       })
     } catch {
+      const filePath = path.join(docsPath, file)
+      const stats = fs.existsSync(filePath) ? fs.statSync(filePath) : null
+      
       documents.push({
         path: file,
-        lastIndexed: new Date(0),
+        size: stats?.size || 0,
+        createdAt: stats?.birthtime || new Date(0),
+        modifiedAt: stats?.mtime || new Date(0),
+        isIndexed: false,
         chunkCount: 0
       })
     }
@@ -228,4 +243,88 @@ export function clearIndex(): void {
   documentIndex = null
 }
 
-export { buildContextFromResults, transformSearchResults }
+export async function resetIndex(): Promise<{ indexed: number; errors: string[] }> {
+  const { indexPath } = getConfig()
+  
+  documentIndex = null
+  
+  if (fs.existsSync(indexPath)) {
+    const items = fs.readdirSync(indexPath)
+    for (const item of items) {
+      if (item !== 'users') {
+        const itemPath = path.join(indexPath, item)
+        try {
+          if (fs.lstatSync(itemPath).isDirectory()) {
+            fs.rmSync(itemPath, { recursive: true, force: true })
+          } else {
+            fs.unlinkSync(itemPath)
+          }
+        } catch (error) {
+          console.error(`Failed to delete ${itemPath}:`, error)
+        }
+      }
+    }
+  }
+  
+  return indexDocuments()
+}
+
+export function getDocumentContent(filename: string): string | null {
+  const { docsPath } = getConfig()
+  const filePath = path.join(docsPath, filename)
+  
+  if (!fs.existsSync(filePath)) {
+    return null
+  }
+  
+  return fs.readFileSync(filePath, 'utf-8')
+}
+
+export function saveDocumentContent(filename: string, content: string): boolean {
+  const { docsPath } = getConfig()
+  const filePath = path.join(docsPath, filename)
+  
+  try {
+    fs.writeFileSync(filePath, content, 'utf-8')
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function deleteDocumentFile(filename: string): boolean {
+  const { docsPath } = getConfig()
+  const filePath = path.join(docsPath, filename)
+  
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath)
+    }
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function createDocument(filename: string, content: string): boolean {
+  const { docsPath } = getConfig()
+  
+  if (!fs.existsSync(docsPath)) {
+    fs.mkdirSync(docsPath, { recursive: true })
+  }
+  
+  const filePath = path.join(docsPath, filename)
+  
+  if (fs.existsSync(filePath)) {
+    return false
+  }
+  
+  try {
+    fs.writeFileSync(filePath, content || '', 'utf-8')
+    return true
+  } catch {
+    return false
+  }
+}
+
+export { buildContextFromResults, transformSearchResults, getIndex }

@@ -104,12 +104,12 @@ describe('MCP Utils', () => {
     })
   })
 
-  describe('createService', () => {
+  describe('createMcpService', () => {
     it('should create service and return insertId', async () => {
       mockInsert.mockResolvedValue({ insertId: 1, affectedRows: 1 })
 
-      const { createService } = await import('../utils/mcp')
-      const result = await createService({
+      const { createMcpService } = await import('../utils/mcp')
+      const result = await createMcpService({
         name: 'test-service',
         command: 'node',
         args: ['server.js'],
@@ -131,8 +131,8 @@ describe('MCP Utils', () => {
     it('should use default values for args and env', async () => {
       mockInsert.mockResolvedValue({ insertId: 2, affectedRows: 1 })
 
-      const { createService } = await import('../utils/mcp')
-      await createService({
+      const { createMcpService } = await import('../utils/mcp')
+      await createMcpService({
         name: 'minimal-service',
         command: 'python'
       })
@@ -148,12 +148,12 @@ describe('MCP Utils', () => {
     })
   })
 
-  describe('updateService', () => {
+  describe('updateMcpService', () => {
     it('should update service fields', async () => {
       mockQuery.mockResolvedValue({ affectedRows: 1 })
 
-      const { updateService } = await import('../utils/mcp')
-      const result = await updateService(1, {
+      const { updateMcpService } = await import('../utils/mcp')
+      const result = await updateMcpService(1, {
         name: 'updated-service',
         command: 'new-command',
         args: ['new-arg'],
@@ -180,8 +180,8 @@ describe('MCP Utils', () => {
     })
 
     it('should return false when no fields to update', async () => {
-      const { updateService } = await import('../utils/mcp')
-      const result = await updateService(1, {})
+      const { updateMcpService } = await import('../utils/mcp')
+      const result = await updateMcpService(1, {})
 
       expect(result).toBe(false)
       expect(mockQuery).not.toHaveBeenCalled()
@@ -190,8 +190,8 @@ describe('MCP Utils', () => {
     it('should update only provided fields', async () => {
       mockQuery.mockResolvedValue({ affectedRows: 1 })
 
-      const { updateService } = await import('../utils/mcp')
-      await updateService(1, { status: 'error' })
+      const { updateMcpService } = await import('../utils/mcp')
+      await updateMcpService(1, { status: 'error' })
 
       const callArgs = mockQuery.mock.calls[0][1]
       expect(callArgs[0]).toEqual({ status: 'error' })
@@ -200,19 +200,19 @@ describe('MCP Utils', () => {
     it('should return false when no rows affected', async () => {
       mockQuery.mockResolvedValue({ affectedRows: 0 })
 
-      const { updateService } = await import('../utils/mcp')
-      const result = await updateService(999, { name: 'nonexistent' })
+      const { updateMcpService } = await import('../utils/mcp')
+      const result = await updateMcpService(999, { name: 'nonexistent' })
 
       expect(result).toBe(false)
     })
   })
 
-  describe('deleteService', () => {
+  describe('deleteMcpService', () => {
     it('should delete service and return true', async () => {
       mockRemove.mockResolvedValue({ affectedRows: 1 })
 
-      const { deleteService } = await import('../utils/mcp')
-      const result = await deleteService(1)
+      const { deleteMcpService } = await import('../utils/mcp')
+      const result = await deleteMcpService(1)
 
       expect(mockRemove).toHaveBeenCalledWith('mcp_services', 'id = ?', [1])
       expect(result).toBe(true)
@@ -221,8 +221,8 @@ describe('MCP Utils', () => {
     it('should return false when service not found', async () => {
       mockRemove.mockResolvedValue({ affectedRows: 0 })
 
-      const { deleteService } = await import('../utils/mcp')
-      const result = await deleteService(999)
+      const { deleteMcpService } = await import('../utils/mcp')
+      const result = await deleteMcpService(999)
 
       expect(result).toBe(false)
     })

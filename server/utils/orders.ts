@@ -175,7 +175,7 @@ export async function getOrderByNo(orderNo: string): Promise<OrderWithItems | nu
 export async function getUserOrders(
   userId: number,
   options?: { status?: string; limit?: number; offset?: number }
-): Promise<Order[]> {
+): Promise<OrderWithItems[]> {
   let sql = 'SELECT * FROM orders WHERE user_id = ?'
   const params: (string | number)[] = [userId]
 
@@ -190,7 +190,11 @@ export async function getUserOrders(
   const offset = options?.offset ?? DEFAULT_ORDER_OFFSET
   sql += ` LIMIT ${limit} OFFSET ${offset}`
 
-  return query<Order[]>(sql, params)
+  const orders = await query<Order[]>(sql, params)
+  const ordersWithItems = await Promise.all(
+    orders.map(order => buildOrderWithItems(order))
+  )
+  return ordersWithItems
 }
 
 export async function getOrderCount(userId: number, status?: string): Promise<number> {

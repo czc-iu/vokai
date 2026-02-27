@@ -129,6 +129,144 @@ SKILLS_PATH=./skills
 CONTACT_EMAIL=info@sayco.com.cn
 ```
 
+## 支付配置
+
+系统支持三种支付方式：支付宝、微信支付、银行汇款。
+
+### 银行汇款配置
+
+银行汇款是最简单的支付方式，只需配置银行账户信息：
+
+```bash
+# 银行汇款配置
+BANK_NAME=中国工商银行
+BANK_ACCOUNT=6222020200123456789
+BANK_ACCOUNT_NAME=某某科技有限公司
+BANK_BRANCH=北京市朝阳区支行
+```
+
+用户选择银行汇款后，系统会显示银行账户信息，用户转账后需联系客服确认。
+
+### 支付宝配置
+
+#### 1. 申请支付宝开放平台账号
+
+1. 访问 [支付宝开放平台](https://open.alipay.com/)
+2. 创建应用，选择"网页/移动应用"
+3. 添加"电脑网站支付"或"手机网站支付"能力
+4. 配置应用公钥（使用 RSA2 签名）
+
+#### 2. 生成密钥对
+
+```bash
+# 使用 OpenSSL 生成私钥
+openssl genrsa -out app_private_key.pem 2048
+
+# 从私钥中提取公钥
+openssl rsa -in app_private_key.pem -pubout -out app_public_key.pem
+```
+
+#### 3. 配置环境变量
+
+```bash
+# 支付宝支付配置
+ALIPAY_APP_ID=2021000000000000          # 应用APPID
+ALIPAY_PRIVATE_KEY=MIIEv...              # 应用私钥（去除头尾和换行）
+ALIPAY_PUBLIC_KEY=MIIBI...               # 支付宝公钥（从开放平台获取）
+ALIPAY_NOTIFY_URL=https://yourdomain.com/api/payments/notify     # 异步通知地址
+ALIPAY_RETURN_URL=https://yourdomain.com/pay/result              # 同步跳转地址
+ALIPAY_SANDBOX=false                     # 是否使用沙箱环境
+```
+
+#### 4. 沙箱测试
+
+开发阶段可使用支付宝沙箱环境：
+- 设置 `ALIPAY_SANDBOX=true`
+- 使用沙箱 APP 扫码支付
+- 沙箱账号在开放平台"沙箱"页面获取
+
+### 微信支付配置
+
+#### 1. 申请微信支付商户号
+
+1. 访问 [微信支付商户平台](https://pay.weixin.qq.com/)
+2. 注册并完成商户认证
+3. 获取商户号 (MchID)
+
+#### 2. 配置 API 证书
+
+1. 在商户平台"账户中心" → "API安全" 申请证书
+2. 下载证书压缩包，包含：
+   - `apiclient_key.pem` - 商户私钥
+   - `apiclient_cert.pem` - 商户证书
+   - 证书序列号
+
+#### 3. 设置 API v3 密钥
+
+1. 在商户平台"账户中心" → "API安全" 设置 API v3 密钥
+2. 密钥为 32 位字符串，建议使用随机生成
+
+#### 4. 配置环境变量
+
+```bash
+# 微信支付配置
+WECHAT_APP_ID=wx1234567890abcdef         # 公众号/小程序 APPID
+WECHAT_MCH_ID=1234567890                  # 商户号
+WECHAT_API_KEY=your32characterapikey1234567890123  # API v3 密钥（32位）
+WECHAT_SERIAL_NO=1234567890ABCDEF1234567890ABCDEF12345678  # 证书序列号
+WECHAT_PRIVATE_KEY=MIIEv...               # 商户私钥内容
+WECHAT_NOTIFY_URL=https://yourdomain.com/api/payments/wechat/notify  # 异步通知地址
+```
+
+#### 5. 提取私钥内容
+
+```bash
+# 查看 private key 内容（去除头尾和换行符）
+cat apiclient_key.pem | grep -v "-----" | tr -d "\n"
+```
+
+### 支付流程说明
+
+#### 支付宝流程
+
+1. 用户选择支付宝 → 点击确认支付
+2. 后端生成支付链接 → 前端跳转到支付宝
+3. 用户在支付宝完成支付
+4. 支付宝异步通知 `/api/payments/notify` → 更新订单状态
+5. 用户同步跳转到 `/pay/result` → 显示支付结果
+
+#### 微信支付流程
+
+1. 用户选择微信支付 → 点击确认支付
+2. 后端创建 Native Pay 订单 → 返回二维码链接
+3. 跳转到扫码页面 `/pay/wechat/[paymentNo]` → 显示二维码
+4. 用户微信扫码支付
+5. 页面轮询支付状态（每 5 秒）
+6. 微信异步通知 `/api/payments/wechat/notify` → 更新订单状态
+7. 支付成功 → 跳转到结果页面
+
+#### 银行汇款流程
+
+1. 用户选择银行汇款 → 点击确认支付
+2. 系统创建订单，显示银行账户信息
+3. 用户线下转账，备注订单号
+4. 用户联系客服确认转账
+5. 管理员手动确认订单
+
+### 重要提示
+
+1. **HTTPS 要求**：支付回调地址必须使用 HTTPS
+2. **域名配置**：
+   - 支付宝：在开放平台配置授权回调域名
+   - 微信：在商户平台配置支付授权目录
+3. **测试环境**：
+   - 支付宝：使用沙箱环境测试
+   - 微信：使用沙箱环境或小额真实支付测试
+4. **安全建议**：
+   - 私钥不要提交到代码仓库
+   - 使用环境变量或密钥管理服务
+   - 定期更换 API 密钥
+
 ### 初始化数据库
 
 ```bash
@@ -178,6 +316,10 @@ Tomybot/
 │   │   ├── services.vue          # 服务套餐
 │   │   ├── cart.vue              # 购物车
 │   │   ├── checkout.vue          # 结算
+│   │   ├── pay/                   # 支付页面
+│   │   │   ├── result.vue         # 支付结果
+│   │   │   └── wechat/            # 微信支付
+│   │   │       └── [paymentNo].vue
 │   │   ├── billing.vue           # 账单管理
 │   │   ├── account.vue           # 个人中心
 │   │   ├── orders/               # 订单页面
@@ -204,6 +346,14 @@ Tomybot/
 │   │   ├── services/             # 服务套餐
 │   │   ├── cart/                 # 购物车
 │   │   ├── orders/               # 订单管理
+│   │   ├── payments/             # 支付管理
+│   │   │   ├── alipay.post.ts    # 支付宝支付
+│   │   │   ├── wechat.post.ts    # 微信支付
+│   │   │   ├── wechat/           # 微信支付回调
+│   │   │   │   └── notify.post.ts
+│   │   │   ├── notify.post.ts    # 支付宝通知
+│   │   │   ├── return.get.ts     # 支付宝跳转
+│   │   │   └── status/           # 支付状态查询
 │   │   ├── billing/              # 账单系统
 │   │   ├── points/               # 积分系统
 │   │   ├── account/              # 账户管理
@@ -223,6 +373,8 @@ Tomybot/
 │   │   ├── billing.ts            # 计费工具
 │   │   ├── orders.ts             # 订单工具
 │   │   ├── services.ts           # 服务套餐工具
+│   │   ├── alipay.ts             # 支付宝支付
+│   │   ├── wechat.ts             # 微信支付
 │   │   ├── embedding.ts          # 文本嵌入
 │   │   ├── executor.ts           # 命令执行器
 │   │   ├── mcp.ts                # MCP 服务集成
@@ -331,6 +483,18 @@ Tomybot/
 | POST | /api/orders/checkout | 结算购物车 | ✅ |
 | POST | /api/orders/:id/pay | 支付订单 | ✅ |
 | POST | /api/orders/:id/cancel | 取消订单 | ✅ |
+
+### 支付接口
+
+| Method | Endpoint | 描述 | 认证 |
+|--------|----------|------|------|
+| GET | /api/bank-info | 获取银行汇款信息 | ❌ |
+| POST | /api/payments/alipay | 创建支付宝支付 | ✅ |
+| POST | /api/payments/wechat | 创建微信支付 | ✅ |
+| GET | /api/payments/status/:paymentNo | 查询支付状态 | ✅ |
+| POST | /api/payments/notify | 支付宝异步通知 | ❌ |
+| GET | /api/payments/return | 支付宝同步跳转 | ❌ |
+| POST | /api/payments/wechat/notify | 微信异步通知 | ❌ |
 
 ### 计费接口
 
@@ -441,6 +605,7 @@ Tomybot/
 | cart_items | 购物车 |
 | orders | 订单 |
 | order_items | 订单项 |
+| payments | 支付记录 |
 | transactions | 交易记录 |
 | user_knowledge | 用户知识库 |
 

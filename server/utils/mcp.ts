@@ -1,6 +1,6 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
-import { query, queryOne, insert, remove } from './db'
+import { query, queryOne, insert, update, remove } from './db'
 
 export interface MCPTool {
   name: string
@@ -55,7 +55,7 @@ export async function getMcpService(id: number): Promise<MCPService | null> {
   return queryOne<MCPService>('SELECT * FROM mcp_services WHERE id = ?', [id])
 }
 
-export async function createService(data: {
+export async function createMcpService(data: {
   name: string
   command: string
   args?: string[]
@@ -73,7 +73,7 @@ export async function createService(data: {
   return result.insertId
 }
 
-export async function updateService(
+export async function updateMcpService(
   id: number,
   data: Partial<{
     name: string
@@ -95,14 +95,11 @@ export async function updateService(
 
   if (Object.keys(updateData).length === 0) return false
 
-  const result = (await query(
-    'UPDATE mcp_services SET ? WHERE id = ?',
-    [updateData, id]
-  )) as unknown as { affectedRows: number }
+  const result = await update('mcp_services', updateData, 'id = ?', [id])
   return result.affectedRows > 0
 }
 
-export async function deleteService(id: number): Promise<boolean> {
+export async function deleteMcpService(id: number): Promise<boolean> {
   const result = await remove('mcp_services', 'id = ?', [id])
   return result.affectedRows > 0
 }
@@ -150,7 +147,7 @@ async function connectService(service: MCPService): Promise<MCPClientInfo | null
     return clientInfo
   } catch (error) {
     console.error(`Failed to connect MCP service ${service.name}:`, error)
-    await updateService(service.id, { status: 'error' })
+    await updateMcpService(service.id, { status: 'error' })
     return null
   }
 }

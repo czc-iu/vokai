@@ -3,6 +3,7 @@ import { validate, chatSchema } from '../../utils/validation'
 import { requireAuth } from '../../utils/auth'
 import { queryOne, query, insert } from '../../utils/db'
 import { chatWithQwen, type QwenMessage } from '../../utils/ai'
+import { getSkillsPrompt } from '../../utils/skills'
 import { successResponse, throwBadRequest } from '../../utils/response'
 
 interface DbConversation {
@@ -76,9 +77,17 @@ export default defineEventHandler(async (event) => {
     content: m.content
   }))
 
+  let skillsPrompt = ''
+  try {
+    skillsPrompt = await getSkillsPrompt()
+  } catch (error) {
+    console.error('Skills prompt error:', error)
+  }
+
   const aiResponse = await chatWithQwen(aiMessages, {
     enableSearch,
-    enableThinking
+    enableThinking,
+    additionalSystemPrompt: skillsPrompt
   })
 
   const responseContent = aiResponse.content || '抱歉，我暂时无法回答这个问题。'

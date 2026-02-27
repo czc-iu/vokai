@@ -192,29 +192,7 @@ const buyNow = async (service: Service) => {
     return
   }
 
-  try {
-    const response = await $fetch('/api/orders/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...auth.getAuthHeaders() },
-      body: {
-        method: 'balance',
-        items: [{ serviceId: service.id, quantity: 1 }]
-      }
-    })
-
-    if (response.success) {
-      alert(t('services.alerts.purchaseSuccess'))
-      router.push('/billing')
-    } else {
-      router.push(`/checkout?serviceId=${service.id}`)
-    }
-  } catch (error: any) {
-    if (error.data?.message?.includes('余额不足')) {
-      router.push(`/checkout?serviceId=${service.id}`)
-    } else {
-      alert(error.data?.message || t('services.alerts.purchaseFailed'))
-    }
-  }
+  router.push(`/checkout?serviceId=${service.id}`)
 }
 
 const formatNumber = (num: number) => {

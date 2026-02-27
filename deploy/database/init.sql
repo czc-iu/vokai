@@ -148,6 +148,10 @@ CREATE TABLE IF NOT EXISTS `mcp_services` (
   UNIQUE KEY `idx_mcp_services_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 插入默认 MCP 服务
+INSERT INTO `mcp_services` (`name`, `command`, `args`, `env`, `status`, `description`) VALUES
+('web-search', 'node', '["/app/mcp-services/node_modules/.bin/mcp-web-search"]', '{}', 'active', '多引擎网页搜索服务 - 支持 DuckDuckGo、Bing、SearXNG，无需 API Key');
+
 -- Skills 技能表
 CREATE TABLE IF NOT EXISTS `skills` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
