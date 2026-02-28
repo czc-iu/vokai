@@ -109,8 +109,10 @@ export async function getUserRAGContext(
   queryText: string,
   maxTokens = DEFAULT_MAX_TOKENS
 ): Promise<string> {
+  const config = useRuntimeConfig()
+  const userPromptHeader = (config.ragUserPromptHeader as string) || '用户知识库内容：'
   const results = await searchUserDocuments(userId, queryText, DEFAULT_TOP_K)
-  return buildContextFromResults(results, '用户知识库内容：\n', maxTokens)
+  return buildContextFromResults(results, userPromptHeader + '\n', maxTokens)
 }
 
 export function clearUserIndex(userId: number): void {

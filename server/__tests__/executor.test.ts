@@ -582,25 +582,29 @@ describe('Executor Utils', () => {
   })
 
   describe('getExecutionTools', () => {
-    it('should return tool definition for AI function calling', async () => {
+    it('should return tool definitions for execute_command and execute_python', async () => {
       const { getExecutionTools } = await import('../utils/executor')
       const tools = getExecutionTools()
 
-      expect(tools).toHaveLength(1)
+      expect(tools).toHaveLength(2)
       expect(tools[0].type).toBe('function')
       expect(tools[0].function.name).toBe('execute_command')
       expect(tools[0].function.parameters.type).toBe('object')
       expect(tools[0].function.parameters.required).toEqual(['command'])
+
+      expect(tools[1].type).toBe('function')
+      expect(tools[1].function.name).toBe('execute_python')
+      expect(tools[1].function.parameters.required).toEqual(['code'])
     })
 
-    it('should have correct parameter schema', async () => {
+    it('should have correct parameter schema for execute_command', async () => {
       const { getExecutionTools } = await import('../utils/executor')
       const tools = getExecutionTools()
       const properties = tools[0].function.parameters.properties as Record<string, { type: string; description: string }>
       const commandParam = properties.command
 
       expect(commandParam.type).toBe('string')
-      expect(commandParam.description).toContain('whitelist')
+      expect(commandParam.description).toContain('command')
     })
 
     it('should return consistent tool definition', async () => {

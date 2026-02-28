@@ -12,6 +12,7 @@ import { getExecutionTools, executeCommand, executePythonCode } from '../../util
 import { throwBadRequest } from '../../utils/response'
 import { consumeTokens, recordDailyConsumption, getBalance } from '../../utils/billing'
 import { calculateMessageTokens } from '../../utils/tokenCalculator'
+import { isRagEnabled } from '../../utils/userSettings'
 
 interface DbConversation {
   id: number
@@ -93,18 +94,23 @@ export default defineEventHandler(async (event) => {
     content: m.content
   }))
 
-  let ragContext = ''
-  try {
-    ragContext = await getRAGContext(message, 1000)
-  } catch (error) {
-    console.error('RAG context error:', error)
-  }
+  const ragEnabled = await isRagEnabled(userId)
 
+  let ragContext = ''
   let userRagContext = ''
-  try {
-    userRagContext = await getUserRAGContext(userId, message, 1000)
-  } catch (error) {
-    console.error('User RAG context error:', error)
+
+  if (ragEnabled) {
+    try {
+      ragContext = await getRAGContext(message, 1000)
+    } catch (error) {
+      console.error('RAG context error:', error)
+    }
+
+    try {
+      userRagContext = await getUserRAGContext(userId, message, 1000)
+    } catch (error) {
+      console.error('User RAG context error:', error)
+    }
   }
 
   let memoryContext = ''
@@ -326,14 +332,8 @@ export default defineEventHandler(async (event) => {
               if (chunk.done) break
               
               if (chunk.content) {
-                const content = chunk.content
-                  .replace(/<invoke[^>]*>[\s\S]*?<\/invoke>/gi, '')
-                  .replace(/<parameter[^>]*>[\s\S]*?<\/parameter>/gi, '')
-                  .trim()
-                if (content) {
-                  fullContent += content
-                  sendEvent({ type: 'content', content })
-                }
+                fullContent += chunk.content
+                sendEvent({ type: 'content', content: chunk.content })
               }
               
               if (chunk.reasoningContent) {
@@ -351,14 +351,8 @@ export default defineEventHandler(async (event) => {
               if (chunk.done) break
               
               if (chunk.content) {
-                const content = chunk.content
-                  .replace(/<invoke[^>]*>[\s\S]*?<\/invoke>/gi, '')
-                  .replace(/<parameter[^>]*>[\s\S]*?<\/parameter>/gi, '')
-                  .trim()
-                if (content) {
-                  fullContent += content
-                  sendEvent({ type: 'content', content })
-                }
+                fullContent += chunk.content
+                sendEvent({ type: 'content', content: chunk.content })
               }
               
               if (chunk.reasoningContent) {
@@ -387,11 +381,6 @@ export default defineEventHandler(async (event) => {
             }
           }
         }
-
-        fullContent = fullContent
-          .replace(/<invoke[^>]*>[\s\S]*?<\/invoke>/gi, '')
-          .replace(/<parameter[^>]*>[\s\S]*?<\/parameter>/gi, '')
-          .trim()
 
         const responseContent = fullContent || '抱歉，我暂时无法回答这个问题。'
         

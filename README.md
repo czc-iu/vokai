@@ -2,7 +2,7 @@
 
 > 让客服更智能，让服务更高效
 
-TomyBot 是一个基于 Nuxt 3 的全栈 AI 智能客服系统，集成阿里云通义千问（Qwen）大模型，提供企业级智能对话服务。采用日系极简设计风格，为用户提供优雅的交互体验。
+TomyBot 是一个基于 Nuxt 3 的全栈 AI 智能客服系统，集成LLM大模型，提供企业级智能对话服务。采用日系极简设计风格，为用户提供优雅的交互体验。
 
 ## 功能特性
 
@@ -68,7 +68,7 @@ TomyBot 是一个基于 Nuxt 3 的全栈 AI 智能客服系统，集成阿里云
 | 后端 API | Nuxt Server API |
 | 数据库 | MySQL 8.0 |
 | 认证 | JWT + bcrypt |
-| AI 模型 | 阿里云 Qwen (通义千问) / SiliconFlow |
+| AI 模型 | SiliconFlow |
 | 向量数据库 | Vectra |
 | MCP SDK | @modelcontextprotocol/sdk |
 | 验证 | Zod |
@@ -320,7 +320,8 @@ Tomybot/
 │   │   │   ├── result.vue         # 支付结果
 │   │   │   └── wechat/            # 微信支付
 │   │   │       └── [paymentNo].vue
-│   │   ├── billing.vue           # 账单管理
+│   │   ├── billing.vue           # 计费管理
+│   │   ├── test-auth.vue         # 测试认证页面
 │   │   ├── account.vue           # 个人中心
 │   │   ├── orders/               # 订单页面
 │   │   ├── knowledge-base/       # 知识库管理
@@ -496,6 +497,48 @@ Tomybot/
 | GET | /api/payments/return | 支付宝同步跳转 | ❌ |
 | POST | /api/payments/wechat/notify | 微信异步通知 | ❌ |
 
+### 管理接口
+
+#### 统计概览
+| Method | Endpoint | 描述 | 认证 |
+|--------|----------|------|------|
+| GET | /api/admin/stats/overview | 获取系统统计概览 | Admin |
+| GET | /api/admin/stats/trends | 获取数据趋势 | Admin |
+
+#### 用户管理
+| Method | Endpoint | 描述 | 认证 |
+|--------|----------|------|------|
+| GET | /api/admin/users | 用户列表 | Admin |
+| GET | /api/admin/users/:id | 用户详情 | Admin |
+| PUT | /api/admin/users/:id | 更新用户 | Admin |
+
+#### 订单管理
+| Method | Endpoint | 描述 | 认证 |
+|--------|----------|------|------|
+| GET | /api/admin/orders | 订单列表 | Admin |
+| GET | /api/admin/orders/:id | 订单详情 | Admin |
+| PUT | /api/admin/orders/:id | 更新订单 | Admin |
+
+#### 交易管理
+| Method | Endpoint | 描述 | 认证 |
+|--------|----------|------|------|
+| GET | /api/admin/transactions | 交易记录 | Admin |
+
+#### 服务管理
+| Method | Endpoint | 描述 | 认证 |
+|--------|----------|------|------|
+| GET | /api/admin/services | 服务套餐管理 | Admin |
+| POST | /api/admin/services | 创建服务套餐 | Admin |
+| PUT | /api/admin/services/:id | 更新服务套餐 | Admin |
+| DELETE | /api/admin/services/:id | 删除服务套餐 | Admin |
+
+#### 系统管理
+| Method | Endpoint | 描述 | 认证 |
+|--------|----------|------|------|
+| POST | /api/admin/init-balances | 初始化用户余额 | Admin |
+| POST | /api/admin/seed-admin | 创建管理员账号 | Admin |
+| GET | /api/admin/check | 检查管理员状态 | Admin |
+
 ### 计费接口
 
 | Method | Endpoint | 描述 | 认证 |
@@ -595,19 +638,23 @@ Tomybot/
 | conversations | 对话会话 |
 | messages | 对话消息 |
 | contacts | 联系表单 |
-| user_sessions | 用户会话 |
+| user_sessions | 用户会话（JWT refresh token） |
+| system_config | 系统配置 |
 | user_memories | 用户记忆 |
 | mcp_services | MCP 服务配置 |
 | skills | 技能定义 |
 | whitelisted_commands | 命令白名单 |
-| system_config | 系统配置 |
+| token_balances | Token 余额 |
+| token_transactions | Token 交易记录 |
+| token_daily_stats | 每日 Token 消耗统计 |
 | services | 服务套餐 |
 | cart_items | 购物车 |
 | orders | 订单 |
 | order_items | 订单项 |
 | payments | 支付记录 |
-| transactions | 交易记录 |
-| user_knowledge | 用户知识库 |
+| shared_messages | 分享消息 |
+| admins | 管理员 |
+| admin_logs | 管理员操作日志 |
 
 ### ER 关系
 
@@ -615,10 +662,13 @@ Tomybot/
 users ──┬──< conversations ──< messages
         ├──< user_sessions
         ├──< user_memories
+        ├──< token_balances ──< token_transactions
+        ├──< token_daily_stats
         ├──< cart_items
-        ├──< orders ──< order_items
-        ├──< transactions
-        └──< user_knowledge
+        ├──< orders ──< order_items ──< payments
+        ├──< shared_messages
+        ├──< admins ──< admin_logs
+        └──< (user_knowledge - see userRag.ts)
 
 services ──< cart_items
 services ──< order_items
@@ -627,6 +677,7 @@ mcp_services (独立)
 skills (独立)
 whitelisted_commands (独立)
 contacts (独立)
+system_config (独立)
 ```
 
 ## 高级功能说明
